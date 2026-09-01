@@ -1,89 +1,274 @@
-import { Calendar, Check, Pencil, Tag, Target, Trash2 } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { useState } from "react";
+import {
+  FlaticonAlertCircle,
+  FlaticonCalendar,
+  FlaticonCheck,
+  FlaticonCheckCircle,
+  FlaticonChevronDown,
+  FlaticonChevronRight,
+  FlaticonClock,
+  FlaticonEdit,
+  FlaticonPlayCircle,
+  FlaticonPlus,
+  FlaticonRepeat,
+  FlaticonSubtasks,
+  FlaticonTag,
+  FlaticonTarget,
+  FlaticonTrash,
+} from "./icons/FlaticonIcons";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Progress } from "@/components/ui/progress";
 import { useStore } from "@/lib/store";
-import { formatDate, isOverdue } from "@/lib/utils-domain";
-import { PRIORITY_LABEL, type Task } from "@/lib/types";
+import { PRIORITY_LABEL, RECURRENCE_LABEL, STATUS_LABEL, type Task } from "@/lib/types";
+import { computeTaskStatus, formatDate, isOverdue } from "@/lib/utils-domain";
 
 const priorityStyle: Record<Task["priority"], string> = {
-  alta: "bg-destructive/12 text-destructive border-destructive/30",
-  media: "bg-warning/15 text-warning-foreground border-warning/40",
-  baixa: "bg-secondary text-secondary-foreground border-border",
+  alta: "bg-destructive/15 text-destructive border-destructive/30",
+  media: "bg-warning/15 text-warning-foreground border-warning/30",
+  baixa: "bg-secondary text-secondary-foreground border-border/50",
 };
 
 export function TaskItem({ task, onEdit }: { task: Task; onEdit: (task: Task) => void }) {
-  const { toggleTask, removeTask, goals } = useStore();
+  const { toggleTask, removeTask, goals, categories, toggleSubTask, addSubTask, removeSubTask } =
+    useStore();
+  const [expanded, setExpanded] = useState(false);
+  const [newSubTask, setNewSubTask] = useState("");
+
   const goal = goals.find((g) => g.id === task.goalId) ?? null;
+  const category = categories.find((c) => c.id === task.categoryId) ?? null;
+  const status = computeTaskStatus(task);
   const late = isOverdue(task);
 
+  const subtasks = task.subtasks || [];
+  const completedSubtasks = subtasks.filter((st) => st.done).length;
+  const subtasksPercent =
+    subtasks.length > 0 ? Math.round((completedSubtasks / subtasks.length) * 100) : 0;
+
+  const handleAddInlineSubtask = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newSubTask.trim()) return;
+    addSubTask(task.id, newSubTask.trim());
+    setNewSubTask("");
+  };
+
   return (
-    <li className="card-surface flex items-start gap-3 p-4 transition-shadow hover:shadow-lift">
-      <button
-        type="button"
-        onClick={() => toggleTask(task.id)}
-        aria-label={task.done ? `Reabrir ${task.title}` : `Concluir ${task.title}`}
-        aria-pressed={task.done}
-        className={`pop-check mt-0.5 flex size-6 shrink-0 items-center justify-center rounded-full border ${
-          task.done
-            ? "border-success bg-success text-success-foreground scale-105"
-            : "border-border text-transparent hover:border-primary"
-        }`}
-      >
-        <Check className="size-4" aria-hidden />
-      </button>
+    <li className="glass-card flex flex-col p-4 transition-all duration-200 hover:shadow-lift">
+      <div className="flex items-start gap-3">
+        {/* Checkbox Principal de Conclusão */}
+        <button
+          type="button"
+          onClick={() => toggleTask(task.id)}
+          aria-label={task.done ? `Reabrir ${task.title}` : `Concluir ${task.title}`}
+          aria-pressed={task.done}
+          className={`pop-check mt-0.5 flex size-6 shrink-0 items-center justify-center rounded-full border transition-all ${
+            task.done
+              ? "border-success bg-success text-success-foreground scale-105"
+              : "border-border/80 bg-background/50 text-transparent hover:border-primary hover:scale-105"
+          }`}
+        >
+          <FlaticonCheck size={14} />
+        </button>
 
-      <div className="min-w-0 flex-1">
-        <p className={`font-medium leading-snug ${task.done ? "task-done" : ""}`}>{task.title}</p>
-        {task.description ? (
-          <p className="mt-1 line-clamp-2 text-sm text-muted-foreground">{task.description}</p>
-        ) : null}
+        {/* Informações da Tarefa */}
+        <div className="min-w-0 flex-1">
+          <div className="flex flex-wrap items-center gap-2">
+            <p
+              className={`font-display text-base font-semibold leading-snug tracking-tight text-foreground transition-all ${
+                task.done ? "task-done" : ""
+              }`}
+            >
+              {task.title}
+            </p>
 
-        <div className="mt-2 flex flex-wrap items-center gap-1.5 text-xs">
-          <Badge variant="outline" className={priorityStyle[task.priority]}>
-            {PRIORITY_LABEL[task.priority]}
-          </Badge>
-          <span
-            className={`inline-flex items-center gap-1 rounded-md px-2 py-1 ${
-              late ? "bg-destructive/12 text-destructive" : "bg-muted text-muted-foreground"
-            }`}
+            {/* Badge de Status */}
+            {status === "completed" && (
+              <Badge
+                variant="outline"
+                className="bg-success/15 text-success border-success/30 text-[11px] gap-1 py-0 px-2"
+              >
+                <FlaticonCheckCircle size={12} /> {STATUS_LABEL.completed}
+              </Badge>
+            )}
+            {status === "overdue" && (
+              <Badge
+                variant="outline"
+                className="bg-destructive/15 text-destructive border-destructive/30 text-[11px] gap-1 py-0 px-2"
+              >
+                <FlaticonAlertCircle size={12} /> {STATUS_LABEL.overdue}
+              </Badge>
+            )}
+            {status === "in_progress" && (
+              <Badge
+                variant="outline"
+                className="bg-primary/15 text-primary border-primary/30 text-[11px] gap-1 py-0 px-2"
+              >
+                <FlaticonPlayCircle size={12} /> {STATUS_LABEL.in_progress}
+              </Badge>
+            )}
+            {status === "pending" && (
+              <Badge
+                variant="outline"
+                className="bg-muted text-muted-foreground border-border/50 text-[11px] gap-1 py-0 px-2"
+              >
+                <FlaticonClock size={12} /> {STATUS_LABEL.pending}
+              </Badge>
+            )}
+          </div>
+
+          {task.description && (
+            <p className="mt-1 line-clamp-2 text-sm text-muted-foreground">{task.description}</p>
+          )}
+
+          {/* Badges e Metadados */}
+          <div className="mt-2.5 flex flex-wrap items-center gap-1.5 text-xs">
+            {/* Prioridade */}
+            <Badge variant="outline" className={priorityStyle[task.priority]}>
+              {PRIORITY_LABEL[task.priority]}
+            </Badge>
+
+            {/* Vencimento */}
+            <span
+              className={`inline-flex items-center gap-1 rounded-lg px-2 py-1 ${
+                late
+                  ? "bg-destructive/15 text-destructive font-medium border border-destructive/20"
+                  : "bg-secondary/70 text-muted-foreground"
+              }`}
+            >
+              <FlaticonCalendar size={13} />
+              {formatDate(task.dueDate)}
+            </span>
+
+            {/* Recorrência */}
+            {task.recurrence && task.recurrence.frequency !== "none" && (
+              <span className="inline-flex items-center gap-1 rounded-lg bg-info/15 text-info font-medium px-2 py-1 border border-info/20">
+                <FlaticonRepeat size={13} />
+                {RECURRENCE_LABEL[task.recurrence.frequency]}
+              </span>
+            )}
+
+            {/* Categoria */}
+            {category && (
+              <span className="inline-flex items-center gap-1.5 rounded-lg bg-secondary/70 px-2 py-1 text-foreground">
+                <span className="size-2 rounded-full" style={{ backgroundColor: category.color }} />
+                {category.name}
+              </span>
+            )}
+
+            {/* Meta vinculada */}
+            {goal && (
+              <span className="inline-flex items-center gap-1 rounded-lg bg-primary/10 text-primary px-2 py-1">
+                <FlaticonTarget size={13} />
+                {goal.title}
+              </span>
+            )}
+
+            {/* Botão de Subtarefas */}
+            {subtasks.length > 0 && (
+              <button
+                type="button"
+                onClick={() => setExpanded((v) => !v)}
+                className="inline-flex items-center gap-1.5 rounded-lg bg-secondary/80 hover:bg-secondary px-2.5 py-1 text-foreground font-medium transition-colors"
+              >
+                <FlaticonSubtasks size={13} />
+                <span>
+                  {completedSubtasks}/{subtasks.length}
+                </span>
+                {expanded ? <FlaticonChevronDown size={13} /> : <FlaticonChevronRight size={13} />}
+              </button>
+            )}
+          </div>
+        </div>
+
+        {/* Ações Rápidas */}
+        <div className="flex shrink-0 gap-1">
+          <Button
+            variant="ghost"
+            size="icon"
+            className="size-8 rounded-lg hover:bg-secondary"
+            aria-label={`Editar ${task.title}`}
+            onClick={() => onEdit(task)}
           >
-            <Calendar className="size-3" aria-hidden />
-            {formatDate(task.dueDate)}
-            {late ? " · atrasada" : ""}
-          </span>
-          {task.category ? (
-            <span className="inline-flex items-center gap-1 rounded-md bg-muted px-2 py-1 text-muted-foreground">
-              <Tag className="size-3" aria-hidden />
-              {task.category}
-            </span>
-          ) : null}
-          {goal ? (
-            <span className="inline-flex items-center gap-1 rounded-md bg-primary/10 px-2 py-1 text-primary">
-              <Target className="size-3" aria-hidden />
-              {goal.title}
-            </span>
-          ) : null}
+            <FlaticonEdit size={16} />
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="size-8 rounded-lg text-muted-foreground hover:text-destructive hover:bg-destructive/10"
+            aria-label={`Mover ${task.title} para a lixeira`}
+            onClick={() => removeTask(task.id)}
+          >
+            <FlaticonTrash size={16} />
+          </Button>
         </div>
       </div>
 
-      <div className="flex shrink-0 gap-1">
-        <Button
-          variant="ghost"
-          size="icon"
-          aria-label={`Editar ${task.title}`}
-          onClick={() => onEdit(task)}
-        >
-          <Pencil className="size-4" aria-hidden />
-        </Button>
-        <Button
-          variant="ghost"
-          size="icon"
-          aria-label={`Excluir ${task.title}`}
-          onClick={() => removeTask(task.id)}
-        >
-          <Trash2 className="size-4 text-destructive" aria-hidden />
-        </Button>
-      </div>
+      {/* Barra de Progresso de Subtarefas se houver */}
+      {subtasks.length > 0 && !expanded && (
+        <div className="mt-3 pl-9">
+          <Progress value={subtasksPercent} className="h-1.5 bg-secondary" />
+        </div>
+      )}
+
+      {/* Accordion Expandido de Subtarefas */}
+      {expanded && (
+        <div className="mt-3 pl-9 space-y-2 border-t border-border/40 pt-3">
+          <div className="flex items-center justify-between text-xs text-muted-foreground">
+            <span>Checklist de subtarefas ({subtasksPercent}%)</span>
+            <span>
+              {completedSubtasks} de {subtasks.length} concluídas
+            </span>
+          </div>
+          <Progress value={subtasksPercent} className="h-1.5 bg-secondary" />
+
+          <ul className="space-y-1.5 pt-1">
+            {subtasks.map((st) => (
+              <li
+                key={st.id}
+                className="flex items-center justify-between gap-2 rounded-lg bg-secondary/40 px-2.5 py-1.5 text-xs transition-colors hover:bg-secondary/60"
+              >
+                <button
+                  type="button"
+                  onClick={() => toggleSubTask(task.id, st.id)}
+                  className={`flex size-4 shrink-0 items-center justify-center rounded border transition-colors ${
+                    st.done
+                      ? "border-success bg-success text-success-foreground"
+                      : "border-border bg-background hover:border-primary"
+                  }`}
+                >
+                  {st.done && <FlaticonCheck size={10} />}
+                </button>
+                <span
+                  className={`flex-1 truncate ${st.done ? "line-through text-muted-foreground" : "text-foreground"}`}
+                >
+                  {st.title}
+                </span>
+                <button
+                  type="button"
+                  onClick={() => removeSubTask(task.id, st.id)}
+                  className="text-muted-foreground hover:text-destructive p-0.5"
+                >
+                  <FlaticonTrash size={12} />
+                </button>
+              </li>
+            ))}
+          </ul>
+
+          {/* Adicionar subtarefa rápida inline */}
+          <form onSubmit={handleAddInlineSubtask} className="flex gap-2 pt-1">
+            <Input
+              value={newSubTask}
+              onChange={(e) => setNewSubTask(e.target.value)}
+              placeholder="Adicionar nova subtarefa..."
+              className="h-8 text-xs bg-background/50"
+            />
+            <Button type="submit" size="sm" variant="secondary" className="h-8 text-xs shrink-0">
+              <FlaticonPlus size={14} /> Adicionar
+            </Button>
+          </form>
+        </div>
+      )}
     </li>
   );
 }

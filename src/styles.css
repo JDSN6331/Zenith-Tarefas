@@ -5,17 +5,7 @@
 @custom-variant dark (&:is(.dark *));
 
 /*
- * Design system definition.
- *
- * The @theme inline block maps CSS custom properties to Tailwind utility
- * classes (e.g. --color-primary -> bg-primary, text-primary).
- *
- * The :root and .dark blocks define the actual color values using oklch.
- * All colors MUST use oklch format.
- *
- * To add a new semantic color:
- * 1. Add the variable to :root (light value) and .dark (dark value)
- * 2. Register it in @theme inline as --color-<name>: var(--<name>)
+ * Design system definition — Aura Multi-Palette Tokens
  */
 
 @theme inline {
@@ -24,7 +14,7 @@
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
   --radius-2xl: calc(var(--radius) + 8px);
-  --radius-3xl: calc(var(--radius) + 12px);
+  --radius-3xl: calc(var(--radius) + 14px);
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
@@ -45,106 +35,438 @@
   --color-success-foreground: var(--success-foreground);
   --color-warning: var(--warning);
   --color-warning-foreground: var(--warning-foreground);
+  --color-info: var(--info);
+  --color-info-foreground: var(--info-foreground);
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
-  --color-ring-offset-background: var(--background);
   --color-chart-1: var(--chart-1);
   --color-chart-2: var(--chart-2);
   --color-chart-3: var(--chart-3);
   --color-chart-4: var(--chart-4);
   --color-chart-5: var(--chart-5);
-  --color-sidebar: var(--sidebar);
-  --color-sidebar-foreground: var(--sidebar-foreground);
-  --color-sidebar-primary: var(--sidebar-primary);
-  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
-  --color-sidebar-accent: var(--sidebar-accent);
-  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
-  --color-sidebar-border: var(--sidebar-border);
-  --color-sidebar-ring: var(--sidebar-ring);
-  --font-display: "Fraunces", Georgia, serif;
-  --font-sans: "Outfit", ui-sans-serif, system-ui, sans-serif;
-  --shadow-soft: 0 1px 2px oklch(0.2 0.03 180 / 0.06), 0 12px 32px oklch(0.2 0.03 180 / 0.08);
-  --shadow-lift: 0 2px 6px oklch(0.2 0.03 180 / 0.08), 0 22px 48px oklch(0.2 0.03 180 / 0.14);
+  --font-display: "Outfit", "Plus Jakarta Sans", system-ui, sans-serif;
+  --font-sans: "Inter", system-ui, -apple-system, sans-serif;
+  --shadow-soft: 0 4px 20px -2px rgba(0, 0, 0, 0.05), 0 2px 6px -1px rgba(0, 0, 0, 0.03);
+  --shadow-lift: 0 12px 32px -4px rgba(0, 0, 0, 0.12), 0 4px 12px -2px rgba(0, 0, 0, 0.06);
 }
 
-:root {
-  --radius: 0.9rem;
-  --background: oklch(0.985 0.012 95);
-  --foreground: oklch(0.24 0.03 190);
-  --card: oklch(0.998 0.005 95);
-  --card-foreground: oklch(0.24 0.03 190);
-  --popover: oklch(0.998 0.005 95);
-  --popover-foreground: oklch(0.24 0.03 190);
-  --primary: oklch(0.52 0.1 195);
-  --primary-foreground: oklch(0.985 0.01 95);
-  --secondary: oklch(0.94 0.02 100);
-  --secondary-foreground: oklch(0.3 0.03 190);
-  --muted: oklch(0.95 0.015 100);
-  --muted-foreground: oklch(0.52 0.02 190);
-  --accent: oklch(0.78 0.13 65);
-  --accent-foreground: oklch(0.24 0.04 60);
-  --destructive: oklch(0.58 0.19 25);
-  --destructive-foreground: oklch(0.99 0.01 95);
-  --success: oklch(0.62 0.13 155);
-  --success-foreground: oklch(0.99 0.01 95);
-  --warning: oklch(0.79 0.14 75);
-  --warning-foreground: oklch(0.26 0.04 60);
-  --border: oklch(0.9 0.015 100);
-  --input: oklch(0.9 0.015 100);
-  --ring: oklch(0.52 0.1 195);
-  --chart-1: oklch(0.52 0.1 195);
-  --chart-2: oklch(0.78 0.13 65);
-  --chart-3: oklch(0.62 0.13 155);
-  --chart-4: oklch(0.58 0.19 25);
-  --chart-5: oklch(0.45 0.07 260);
-  --sidebar: oklch(0.97 0.015 100);
-  --sidebar-foreground: oklch(0.24 0.03 190);
-  --sidebar-primary: oklch(0.52 0.1 195);
-  --sidebar-primary-foreground: oklch(0.985 0.01 95);
-  --sidebar-accent: oklch(0.94 0.02 100);
-  --sidebar-accent-foreground: oklch(0.3 0.03 190);
-  --sidebar-border: oklch(0.9 0.015 100);
-  --sidebar-ring: oklch(0.52 0.1 195);
+/* =========================================================================
+   PALETA PRINCIPAL: PRETO & DOURADO (Royal Obsidian & Gold)
+   ========================================================================= */
+:root,
+html[data-palette="gold"] {
+  --radius: 1rem;
+  --background: #fbfbfa;
+  --foreground: #141312;
+  --card: rgba(255, 255, 255, 0.88);
+  --card-foreground: #141312;
+  --popover: rgba(255, 255, 255, 0.98);
+  --popover-foreground: #141312;
+  --primary: #b45309;
+  --primary-foreground: #ffffff;
+  --secondary: #f3efe6;
+  --secondary-foreground: #2e2519;
+  --muted: #f5f2ea;
+  --muted-foreground: #786c5a;
+  --accent: #d97706;
+  --accent-foreground: #ffffff;
+  --destructive: #dc2626;
+  --destructive-foreground: #ffffff;
+  --success: #15803d;
+  --success-foreground: #ffffff;
+  --warning: #d97706;
+  --warning-foreground: #451a03;
+  --info: #0284c7;
+  --info-foreground: #ffffff;
+  --border: rgba(217, 180, 126, 0.35);
+  --input: #eaddc8;
+  --ring: #d97706;
+  --chart-1: #b45309;
+  --chart-2: #d97706;
+  --chart-3: #15803d;
+  --chart-4: #eab308;
+  --chart-5: #dc2626;
+
+  --glass-bg: rgba(255, 255, 255, 0.82);
+  --glass-border: rgba(217, 180, 126, 0.4);
+  --glass-inner-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.95);
+  --mesh-1: rgba(217, 119, 6, 0.08);
+  --mesh-2: rgba(234, 179, 8, 0.06);
+  --mesh-3: rgba(180, 83, 9, 0.05);
 }
 
-.dark {
-  --background: oklch(0.19 0.025 200);
-  --foreground: oklch(0.95 0.01 95);
-  --card: oklch(0.24 0.028 200);
-  --card-foreground: oklch(0.95 0.01 95);
-  --popover: oklch(0.24 0.028 200);
-  --popover-foreground: oklch(0.95 0.01 95);
-  --primary: oklch(0.75 0.11 190);
-  --primary-foreground: oklch(0.19 0.03 200);
-  --secondary: oklch(0.29 0.03 200);
-  --secondary-foreground: oklch(0.95 0.01 95);
-  --muted: oklch(0.28 0.025 200);
-  --muted-foreground: oklch(0.72 0.02 190);
-  --accent: oklch(0.78 0.13 65);
-  --accent-foreground: oklch(0.2 0.04 60);
-  --destructive: oklch(0.66 0.18 25);
-  --destructive-foreground: oklch(0.98 0.01 95);
-  --success: oklch(0.72 0.13 155);
-  --success-foreground: oklch(0.18 0.03 160);
-  --warning: oklch(0.82 0.14 75);
-  --warning-foreground: oklch(0.22 0.04 60);
-  --border: oklch(1 0 0 / 12%);
-  --input: oklch(1 0 0 / 16%);
-  --ring: oklch(0.75 0.11 190);
-  --chart-1: oklch(0.75 0.11 190);
-  --chart-2: oklch(0.78 0.13 65);
-  --chart-3: oklch(0.72 0.13 155);
-  --chart-4: oklch(0.66 0.18 25);
-  --chart-5: oklch(0.7 0.1 280);
-  --sidebar: oklch(0.22 0.028 200);
-  --sidebar-foreground: oklch(0.95 0.01 95);
-  --sidebar-primary: oklch(0.75 0.11 190);
-  --sidebar-primary-foreground: oklch(0.19 0.03 200);
-  --sidebar-accent: oklch(0.29 0.03 200);
-  --sidebar-accent-foreground: oklch(0.95 0.01 95);
-  --sidebar-border: oklch(1 0 0 / 12%);
-  --sidebar-ring: oklch(0.75 0.11 190);
+.dark,
+html[data-palette="gold"].dark {
+  --background: #080809;
+  --foreground: #faf8f5;
+  --card: rgba(18, 18, 22, 0.76);
+  --card-foreground: #faf8f5;
+  --popover: rgba(18, 18, 22, 0.96);
+  --popover-foreground: #faf8f5;
+  --primary: #eab308;
+  --primary-foreground: #080809;
+  --secondary: rgba(36, 34, 30, 0.8);
+  --secondary-foreground: #faf8f5;
+  --muted: rgba(28, 27, 24, 0.6);
+  --muted-foreground: #d4af37;
+  --accent: #fde047;
+  --accent-foreground: #080809;
+  --destructive: #f87171;
+  --destructive-foreground: #080809;
+  --success: #4ade80;
+  --success-foreground: #080809;
+  --warning: #fbbf24;
+  --warning-foreground: #451a03;
+  --info: #38bdf8;
+  --info-foreground: #080809;
+  --border: rgba(234, 179, 8, 0.18);
+  --input: rgba(234, 179, 8, 0.22);
+  --ring: #eab308;
+  --chart-1: #eab308;
+  --chart-2: #fde047;
+  --chart-3: #4ade80;
+  --chart-4: #f59e0b;
+  --chart-5: #f87171;
+
+  --glass-bg: rgba(16, 16, 20, 0.72);
+  --glass-border: rgba(234, 179, 8, 0.16);
+  --glass-inner-shadow: inset 0 1px 0 0 rgba(234, 179, 8, 0.12);
+  --mesh-1: rgba(234, 179, 8, 0.14);
+  --mesh-2: rgba(217, 119, 6, 0.1);
+  --mesh-3: rgba(253, 224, 71, 0.08);
+}
+
+/* =========================================================================
+   PALETA: LINEAR / OBSIDIAN (Preto Ônix + Azul Elétrico & Índigo)
+   ========================================================================= */
+html[data-palette="linear"] {
+  --background: #f8fafc;
+  --foreground: #0f172a;
+  --card: rgba(255, 255, 255, 0.85);
+  --card-foreground: #0f172a;
+  --popover: rgba(255, 255, 255, 0.95);
+  --popover-foreground: #0f172a;
+  --primary: #4f46e5;
+  --primary-foreground: #ffffff;
+  --secondary: #eef2f6;
+  --secondary-foreground: #1e293b;
+  --muted: #f1f5f9;
+  --muted-foreground: #64748b;
+  --accent: #0284c7;
+  --accent-foreground: #ffffff;
+  --destructive: #ef4444;
+  --destructive-foreground: #ffffff;
+  --success: #10b981;
+  --success-foreground: #ffffff;
+  --warning: #f59e0b;
+  --warning-foreground: #78350f;
+  --info: #3b82f6;
+  --info-foreground: #ffffff;
+  --border: rgba(226, 232, 240, 0.9);
+  --input: #e2e8f0;
+  --ring: #4f46e5;
+  --chart-1: #4f46e5;
+  --chart-2: #0284c7;
+  --chart-3: #10b981;
+  --chart-4: #f59e0b;
+  --chart-5: #ef4444;
+
+  --glass-bg: rgba(255, 255, 255, 0.78);
+  --glass-border: rgba(255, 255, 255, 0.85);
+  --glass-inner-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.9);
+  --mesh-1: rgba(99, 102, 241, 0.08);
+  --mesh-2: rgba(56, 189, 248, 0.07);
+  --mesh-3: rgba(168, 85, 247, 0.05);
+}
+
+html[data-palette="linear"].dark {
+  --background: #0b0d14;
+  --foreground: #f8fafc;
+  --card: rgba(18, 21, 33, 0.72);
+  --card-foreground: #f8fafc;
+  --popover: rgba(18, 21, 33, 0.94);
+  --popover-foreground: #f8fafc;
+  --primary: #6366f1;
+  --primary-foreground: #ffffff;
+  --secondary: rgba(30, 36, 56, 0.75);
+  --secondary-foreground: #f8fafc;
+  --muted: rgba(26, 31, 48, 0.6);
+  --muted-foreground: #94a3b8;
+  --accent: #38bdf8;
+  --accent-foreground: #0b0d14;
+  --destructive: #f87171;
+  --destructive-foreground: #0b0d14;
+  --success: #34d399;
+  --success-foreground: #0b0d14;
+  --warning: #fbbf24;
+  --warning-foreground: #451a03;
+  --info: #60a5fa;
+  --info-foreground: #0b0d14;
+  --border: rgba(255, 255, 255, 0.09);
+  --input: rgba(255, 255, 255, 0.12);
+  --ring: #6366f1;
+  --chart-1: #6366f1;
+  --chart-2: #38bdf8;
+  --chart-3: #34d399;
+  --chart-4: #fbbf24;
+  --chart-5: #f87171;
+
+  --glass-bg: rgba(18, 22, 36, 0.68);
+  --glass-border: rgba(255, 255, 255, 0.1);
+  --glass-inner-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.08);
+  --mesh-1: rgba(99, 102, 241, 0.15);
+  --mesh-2: rgba(56, 189, 248, 0.12);
+  --mesh-3: rgba(168, 85, 247, 0.08);
+}
+
+/* =========================================================================
+   PALETA: EMERALD / FOREST (Esmeralda + Menta + Floresta)
+   ========================================================================= */
+html[data-palette="emerald"] {
+  --background: #f2f7f5;
+  --foreground: #0d1e1b;
+  --card: rgba(255, 255, 255, 0.88);
+  --card-foreground: #0d1e1b;
+  --popover: rgba(255, 255, 255, 0.96);
+  --popover-foreground: #0d1e1b;
+  --primary: #059669;
+  --primary-foreground: #ffffff;
+  --secondary: #e1ece8;
+  --secondary-foreground: #0f332c;
+  --muted: #e6f0ec;
+  --muted-foreground: #527a71;
+  --accent: #0d9488;
+  --accent-foreground: #ffffff;
+  --destructive: #e11d48;
+  --destructive-foreground: #ffffff;
+  --success: #059669;
+  --success-foreground: #ffffff;
+  --warning: #d97706;
+  --warning-foreground: #451a03;
+  --info: #0284c7;
+  --info-foreground: #ffffff;
+  --border: rgba(200, 218, 212, 0.8);
+  --input: #d2e3dd;
+  --ring: #059669;
+  --chart-1: #059669;
+  --chart-2: #0d9488;
+  --chart-3: #10b981;
+  --chart-4: #d97706;
+  --chart-5: #e11d48;
+
+  --glass-bg: rgba(255, 255, 255, 0.82);
+  --glass-border: rgba(255, 255, 255, 0.9);
+  --glass-inner-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.95);
+  --mesh-1: rgba(16, 185, 129, 0.09);
+  --mesh-2: rgba(20, 184, 166, 0.08);
+  --mesh-3: rgba(5, 150, 105, 0.05);
+}
+
+html[data-palette="emerald"].dark {
+  --background: #07100e;
+  --foreground: #f0fdf4;
+  --card: rgba(13, 26, 23, 0.75);
+  --card-foreground: #f0fdf4;
+  --popover: rgba(13, 26, 23, 0.95);
+  --popover-foreground: #f0fdf4;
+  --primary: #10b981;
+  --primary-foreground: #052e16;
+  --secondary: rgba(20, 42, 37, 0.8);
+  --secondary-foreground: #f0fdf4;
+  --muted: rgba(18, 36, 32, 0.6);
+  --muted-foreground: #86efac;
+  --accent: #2dd4bf;
+  --accent-foreground: #042f2e;
+  --destructive: #fb7185;
+  --destructive-foreground: #07100e;
+  --success: #34d399;
+  --success-foreground: #052e16;
+  --warning: #fbbf24;
+  --warning-foreground: #451a03;
+  --info: #38bdf8;
+  --info-foreground: #07100e;
+  --border: rgba(255, 255, 255, 0.08);
+  --input: rgba(255, 255, 255, 0.12);
+  --ring: #10b981;
+  --chart-1: #10b981;
+  --chart-2: #2dd4bf;
+  --chart-3: #34d399;
+  --chart-4: #fbbf24;
+  --chart-5: #fb7185;
+
+  --glass-bg: rgba(11, 24, 21, 0.7);
+  --glass-border: rgba(255, 255, 255, 0.09);
+  --glass-inner-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.07);
+  --mesh-1: rgba(16, 185, 129, 0.16);
+  --mesh-2: rgba(45, 212, 191, 0.12);
+  --mesh-3: rgba(5, 150, 105, 0.08);
+}
+
+/* =========================================================================
+   PALETA: VIOLET / NEON (Ébano Arroxeado + Violeta & Rosa)
+   ========================================================================= */
+html[data-palette="violet"] {
+  --background: #faf7fc;
+  --foreground: #180f29;
+  --card: rgba(255, 255, 255, 0.88);
+  --card-foreground: #180f29;
+  --popover: rgba(255, 255, 255, 0.96);
+  --popover-foreground: #180f29;
+  --primary: #7c3aed;
+  --primary-foreground: #ffffff;
+  --secondary: #efe8f9;
+  --secondary-foreground: #291247;
+  --muted: #f2ecfa;
+  --muted-foreground: #766392;
+  --accent: #db2777;
+  --accent-foreground: #ffffff;
+  --destructive: #e11d48;
+  --destructive-foreground: #ffffff;
+  --success: #10b981;
+  --success-foreground: #ffffff;
+  --warning: #f59e0b;
+  --warning-foreground: #451a03;
+  --info: #6366f1;
+  --info-foreground: #ffffff;
+  --border: rgba(224, 210, 242, 0.85);
+  --input: #decdef;
+  --ring: #7c3aed;
+  --chart-1: #7c3aed;
+  --chart-2: #db2777;
+  --chart-3: #10b981;
+  --chart-4: #f59e0b;
+  --chart-5: #e11d48;
+
+  --glass-bg: rgba(255, 255, 255, 0.82);
+  --glass-border: rgba(255, 255, 255, 0.9);
+  --glass-inner-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.95);
+  --mesh-1: rgba(124, 58, 237, 0.08);
+  --mesh-2: rgba(219, 39, 119, 0.07);
+  --mesh-3: rgba(99, 102, 241, 0.05);
+}
+
+html[data-palette="violet"].dark {
+  --background: #0c0a14;
+  --foreground: #faf5ff;
+  --card: rgba(23, 19, 38, 0.74);
+  --card-foreground: #faf5ff;
+  --popover: rgba(23, 19, 38, 0.95);
+  --popover-foreground: #faf5ff;
+  --primary: #8b5cf6;
+  --primary-foreground: #ffffff;
+  --secondary: rgba(38, 30, 64, 0.8);
+  --secondary-foreground: #faf5ff;
+  --muted: rgba(30, 24, 51, 0.6);
+  --muted-foreground: #c4b5fd;
+  --accent: #f472b6;
+  --accent-foreground: #0c0a14;
+  --destructive: #fb7185;
+  --destructive-foreground: #0c0a14;
+  --success: #34d399;
+  --success-foreground: #0c0a14;
+  --warning: #fbbf24;
+  --warning-foreground: #451a03;
+  --info: #818cf8;
+  --info-foreground: #0c0a14;
+  --border: rgba(255, 255, 255, 0.09);
+  --input: rgba(255, 255, 255, 0.12);
+  --ring: #8b5cf6;
+  --chart-1: #8b5cf6;
+  --chart-2: #f472b6;
+  --chart-3: #34d399;
+  --chart-4: #fbbf24;
+  --chart-5: #fb7185;
+
+  --glass-bg: rgba(20, 16, 34, 0.7);
+  --glass-border: rgba(255, 255, 255, 0.1);
+  --glass-inner-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.08);
+  --mesh-1: rgba(139, 92, 246, 0.18);
+  --mesh-2: rgba(244, 114, 182, 0.12);
+  --mesh-3: rgba(99, 102, 241, 0.1);
+}
+
+/* =========================================================================
+   PALETA: MONOCHROME (Carvão & Âmbar)
+   ========================================================================= */
+html[data-palette="monochrome"] {
+  --background: #faf9f6;
+  --foreground: #18181b;
+  --card: rgba(255, 255, 255, 0.9);
+  --card-foreground: #18181b;
+  --popover: rgba(255, 255, 255, 0.98);
+  --popover-foreground: #18181b;
+  --primary: #18181b;
+  --primary-foreground: #ffffff;
+  --secondary: #f0efea;
+  --secondary-foreground: #18181b;
+  --muted: #efece6;
+  --muted-foreground: #71717a;
+  --accent: #d97706;
+  --accent-foreground: #ffffff;
+  --destructive: #dc2626;
+  --destructive-foreground: #ffffff;
+  --success: #16a34a;
+  --success-foreground: #ffffff;
+  --warning: #d97706;
+  --warning-foreground: #451a03;
+  --info: #2563eb;
+  --info-foreground: #ffffff;
+  --border: rgba(228, 228, 231, 0.9);
+  --input: #e4e4e7;
+  --ring: #18181b;
+  --chart-1: #18181b;
+  --chart-2: #d97706;
+  --chart-3: #16a34a;
+  --chart-4: #f59e0b;
+  --chart-5: #dc2626;
+
+  --glass-bg: rgba(255, 255, 255, 0.85);
+  --glass-border: rgba(255, 255, 255, 0.95);
+  --glass-inner-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 1);
+  --mesh-1: rgba(217, 119, 6, 0.05);
+  --mesh-2: rgba(24, 24, 27, 0.03);
+  --mesh-3: rgba(113, 113, 122, 0.04);
+}
+
+html[data-palette="monochrome"].dark {
+  --background: #101012;
+  --foreground: #f4f4f5;
+  --card: rgba(24, 24, 27, 0.76);
+  --card-foreground: #f4f4f5;
+  --popover: rgba(24, 24, 27, 0.96);
+  --popover-foreground: #f4f4f5;
+  --primary: #f4f4f5;
+  --primary-foreground: #101012;
+  --secondary: rgba(39, 39, 42, 0.8);
+  --secondary-foreground: #f4f4f5;
+  --muted: rgba(32, 32, 36, 0.6);
+  --muted-foreground: #a1a1aa;
+  --accent: #f59e0b;
+  --accent-foreground: #101012;
+  --destructive: #f87171;
+  --destructive-foreground: #101012;
+  --success: #4ade80;
+  --success-foreground: #101012;
+  --warning: #fbbf24;
+  --warning-foreground: #451a03;
+  --info: #60a5fa;
+  --info-foreground: #101012;
+  --border: rgba(255, 255, 255, 0.08);
+  --input: rgba(255, 255, 255, 0.12);
+  --ring: #f4f4f5;
+  --chart-1: #f4f4f5;
+  --chart-2: #f59e0b;
+  --chart-3: #4ade80;
+  --chart-4: #fbbf24;
+  --chart-5: #f87171;
+
+  --glass-bg: rgba(22, 22, 25, 0.72);
+  --glass-border: rgba(255, 255, 255, 0.09);
+  --glass-inner-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.07);
+  --mesh-1: rgba(245, 158, 11, 0.1);
+  --mesh-2: rgba(255, 255, 255, 0.04);
+  --mesh-3: rgba(161, 161, 170, 0.05);
 }
 
 @layer base {
@@ -156,25 +478,84 @@
     background-color: var(--color-background);
     color: var(--color-foreground);
     font-family: var(--font-sans);
+    min-height: 100vh;
+    overflow-x: hidden;
+    position: relative;
+    transition:
+      background-color 0.25s ease,
+      color 0.25s ease;
   }
 
   h1,
   h2,
+  h3,
+  h4,
   .font-display {
     font-family: var(--font-display);
+    letter-spacing: -0.02em;
   }
 }
 
-/* Transições leves ao concluir tarefas / trocar de tela */
-@utility card-surface {
-  background-color: var(--color-card);
-  border: 1px solid var(--color-border);
+/* Background com Mesh Gradient Moderno */
+.modern-bg {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background-color: var(--color-background);
+  background-image:
+    radial-gradient(at 0% 0%, var(--mesh-1) 0px, transparent 50%),
+    radial-gradient(at 100% 0%, var(--mesh-2) 0px, transparent 50%),
+    radial-gradient(at 50% 50%, var(--mesh-3) 0px, transparent 50%),
+    radial-gradient(at 100% 100%, var(--mesh-1) 0px, transparent 50%),
+    radial-gradient(at 0% 100%, var(--mesh-2) 0px, transparent 50%);
+  background-attachment: fixed;
+  transition: all 0.3s ease;
+}
+
+/* Utilitários de Glassmorphism */
+@utility glass-card {
+  background: var(--glass-bg);
+  backdrop-filter: blur(18px) saturate(180%);
+  -webkit-backdrop-filter: blur(18px) saturate(180%);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--shadow-soft), var(--glass-inner-shadow);
   border-radius: var(--radius-xl);
-  box-shadow: var(--shadow-soft);
+}
+
+@utility glass-card-hover {
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@utility glass-nav {
+  background: var(--glass-bg);
+  backdrop-filter: blur(20px) saturate(190%);
+  -webkit-backdrop-filter: blur(20px) saturate(190%);
+  border-bottom: 1px solid var(--glass-border);
+  box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.05);
+}
+
+@utility glass-badge {
+  background: var(--glass-bg);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid var(--glass-border);
+}
+
+@utility card-surface {
+  background: var(--glass-bg);
+  backdrop-filter: blur(18px) saturate(180%);
+  -webkit-backdrop-filter: blur(18px) saturate(180%);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-soft), var(--glass-inner-shadow);
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
 @utility task-done {
-  opacity: 0.55;
+  opacity: 0.6;
   text-decoration: line-through;
   transition:
     opacity 0.3s ease,
@@ -184,7 +565,7 @@
 @keyframes fade-rise {
   from {
     opacity: 0;
-    transform: translateY(10px);
+    transform: translateY(8px);
   }
   to {
     opacity: 1;
@@ -193,10 +574,29 @@
 }
 
 @utility animate-rise {
-  animation: fade-rise 0.35s ease both;
+  animation: fade-rise 0.3s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
 @utility pop-check {
   transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-muted-foreground);
+  opacity: 0.3;
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-primary);
+}

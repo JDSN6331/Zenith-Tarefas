@@ -1,0 +1,14 @@
+<svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="aura-favicon-gold" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#EAB308" />
+      <stop offset="60%" stop-color="#FDE047" />
+      <stop offset="100%" stop-color="#F59E0B" />
+    </linearGradient>
+  </defs>
+  <rect width="48" height="48" rx="14" fill="#080809"/>
+  <circle cx="24" cy="24" r="18" fill="url(#aura-favicon-gold)" fill-opacity="0.2" />
+  <rect x="8" y="8" width="32" height="32" rx="10" stroke="url(#aura-favicon-gold)" stroke-width="2.5" fill="none"/>
+  <path d="M24 14L33 29H15L24 14Z" fill="url(#aura-favicon-gold)" stroke="#FDE047" stroke-width="1.5" stroke-linejoin="round"/>
+  <circle cx="24" cy="24" r="3" fill="#080809" stroke="#EAB308" stroke-width="1" />
+</svg>

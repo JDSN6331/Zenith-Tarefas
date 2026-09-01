@@ -1,10 +1,18 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { ListTodo, Plus } from "lucide-react";
 import { useMemo, useState } from "react";
 import { AppShell } from "@/components/AppShell";
 import { EmptyState } from "@/components/EmptyState";
 import { TaskDialog } from "@/components/TaskDialog";
 import { TaskItem } from "@/components/TaskItem";
+import {
+  FlaticonAlertCircle,
+  FlaticonCheckCircle,
+  FlaticonClock,
+  FlaticonPlayCircle,
+  FlaticonPlus,
+  FlaticonSearch,
+  FlaticonTasks,
+} from "@/components/icons/FlaticonIcons";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -15,165 +23,302 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { StoreProvider, useStore } from "@/lib/store";
-import { sortTasks, type SortKey } from "@/lib/utils-domain";
-import type { Task } from "@/lib/types";
+import { useStore } from "@/lib/store";
+import type { Task, TaskStatus } from "@/lib/types";
+import { computeTaskStatus, isOverdue, sortTasks, type SortKey } from "@/lib/utils-domain";
 
 export const Route = createFileRoute("/tarefas")({
   head: () => ({
     meta: [
-      { title: "Tarefas · Rumo — organize seu dia" },
+      { title: "Tarefas · Aura — Gestão e Produtividade" },
       {
         name: "description",
         content:
-          "Crie, edite, filtre e conclua tarefas com prioridade, categoria e data de vencimento.",
-      },
-      { property: "og:title", content: "Tarefas · Rumo" },
-      {
-        property: "og:description",
-        content: "Gerencie suas tarefas com filtros por status, prioridade, categoria e data.",
+          "Gerenciamento de tarefas com filtros por status, recorrência, subtarefas e categorias.",
       },
     ],
   }),
   component: () => (
-    <StoreProvider>
-      <AppShell>
-        <TarefasPage />
-      </AppShell>
-    </StoreProvider>
+    <AppShell>
+      <TarefasPage />
+    </AppShell>
   ),
 });
 
-function TarefasPage() {
-  const { tasks, ready } = useStore();
-  const [open, setOpen] = useState(false);
-  const [editing, setEditing] = useState<Task | null>(null);
-  const [status, setStatus] = useState<"todas" | "pendentes" | "concluidas">("todas");
-  const [priority, setPriority] = useState<string>("todas");
-  const [category, setCategory] = useState<string>("todas");
-  const [date, setDate] = useState<string>("");
-  const [sort, setSort] = useState<SortKey>("createdAt");
+type FilterStatus = "todas" | TaskStatus;
 
-  const categories = useMemo(
-    () => Array.from(new Set(tasks.map((t) => t.category).filter(Boolean))),
-    [tasks],
-  );
+export function TarefasPage() {
+  const { tasks, categories, ready } = useStore();
+  const [openDialog, setOpenDialog] = useState(false);
+  const [editingTask, setEditingTask] = useState<Task | null>(null);
 
-  const visible = useMemo(() => {
+  // Filtros
+  const [statusFilter, setStatusFilter] = useState<FilterStatus>("todas");
+  const [priorityFilter, setPriorityFilter] = useState<string>("todas");
+  const [categoryFilter, setCategoryFilter] = useState<string>("todas");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [dueDateFilter, setDueDateFilter] = useState<string>("");
+  const [sortKey, setSortKey] = useState<SortKey>("createdAt");
+
+  const pendingCount = tasks.filter((t) => !t.done).length;
+
+  const visibleTasks = useMemo(() => {
     const filtered = tasks.filter((t) => {
-      if (status === "pendentes" && t.done) return false;
-      if (status === "concluidas" && !t.done) return false;
-      if (priority !== "todas" && t.priority !== priority) return false;
-      if (category !== "todas" && t.category !== category) return false;
-      if (date && t.dueDate !== date) return false;
+      const computedStatus = computeTaskStatus(t);
+
+      // Filtro de Status
+      if (statusFilter !== "todas") {
+        if (statusFilter === "pending" && computedStatus !== "pending") return false;
+        if (statusFilter === "in_progress" && computedStatus !== "in_progress") return false;
+        if (statusFilter === "overdue" && computedStatus !== "overdue") return false;
+        if (statusFilter === "completed" && computedStatus !== "completed") return false;
+      }
+
+      // Filtro de Prioridade
+      if (priorityFilter !== "todas" && t.priority !== priorityFilter) return false;
+
+      // Filtro de Categoria
+      if (categoryFilter !== "todas" && t.categoryId !== categoryFilter) return false;
+
+      // Filtro de Data
+      if (dueDateFilter && t.dueDate !== dueDateFilter) return false;
+
+      // Busca por Texto
+      if (searchQuery.trim()) {
+        const query = searchQuery.toLowerCase();
+        const matchesTitle = t.title.toLowerCase().includes(query);
+        const matchesDesc = t.description?.toLowerCase().includes(query);
+        const matchesSubtasks = t.subtasks?.some((st) => st.title.toLowerCase().includes(query));
+        if (!matchesTitle && !matchesDesc && !matchesSubtasks) return false;
+      }
+
       return true;
     });
-    return sortTasks(filtered, sort);
-  }, [tasks, status, priority, category, date, sort]);
+
+    return sortTasks(filtered, sortKey);
+  }, [tasks, statusFilter, priorityFilter, categoryFilter, dueDateFilter, searchQuery, sortKey]);
 
   const openNew = () => {
-    setEditing(null);
-    setOpen(true);
+    setEditingTask(null);
+    setOpenDialog(true);
   };
+
   const openEdit = (task: Task) => {
-    setEditing(task);
-    setOpen(true);
+    setEditingTask(task);
+    setOpenDialog(true);
   };
 
   return (
-    <>
-      <div className="flex flex-wrap items-end justify-between gap-3">
+    <div className="space-y-6">
+      {/* Cabeçalho da Página */}
+      <div className="flex flex-wrap items-center justify-between gap-4">
         <div>
-          <h1 className="font-display text-3xl font-semibold tracking-tight">Tarefas</h1>
+          <div className="flex items-center gap-2">
+            <span className="text-xs font-semibold uppercase tracking-wider text-primary">
+              Organização
+            </span>
+          </div>
+          <h1 className="mt-1 font-display text-3xl font-bold tracking-tight text-foreground">
+            Minhas Tarefas
+          </h1>
           <p className="text-sm text-muted-foreground">
-            {tasks.filter((t) => !t.done).length} pendentes de {tasks.length}
+            {pendingCount} tarefa(s) pendente(s) de {tasks.length} cadastrada(s).
           </p>
         </div>
-        <Button onClick={openNew}>
-          <Plus className="size-4" aria-hidden /> Nova tarefa
+
+        <Button onClick={openNew} className="gap-2 bg-primary text-primary-foreground">
+          <FlaticonPlus size={16} /> Nova Tarefa
         </Button>
       </div>
 
-      <section aria-label="Filtros" className="card-surface mt-6 grid gap-3 p-4 sm:grid-cols-2 lg:grid-cols-5">
+      {/* Barra de Filtros por Status (Tabs Rápidas) */}
+      <div className="flex flex-wrap items-center gap-1.5 rounded-2xl bg-secondary/40 p-1.5 border border-border/40">
+        {[
+          { key: "todas", label: "Todas", count: tasks.length },
+          {
+            key: "pending",
+            label: "Não Iniciadas",
+            icon: FlaticonClock,
+            count: tasks.filter((t) => computeTaskStatus(t) === "pending").length,
+          },
+          {
+            key: "in_progress",
+            label: "Em Andamento",
+            icon: FlaticonPlayCircle,
+            count: tasks.filter((t) => computeTaskStatus(t) === "in_progress").length,
+          },
+          {
+            key: "overdue",
+            label: "Atrasadas",
+            icon: FlaticonAlertCircle,
+            count: tasks.filter(isOverdue).length,
+          },
+          {
+            key: "completed",
+            label: "Concluídas",
+            icon: FlaticonCheckCircle,
+            count: tasks.filter((t) => t.done).length,
+          },
+        ].map(({ key, label, icon: Icon, count }) => {
+          const active = statusFilter === key;
+          return (
+            <button
+              key={key}
+              type="button"
+              onClick={() => setStatusFilter(key as FilterStatus)}
+              className={`flex items-center gap-2 rounded-xl px-3.5 py-2 text-xs font-semibold transition-all ${
+                active
+                  ? "bg-primary text-primary-foreground shadow-sm"
+                  : "text-muted-foreground hover:bg-secondary hover:text-foreground"
+              }`}
+            >
+              {Icon && <Icon size={14} />}
+              <span>{label}</span>
+              <span
+                className={`rounded-full px-1.5 py-0.2 text-[10px] ${
+                  active
+                    ? "bg-primary-foreground/20 text-primary-foreground"
+                    : "bg-muted text-muted-foreground"
+                }`}
+              >
+                {count}
+              </span>
+            </button>
+          );
+        })}
+      </div>
+
+      {/* Seção de Filtros Detalhados */}
+      <section
+        aria-label="Filtros Detalhados"
+        className="glass-card grid gap-3.5 p-4 sm:grid-cols-2 lg:grid-cols-5"
+      >
+        {/* Campo de Busca */}
         <div className="space-y-1.5">
-          <Label htmlFor="f-status">Status</Label>
-          <Select value={status} onValueChange={(v) => setStatus(v as typeof status)}>
-            <SelectTrigger id="f-status">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="todas">Todas</SelectItem>
-              <SelectItem value="pendentes">Pendentes</SelectItem>
-              <SelectItem value="concluidas">Concluídas</SelectItem>
-            </SelectContent>
-          </Select>
+          <Label
+            htmlFor="f-search"
+            className="text-xs font-semibold uppercase tracking-wider text-muted-foreground"
+          >
+            Buscar
+          </Label>
+          <div className="relative">
+            <FlaticonSearch
+              size={14}
+              className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
+            />
+            <Input
+              id="f-search"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Buscar por texto..."
+              className="pl-8 bg-background/50 text-sm h-9"
+            />
+          </div>
         </div>
+
+        {/* Prioridade */}
         <div className="space-y-1.5">
-          <Label htmlFor="f-priority">Prioridade</Label>
-          <Select value={priority} onValueChange={setPriority}>
-            <SelectTrigger id="f-priority">
+          <Label
+            htmlFor="f-priority"
+            className="text-xs font-semibold uppercase tracking-wider text-muted-foreground"
+          >
+            Prioridade
+          </Label>
+          <Select value={priorityFilter} onValueChange={setPriorityFilter}>
+            <SelectTrigger id="f-priority" className="bg-background/50 h-9 text-sm">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="todas">Todas</SelectItem>
+              <SelectItem value="todas">Todas as prioridades</SelectItem>
               <SelectItem value="alta">Alta</SelectItem>
               <SelectItem value="media">Média</SelectItem>
               <SelectItem value="baixa">Baixa</SelectItem>
             </SelectContent>
           </Select>
         </div>
+
+        {/* Categoria */}
         <div className="space-y-1.5">
-          <Label htmlFor="f-category">Categoria</Label>
-          <Select value={category} onValueChange={setCategory}>
-            <SelectTrigger id="f-category">
+          <Label
+            htmlFor="f-category"
+            className="text-xs font-semibold uppercase tracking-wider text-muted-foreground"
+          >
+            Categoria
+          </Label>
+          <Select value={categoryFilter} onValueChange={setCategoryFilter}>
+            <SelectTrigger id="f-category" className="bg-background/50 h-9 text-sm">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="todas">Todas</SelectItem>
+              <SelectItem value="todas">Todas as categorias</SelectItem>
               {categories.map((c) => (
-                <SelectItem key={c} value={c}>
-                  {c}
+                <SelectItem key={c.id} value={c.id}>
+                  <div className="flex items-center gap-2">
+                    <span className="size-2 rounded-full" style={{ backgroundColor: c.color }} />
+                    {c.name}
+                  </div>
                 </SelectItem>
               ))}
             </SelectContent>
           </Select>
         </div>
+
+        {/* Data */}
         <div className="space-y-1.5">
-          <Label htmlFor="f-date">Data</Label>
-          <Input id="f-date" type="date" value={date} onChange={(e) => setDate(e.target.value)} />
+          <Label
+            htmlFor="f-date"
+            className="text-xs font-semibold uppercase tracking-wider text-muted-foreground"
+          >
+            Data Específica
+          </Label>
+          <Input
+            id="f-date"
+            type="date"
+            value={dueDateFilter}
+            onChange={(e) => setDueDateFilter(e.target.value)}
+            className="bg-background/50 h-9 text-sm"
+          />
         </div>
+
+        {/* Ordenação */}
         <div className="space-y-1.5">
-          <Label htmlFor="f-sort">Ordenar por</Label>
-          <Select value={sort} onValueChange={(v) => setSort(v as SortKey)}>
-            <SelectTrigger id="f-sort">
+          <Label
+            htmlFor="f-sort"
+            className="text-xs font-semibold uppercase tracking-wider text-muted-foreground"
+          >
+            Ordenar por
+          </Label>
+          <Select value={sortKey} onValueChange={(v) => setSortKey(v as SortKey)}>
+            <SelectTrigger id="f-sort" className="bg-background/50 h-9 text-sm">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="createdAt">Criação</SelectItem>
-              <SelectItem value="dueDate">Vencimento</SelectItem>
-              <SelectItem value="priority">Prioridade</SelectItem>
+              <SelectItem value="createdAt">Data de Criação</SelectItem>
+              <SelectItem value="dueDate">Data de Vencimento</SelectItem>
+              <SelectItem value="priority">Nível de Prioridade</SelectItem>
+              <SelectItem value="title">Título Alfabético</SelectItem>
+              <SelectItem value="status">Status da Tarefa</SelectItem>
             </SelectContent>
           </Select>
         </div>
       </section>
 
-      {ready && visible.length === 0 ? (
-        <div className="mt-6">
-          <EmptyState
-            icon={ListTodo}
-            title="Nenhuma tarefa por aqui ainda!"
-            hint="Crie sua primeira tarefa ou ajuste os filtros para ver outros itens."
-          />
-        </div>
+      {/* Lista de Tarefas ou Empty State */}
+      {ready && visibleTasks.length === 0 ? (
+        <EmptyState
+          icon={FlaticonTasks}
+          title="Nenhuma tarefa encontrada"
+          hint="Não encontramos tarefas correspondentes aos filtros selecionados. Altere os filtros ou crie uma nova tarefa."
+        />
       ) : (
-        <ul className="mt-6 space-y-3">
-          {visible.map((t) => (
+        <ul className="space-y-3">
+          {visibleTasks.map((t) => (
             <TaskItem key={t.id} task={t} onEdit={openEdit} />
           ))}
         </ul>
       )}
 
-      <TaskDialog open={open} onOpenChange={setOpen} task={editing} />
-    </>
+      <TaskDialog open={openDialog} onOpenChange={setOpenDialog} task={editingTask} />
+    </div>
   );
 }

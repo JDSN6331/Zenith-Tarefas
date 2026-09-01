@@ -10,12 +10,30 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as CategoriasRouteImport } from './routes/categorias'
+import { Route as DesempenhoRouteImport } from './routes/desempenho'
+import { Route as LixeiraRouteImport } from './routes/lixeira'
 import { Route as MetasRouteImport } from './routes/metas'
 import { Route as TarefasRouteImport } from './routes/tarefas'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CategoriasRoute = CategoriasRouteImport.update({
+  id: '/categorias',
+  path: '/categorias',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DesempenhoRoute = DesempenhoRouteImport.update({
+  id: '/desempenho',
+  path: '/desempenho',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LixeiraRoute = LixeiraRouteImport.update({
+  id: '/lixeira',
+  path: '/lixeira',
   getParentRoute: () => rootRouteImport,
 } as any)
 const MetasRoute = MetasRouteImport.update({
@@ -31,30 +49,50 @@ const TarefasRoute = TarefasRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/categorias': typeof CategoriasRoute
+  '/desempenho': typeof DesempenhoRoute
+  '/lixeira': typeof LixeiraRoute
   '/metas': typeof MetasRoute
   '/tarefas': typeof TarefasRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/categorias': typeof CategoriasRoute
+  '/desempenho': typeof DesempenhoRoute
+  '/lixeira': typeof LixeiraRoute
   '/metas': typeof MetasRoute
   '/tarefas': typeof TarefasRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/categorias': typeof CategoriasRoute
+  '/desempenho': typeof DesempenhoRoute
+  '/lixeira': typeof LixeiraRoute
   '/metas': typeof MetasRoute
   '/tarefas': typeof TarefasRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/metas' | '/tarefas'
+  fullPaths:
+    '/' | '/categorias' | '/desempenho' | '/lixeira' | '/metas' | '/tarefas'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/metas' | '/tarefas'
-  id: '__root__' | '/' | '/metas' | '/tarefas'
+  to: '/' | '/categorias' | '/desempenho' | '/lixeira' | '/metas' | '/tarefas'
+  id:
+    | '__root__'
+    | '/'
+    | '/categorias'
+    | '/desempenho'
+    | '/lixeira'
+    | '/metas'
+    | '/tarefas'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  CategoriasRoute: typeof CategoriasRoute
+  DesempenhoRoute: typeof DesempenhoRoute
+  LixeiraRoute: typeof LixeiraRoute
   MetasRoute: typeof MetasRoute
   TarefasRoute: typeof TarefasRoute
 }
@@ -66,6 +104,27 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/categorias': {
+      id: '/categorias'
+      path: '/categorias'
+      fullPath: '/categorias'
+      preLoaderRoute: typeof CategoriasRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/desempenho': {
+      id: '/desempenho'
+      path: '/desempenho'
+      fullPath: '/desempenho'
+      preLoaderRoute: typeof DesempenhoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/lixeira': {
+      id: '/lixeira'
+      path: '/lixeira'
+      fullPath: '/lixeira'
+      preLoaderRoute: typeof LixeiraRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/metas': {
@@ -87,6 +146,9 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  CategoriasRoute: CategoriasRoute,
+  DesempenhoRoute: DesempenhoRoute,
+  LixeiraRoute: LixeiraRoute,
   MetasRoute: MetasRoute,
   TarefasRoute: TarefasRoute,
 }
