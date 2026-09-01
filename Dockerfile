@@ -4,13 +4,12 @@ FROM node:22-alpine AS builder
 WORKDIR /app
 
 ENV NITRO_PRESET=node-server
-ENV NODE_ENV=production
 
 # Copia manifestos de dependências
 COPY package.json package-lock.json* ./
 
-# Instala todas as dependências com suporte a peer dependencies
-RUN npm install --legacy-peer-deps
+# Instala todas as dependências (incluindo devDependencies como Vite para o build)
+RUN npm install --include=dev --legacy-peer-deps
 
 # Copia código-fonte
 COPY . .
