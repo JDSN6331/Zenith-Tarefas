@@ -18,6 +18,7 @@ import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { useStore } from "@/lib/store";
 import { useTheme } from "@/lib/theme";
+import { usePwaInstall, InstallPwaModal } from "./InstallPwaModal";
 
 const DESKTOP_NAV_ITEMS = [
   { to: "/", label: "Painel", icon: FlaticonDashboard },
@@ -41,7 +42,20 @@ export function AppShell({ children }: { children: ReactNode }) {
   const { trashCount } = useStore();
   const [themeModalOpen, setThemeModalOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [pwaModalOpen, setPwaModalOpen] = useState(false);
+  const { isInstallable, isInstalled, isIos, triggerInstall } = usePwaInstall();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
+
+  const handleInstallClick = async () => {
+    if (isInstallable) {
+      const installed = await triggerInstall();
+      if (!installed) {
+        setPwaModalOpen(true);
+      }
+    } else {
+      setPwaModalOpen(true);
+    }
+  };
 
   return (
     <div className="relative min-h-screen">
@@ -98,6 +112,19 @@ export function AppShell({ children }: { children: ReactNode }) {
 
           {/* Ações de Tema e Personalização no Topo */}
           <div className="flex items-center gap-1">
+            {/* Botão de Instalar App (Desktop / Tablet) */}
+            {!isInstalled && (
+              <Button
+                variant="outline"
+                size="sm"
+                className="hidden sm:inline-flex items-center gap-1.5 rounded-xl border-primary/30 bg-primary/10 text-primary text-xs font-semibold hover:bg-primary/20"
+                onClick={handleInstallClick}
+                aria-label="Instalar Aplicativo"
+              >
+                <span>📲 Instalar App</span>
+              </Button>
+            )}
+
             {/* Botão de Paleta de Cores */}
             <Button
               variant="ghost"
@@ -205,6 +232,26 @@ export function AppShell({ children }: { children: ReactNode }) {
           </SheetHeader>
 
           <div className="mt-4 space-y-2">
+            {/* Botão Instalar App no Mobile */}
+            {!isInstalled && (
+              <button
+                type="button"
+                onClick={() => {
+                  setMobileMenuOpen(false);
+                  handleInstallClick();
+                }}
+                className="flex w-full items-center justify-between rounded-xl bg-primary/15 border border-primary/30 p-3.5 text-sm font-semibold text-primary transition-colors hover:bg-primary/25"
+              >
+                <div className="flex items-center gap-3">
+                  <span className="text-lg">📲</span>
+                  <span>Instalar Aplicativo (PWA)</span>
+                </div>
+                <span className="rounded-lg bg-primary text-primary-foreground text-[10px] px-2 py-0.5 font-bold uppercase">
+                  App
+                </span>
+              </button>
+            )}
+
             {/* Categorias */}
             <Link
               to="/categorias"
@@ -262,6 +309,15 @@ export function AppShell({ children }: { children: ReactNode }) {
 
       {/* Modal de Personalização de Tema & Cores */}
       <ThemeSelectorModal open={themeModalOpen} onOpenChange={setThemeModalOpen} />
+
+      {/* Modal de Instalação PWA */}
+      <InstallPwaModal
+        open={pwaModalOpen}
+        onOpenChange={setPwaModalOpen}
+        onInstall={triggerInstall}
+        isIos={isIos}
+        isInstalled={isInstalled}
+      />
     </div>
   );
 }
