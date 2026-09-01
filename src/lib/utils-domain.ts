@@ -58,7 +58,7 @@ export function weeklyProductivity(tasks: Task[]): { label: string; value: numbe
     d.setDate(d.getDate() - i);
     const iso = d.toISOString().slice(0, 10);
     const value = tasks.filter((t) => t.completedAt?.slice(0, 10) === iso).length;
-    days.push({ label: names[d.getDay()], value });
+    days.push({ label: names[d.getDay()] ?? "", value });
   }
   return days;
 }
