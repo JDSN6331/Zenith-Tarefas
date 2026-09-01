@@ -3,6 +3,9 @@ FROM node:22-alpine AS builder
 
 WORKDIR /app
 
+ENV NITRO_PRESET=node-server
+ENV NODE_ENV=production
+
 # Copia manifestos de dependências
 COPY package.json package-lock.json* ./
 
