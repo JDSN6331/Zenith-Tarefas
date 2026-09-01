@@ -6,8 +6,8 @@ WORKDIR /app
 # Copia manifestos de dependências
 COPY package.json package-lock.json* ./
 
-# Instala todas as dependências
-RUN npm ci
+# Instala todas as dependências com suporte a peer dependencies
+RUN npm install --legacy-peer-deps
 
 # Copia código-fonte
 COPY . .
