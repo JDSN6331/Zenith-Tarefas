@@ -514,7 +514,7 @@ html[data-palette="roxo"].dark {
     radial-gradient(at 100% 100%, var(--mesh-1) 0px, transparent 50%),
     radial-gradient(at 0% 100%, var(--mesh-2) 0px, transparent 50%);
   background-attachment: fixed;
-  transition: all 0.3s ease;
+  transition: background-color 0.3s ease;
 }
 
 /* Utilitários de Glassmorphism */
@@ -593,16 +593,14 @@ body[data-scroll-locked] {
 @keyframes fade-rise {
   from {
     opacity: 0;
-    transform: translateY(8px);
   }
   to {
     opacity: 1;
-    transform: none;
   }
 }
 
 @utility animate-rise {
-  animation: fade-rise 0.3s cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation: fade-rise 0.2s ease both;
 }
 
 @utility pop-check {

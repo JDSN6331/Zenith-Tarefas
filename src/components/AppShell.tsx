@@ -109,7 +109,7 @@ export function AppShell({ children }: { children: ReactNode }) {
                   key={to}
                   to={to}
                   aria-current={active ? "page" : undefined}
-                  className={`relative flex items-center gap-2 rounded-xl px-3 py-2 text-sm font-medium transition-all shrink-0 ${
+                  className={`relative flex items-center gap-2 rounded-xl px-3 py-2 text-sm font-medium transition-colors duration-150 shrink-0 ${
                     active
                       ? "bg-primary text-primary-foreground shadow-sm"
                       : "text-muted-foreground hover:bg-secondary/80 hover:text-foreground"
@@ -131,7 +131,7 @@ export function AppShell({ children }: { children: ReactNode }) {
                     key={to}
                     to={to}
                     aria-current={active ? "page" : undefined}
-                    className={`relative flex items-center gap-2 rounded-xl px-3 py-2 text-sm font-medium transition-all shrink-0 ${
+                    className={`relative flex items-center gap-2 rounded-xl px-3 py-2 text-sm font-medium transition-colors duration-150 shrink-0 ${
                       active
                         ? "bg-primary text-primary-foreground shadow-sm"
                         : "text-muted-foreground hover:bg-secondary/80 hover:text-foreground"
@@ -353,7 +353,7 @@ export function AppShell({ children }: { children: ReactNode }) {
       </header>
 
       {/* Conteúdo Principal (com padding fluido e adaptado) */}
-      <main className="mx-auto max-w-7xl animate-rise px-3 sm:px-5 lg:px-6 pb-28 pt-5 md:pb-24">
+      <main className="mx-auto max-w-7xl px-3 sm:px-5 lg:px-6 pb-28 pt-5 md:pb-24">
         {children}
       </main>
 
@@ -371,12 +371,12 @@ export function AppShell({ children }: { children: ReactNode }) {
                 to={to}
                 aria-current={active ? "page" : undefined}
                 className={`flex flex-col items-center justify-center gap-0.5 rounded-xl py-1 px-3 transition-colors ${
-                  active ? "text-primary font-bold" : "text-muted-foreground hover:text-foreground"
+                  active ? "text-primary font-semibold" : "text-muted-foreground hover:text-foreground font-normal"
                 }`}
               >
                 <div
-                  className={`flex size-8 items-center justify-center rounded-lg transition-all ${
-                    active ? "bg-primary/15 text-primary scale-105" : ""
+                  className={`flex size-8 items-center justify-center rounded-lg transition-colors ${
+                    active ? "bg-primary/15 text-primary" : ""
                   }`}
                 >
                   <Icon size={19} />
@@ -392,14 +392,14 @@ export function AppShell({ children }: { children: ReactNode }) {
             onClick={() => setMobileMenuOpen(true)}
             className={`relative flex flex-col items-center justify-center gap-0.5 rounded-xl py-1 px-3 transition-colors ${
               pathname === "/categorias" || pathname === "/lixeira"
-                ? "text-primary font-bold"
-                : "text-muted-foreground hover:text-foreground"
+                ? "text-primary font-semibold"
+                : "text-muted-foreground hover:text-foreground font-normal"
             }`}
           >
             <div
-              className={`flex size-8 items-center justify-center rounded-lg transition-all ${
+              className={`flex size-8 items-center justify-center rounded-lg transition-colors ${
                 pathname === "/categorias" || pathname === "/lixeira"
-                  ? "bg-primary/15 text-primary scale-105"
+                  ? "bg-primary/15 text-primary"
                   : ""
               }`}
             >
