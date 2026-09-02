@@ -226,12 +226,12 @@ export function TaskItem({ task, onEdit }: { task: Task; onEdit: (task: Task) =>
             {subtasks.map((st) => (
               <li
                 key={st.id}
-                className="flex items-center justify-between gap-2 rounded-lg bg-secondary/40 px-2.5 py-1.5 text-xs transition-colors hover:bg-secondary/60"
+                className="flex items-start justify-between gap-2.5 rounded-lg bg-secondary/40 px-3 py-2 text-xs transition-colors hover:bg-secondary/60"
               >
                 <button
                   type="button"
                   onClick={() => toggleSubTask(task.id, st.id)}
-                  className={`flex size-4 shrink-0 items-center justify-center rounded border transition-colors ${
+                  className={`mt-0.5 flex size-4 shrink-0 items-center justify-center rounded border transition-colors ${
                     st.done
                       ? "border-success bg-success text-success-foreground"
                       : "border-border bg-background hover:border-primary"
@@ -240,16 +240,18 @@ export function TaskItem({ task, onEdit }: { task: Task; onEdit: (task: Task) =>
                   {st.done && <FlaticonCheck size={10} />}
                 </button>
                 <span
-                  className={`flex-1 truncate ${st.done ? "line-through text-muted-foreground" : "text-foreground"}`}
+                  className={`flex-1 min-w-0 break-words whitespace-normal leading-relaxed ${
+                    st.done ? "line-through text-muted-foreground" : "text-foreground"
+                  }`}
                 >
                   {st.title}
                 </span>
                 <button
                   type="button"
                   onClick={() => removeSubTask(task.id, st.id)}
-                  className="text-muted-foreground hover:text-destructive p-0.5"
+                  className="mt-0.5 text-muted-foreground hover:text-destructive p-0.5 shrink-0 transition-colors"
                 >
-                  <FlaticonTrash size={12} />
+                  <FlaticonTrash size={13} />
                 </button>
               </li>
             ))}

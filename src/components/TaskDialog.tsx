@@ -135,7 +135,7 @@ export function TaskDialog({ open, onOpenChange, task, defaultGoalId = null }: P
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="glass-card max-h-[90vh] overflow-y-auto sm:max-w-xl">
+      <DialogContent className="glass-card max-h-[90vh] overflow-y-auto overflow-x-hidden w-full max-w-[calc(100vw-1.5rem)] sm:max-w-xl">
         <DialogHeader>
           <DialogTitle className="font-display text-xl font-bold">
             {task ? "Editar tarefa" : "Nova tarefa"}
@@ -426,16 +426,16 @@ export function TaskDialog({ open, onOpenChange, task, defaultGoalId = null }: P
 
             {/* Lista de subtarefas adicionadas */}
             {draft.subtasks && draft.subtasks.length > 0 ? (
-              <ul className="space-y-1.5 pt-1">
+              <ul className="space-y-1.5 pt-1 max-h-60 overflow-y-auto overflow-x-hidden pr-1">
                 {draft.subtasks.map((st) => (
                   <li
                     key={st.id}
-                    className="flex items-center justify-between gap-2 rounded-lg bg-background/60 px-3 py-1.5 text-sm border border-border/40"
+                    className="flex items-start justify-between gap-2.5 rounded-lg bg-background/60 px-3 py-2 text-sm border border-border/40"
                   >
                     <button
                       type="button"
                       onClick={() => handleToggleSubtask(st.id)}
-                      className={`flex size-4.5 shrink-0 items-center justify-center rounded border transition-colors ${
+                      className={`mt-0.5 flex size-4.5 shrink-0 items-center justify-center rounded border transition-colors ${
                         st.done
                           ? "border-success bg-success text-success-foreground"
                           : "border-border hover:border-primary"
@@ -444,14 +444,16 @@ export function TaskDialog({ open, onOpenChange, task, defaultGoalId = null }: P
                       {st.done && <FlaticonCheck size={12} />}
                     </button>
                     <span
-                      className={`flex-1 truncate ${st.done ? "line-through text-muted-foreground" : ""}`}
+                      className={`flex-1 min-w-0 break-words whitespace-normal leading-relaxed ${
+                        st.done ? "line-through text-muted-foreground" : "text-foreground"
+                      }`}
                     >
                       {st.title}
                     </span>
                     <button
                       type="button"
                       onClick={() => handleRemoveSubtask(st.id)}
-                      className="text-muted-foreground hover:text-destructive transition-colors p-1"
+                      className="mt-0.5 text-muted-foreground hover:text-destructive transition-colors p-1 shrink-0"
                     >
                       <FlaticonTrash size={14} />
                     </button>
