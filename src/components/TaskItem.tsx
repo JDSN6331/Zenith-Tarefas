@@ -54,7 +54,7 @@ export function TaskItem({ task, onEdit }: { task: Task; onEdit: (task: Task) =>
   };
 
   return (
-    <li className="glass-card flex flex-col p-4 transition-all duration-200 hover:shadow-lift">
+    <li className="glass-card flex flex-col p-4 transition-shadow duration-200 hover:shadow-lift">
       <div className="flex items-start gap-3">
         {/* Checkbox Principal de Conclusão */}
         <button
