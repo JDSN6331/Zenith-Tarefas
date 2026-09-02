@@ -99,7 +99,7 @@ export async function validateSession(token: string | null | undefined): Promise
         [token, now]
       );
 
-      if (rows.length === 0) return null;
+      if (rows.length === 0 || !rows[0]) return null;
 
       const row = rows[0];
       return {

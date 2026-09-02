@@ -48,7 +48,7 @@ interface MemoryDb {
     title: string;
     description: string;
     horizon: string;
-    category_id: string;
+    category_id: string | null;
     target_date: string | null;
     created_at: string;
     deleted_at: string | null;

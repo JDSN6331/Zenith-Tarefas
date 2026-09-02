@@ -136,7 +136,7 @@ export const apiClient = {
   },
 
   async fetchData(): Promise<AppData | null> {
-    const res = await request<{ ok: boolean; data: AppData }>("/api/data", {
+    const res = await request<AppData>("/api/data", {
       method: "GET",
     });
     if (res.ok && res.data) {

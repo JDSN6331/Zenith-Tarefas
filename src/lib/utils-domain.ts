@@ -31,7 +31,7 @@ export const isToday = (task: Task): boolean => task.dueDate === todayISO();
 
 export function formatDate(iso: string | null): string {
   if (!iso) return "Sem prazo";
-  const clean = iso.split("T")[0];
+  const clean = iso.split("T")[0] || "";
   const parts = clean.split("-");
   if (parts.length < 3) return iso;
   const [y, m, d] = parts;

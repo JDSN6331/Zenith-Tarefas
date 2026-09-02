@@ -8,10 +8,10 @@ export type RecurrenceFrequency = "none" | "daily" | "weekdays" | "weekly" | "mo
 
 export interface RecurrenceRule {
   frequency: RecurrenceFrequency;
-  interval?: number;
-  daysOfWeek?: number[];
+  interval?: number | undefined;
+  daysOfWeek?: number[] | undefined;
   /** Status com o qual a próxima tarefa recorrente será criada */
-  nextStatus?: "pending" | "in_progress";
+  nextStatus?: ("pending" | "in_progress") | undefined;
 }
 
 export interface SubTask {
@@ -25,7 +25,7 @@ export interface Category {
   id: string;
   name: string;
   color: string; // hex ou classe de cor
-  isDefault?: boolean;
+  isDefault?: boolean | undefined;
   createdAt: string;
 }
 
@@ -40,7 +40,7 @@ export interface GoalTarget {
   startValue: number;
   currentValue: number;
   targetValue: number;
-  unit?: string;
+  unit?: string | undefined;
   completed: boolean;
   createdAt: string;
 }
@@ -69,7 +69,7 @@ export interface Goal {
   title: string;
   description: string;
   horizon: GoalHorizon;
-  categoryId: string;
+  categoryId: string | null;
   targetDate: string | null;
   targets: GoalTarget[];
   createdAt: string;

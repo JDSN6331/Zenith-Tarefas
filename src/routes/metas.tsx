@@ -68,7 +68,7 @@ const EMPTY_GOAL_DRAFT: GoalDraft = {
   title: "",
   description: "",
   horizon: "curto",
-  categoryId: "pessoal",
+  categoryId: null,
   targetDate: null,
 };
 
@@ -98,12 +98,9 @@ export function MetasPage() {
 
   useEffect(() => {
     if (goalModalOpen) {
-      setGoalDraft({
-        ...EMPTY_GOAL_DRAFT,
-        categoryId: categories[0]?.id || "pessoal",
-      });
+      setGoalDraft(EMPTY_GOAL_DRAFT);
     }
-  }, [goalModalOpen, categories]);
+  }, [goalModalOpen]);
 
   const handleCreateGoal = (e: React.FormEvent) => {
     e.preventDefault();
@@ -495,13 +492,18 @@ export function MetasPage() {
                   Categoria
                 </Label>
                 <Select
-                  value={goalDraft.categoryId || "pessoal"}
-                  onValueChange={(v) => setGoalDraft({ ...goalDraft, categoryId: v })}
+                  value={goalDraft.categoryId || "none"}
+                  onValueChange={(v) =>
+                    setGoalDraft({ ...goalDraft, categoryId: v === "none" ? null : v })
+                  }
                 >
-                  <SelectTrigger id="goal-cat" className="bg-background/50">
-                    <SelectValue />
+                  <SelectTrigger id="goal-cat" className="bg-background/50 text-foreground">
+                    <SelectValue placeholder="Nenhuma" />
                   </SelectTrigger>
                   <SelectContent>
+                    <SelectItem value="none">
+                      <span className="text-muted-foreground">Nenhuma</span>
+                    </SelectItem>
                     {categories.map((c) => (
                       <SelectItem key={c.id} value={c.id}>
                         <div className="flex items-center gap-2">
