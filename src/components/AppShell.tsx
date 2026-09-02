@@ -94,14 +94,9 @@ export function AppShell({ children }: { children: ReactNode }) {
           {/* Logo e Nome */}
           <Link to="/" className="group flex items-center gap-2.5 shrink-0" aria-label="Zenith Início">
             <ZenithLogo size={36} variant="badge" />
-            <div className="flex flex-col min-w-fit">
-              <span className="font-display text-lg font-bold tracking-tight text-foreground transition-colors group-hover:text-primary sm:text-xl leading-none">
-                ZENITH
-              </span>
-              <span className="hidden text-[8.5px] font-semibold tracking-wider uppercase text-muted-foreground 2xl:inline-block whitespace-nowrap pt-0.5">
-                Foco • Organize • Conquiste
-              </span>
-            </div>
+            <span className="font-display text-lg font-bold tracking-tight text-foreground transition-colors group-hover:text-primary sm:text-xl leading-none">
+              ZENITH
+            </span>
           </Link>
 
           {/* Navegação Desktop com espaçamento agradável e sem sobreposições */}
