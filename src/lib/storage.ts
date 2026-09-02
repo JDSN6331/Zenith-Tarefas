@@ -256,9 +256,14 @@ export function addGoalTarget(
   goalId: string,
   target: Omit<GoalTarget, "id" | "createdAt">,
 ): AppData {
+  const isBool = target.type === "boolean";
   const newTarget: GoalTarget = {
     ...target,
     id: uid(),
+    startValue: isBool ? 0 : target.startValue,
+    currentValue: isBool ? (target.completed ? 1 : 0) : target.currentValue,
+    targetValue: isBool ? 1 : target.targetValue,
+    completed: isBool ? !!target.completed : target.currentValue >= target.targetValue,
     createdAt: new Date().toISOString(),
   };
 
@@ -285,7 +290,14 @@ export function updateGoalTarget(
         targets: g.targets.map((t) => {
           if (t.id !== targetId) return t;
           const updated = { ...t, ...patch };
-          if (patch.currentValue !== undefined) {
+          if (updated.type === "boolean") {
+            if (patch.completed !== undefined) {
+              updated.completed = !!patch.completed;
+            }
+            updated.currentValue = updated.completed ? 1 : 0;
+            updated.targetValue = 1;
+            updated.startValue = 0;
+          } else if (patch.currentValue !== undefined) {
             updated.completed = updated.currentValue >= updated.targetValue;
           }
           return updated;

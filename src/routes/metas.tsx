@@ -7,6 +7,7 @@ import { TaskDialog } from "@/components/TaskDialog";
 import {
   FlaticonCalendar,
   FlaticonCheck,
+  FlaticonClock,
   FlaticonDollar,
   FlaticonEdit,
   FlaticonGoals,
@@ -156,8 +157,11 @@ export function MetasPage() {
   };
 
   const handleToggleBooleanTarget = (goal: Goal, target: GoalTarget) => {
+    const nextCompleted = !target.completed;
     updateGoalTarget(goal.id, target.id, {
-      completed: !target.completed,
+      completed: nextCompleted,
+      currentValue: nextCompleted ? 1 : 0,
+      targetValue: 1,
     });
   };
 
@@ -363,9 +367,21 @@ export function MetasPage() {
                                     size="sm"
                                     variant={tgt.completed ? "default" : "outline"}
                                     onClick={() => handleToggleBooleanTarget(goal, tgt)}
-                                    className="h-6 text-[10px] px-2"
+                                    className={`h-6 text-[10px] px-2.5 font-semibold gap-1 transition-all ${
+                                      tgt.completed
+                                        ? "bg-success text-success-foreground hover:bg-success/90 border-transparent shadow-sm"
+                                        : "border-border text-muted-foreground hover:text-foreground hover:bg-secondary"
+                                    }`}
                                   >
-                                    {tgt.completed ? "Concluído" : "Marcar"}
+                                    {tgt.completed ? (
+                                      <>
+                                        <FlaticonCheck size={11} /> Concluído
+                                      </>
+                                    ) : (
+                                      <>
+                                        <FlaticonClock size={11} /> Marcar
+                                      </>
+                                    )}
                                   </Button>
                                 ) : (
                                   <div className="flex items-center gap-1">

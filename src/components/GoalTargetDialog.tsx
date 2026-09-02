@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import {
   FlaticonCheck,
+  FlaticonClock,
   FlaticonDollar,
   FlaticonHash,
   FlaticonPercent,
@@ -70,25 +71,31 @@ export function GoalTargetDialog({ open, onOpenChange, goal, target }: Props) {
     e.preventDefault();
     if (!goal || !title.trim()) return;
 
+    const isBool = type === "boolean";
+    const finalStart = isBool ? 0 : Number(startValue);
+    const finalCurrent = isBool ? (completed ? 1 : 0) : Number(currentValue);
+    const finalTarget = isBool ? 1 : Number(targetValue);
+    const finalCompleted = isBool ? completed : Number(currentValue) >= Number(targetValue);
+
     if (target) {
       updateGoalTarget(goal.id, target.id, {
         title: title.trim(),
         type,
-        startValue: Number(startValue),
-        currentValue: Number(currentValue),
-        targetValue: Number(targetValue),
-        unit: unit.trim(),
-        completed: type === "boolean" ? completed : Number(currentValue) >= Number(targetValue),
+        startValue: finalStart,
+        currentValue: finalCurrent,
+        targetValue: finalTarget,
+        unit: isBool ? "" : unit.trim(),
+        completed: finalCompleted,
       });
     } else {
       addGoalTarget(goal.id, {
         title: title.trim(),
         type,
-        startValue: Number(startValue),
-        currentValue: Number(currentValue),
-        targetValue: Number(targetValue),
-        unit: unit.trim(),
-        completed: type === "boolean" ? completed : Number(currentValue) >= Number(targetValue),
+        startValue: finalStart,
+        currentValue: finalCurrent,
+        targetValue: finalTarget,
+        unit: isBool ? "" : unit.trim(),
+        completed: finalCompleted,
       });
     }
     onOpenChange(false);
@@ -166,9 +173,9 @@ export function GoalTargetDialog({ open, onOpenChange, goal, target }: Props) {
 
           {/* Campos condicionais baseados no tipo */}
           {type === "boolean" ? (
-            <div className="flex items-center justify-between rounded-xl bg-secondary/50 p-4">
+            <div className="flex items-center justify-between rounded-xl bg-secondary/50 p-4 border border-border/40">
               <div>
-                <p className="text-sm font-medium">Status do Alvo</p>
+                <p className="text-sm font-semibold text-foreground">Status do Alvo</p>
                 <p className="text-xs text-muted-foreground">
                   Marque quando a conquista for atingida
                 </p>
@@ -177,10 +184,23 @@ export function GoalTargetDialog({ open, onOpenChange, goal, target }: Props) {
                 type="button"
                 variant={completed ? "default" : "outline"}
                 onClick={() => setCompleted((v) => !v)}
-                className="gap-2"
+                className={`gap-2 min-w-[125px] font-semibold transition-all ${
+                  completed
+                    ? "bg-success text-success-foreground hover:bg-success/90 border-transparent shadow-sm"
+                    : "border-border text-muted-foreground hover:text-foreground hover:bg-secondary"
+                }`}
               >
-                <FlaticonCheck size={16} />
-                {completed ? "Concluído" : "Pendente"}
+                {completed ? (
+                  <>
+                    <FlaticonCheck size={16} />
+                    <span>Concluído</span>
+                  </>
+                ) : (
+                  <>
+                    <FlaticonClock size={16} />
+                    <span>Pendente</span>
+                  </>
+                )}
               </Button>
             </div>
           ) : (
