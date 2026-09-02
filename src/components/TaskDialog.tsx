@@ -75,7 +75,8 @@ export function TaskDialog({ open, onOpenChange, task, defaultGoalId = null }: P
         dueDate: task.dueDate,
         priority: task.priority,
         categoryId: task.categoryId || "pessoal",
-        status: task.status || "pending",
+        status: task.done ? "completed" : task.status || "pending",
+        done: task.done,
         recurrence: task.recurrence || { frequency: "none" },
         subtasks: task.subtasks || [],
         goalId: task.goalId,
@@ -85,6 +86,8 @@ export function TaskDialog({ open, onOpenChange, task, defaultGoalId = null }: P
         ...EMPTY_TASK,
         categoryId: categories[0]?.id || "pessoal",
         goalId: defaultGoalId,
+        done: false,
+        status: "pending",
       });
     }
     setNewSubtaskTitle("");
@@ -106,12 +109,22 @@ export function TaskDialog({ open, onOpenChange, task, defaultGoalId = null }: P
   };
 
   const handleToggleSubtask = (stId: string) => {
-    setDraft((prev) => ({
-      ...prev,
-      subtasks: (prev.subtasks || []).map((st) =>
+    setDraft((prev) => {
+      const nextSubtasks = (prev.subtasks || []).map((st) =>
         st.id === stId ? { ...st, done: !st.done } : st,
-      ),
-    }));
+      );
+      const allDone = nextSubtasks.length > 0 && nextSubtasks.every((st) => st.done);
+      return {
+        ...prev,
+        subtasks: nextSubtasks,
+        done: allDone,
+        status: allDone
+          ? ("completed" as const)
+          : prev.status === "completed"
+            ? ("in_progress" as const)
+            : prev.status || ("pending" as const),
+      };
+    });
   };
 
   const handleRemoveSubtask = (stId: string) => {
@@ -125,10 +138,20 @@ export function TaskDialog({ open, onOpenChange, task, defaultGoalId = null }: P
     e.preventDefault();
     if (!draft.title.trim()) return;
 
+    const isDone = draft.status === "completed" || draft.done === true;
+    const finalDraft: TaskDraft = {
+      ...draft,
+      done: isDone,
+      status: isDone ? "completed" : draft.status || "pending",
+      subtasks: isDone
+        ? (draft.subtasks || []).map((st) => ({ ...st, done: true }))
+        : draft.subtasks,
+    };
+
     if (task) {
-      editTask(task.id, draft);
+      editTask(task.id, finalDraft);
     } else {
-      addTask(draft);
+      addTask(finalDraft);
     }
     onOpenChange(false);
   };
@@ -313,8 +336,19 @@ export function TaskDialog({ open, onOpenChange, task, defaultGoalId = null }: P
                 Status
               </Label>
               <Select
-                value={draft.status || "pending"}
-                onValueChange={(v) => setDraft({ ...draft, status: v as TaskStatus })}
+                value={draft.status || (draft.done ? "completed" : "pending")}
+                onValueChange={(v) => {
+                  const s = v as TaskStatus;
+                  const isDone = s === "completed";
+                  setDraft({
+                    ...draft,
+                    status: s,
+                    done: isDone,
+                    subtasks: isDone
+                      ? (draft.subtasks || []).map((st) => ({ ...st, done: true }))
+                      : draft.subtasks,
+                  });
+                }}
               >
                 <SelectTrigger id="task-status" className="bg-background/50">
                   <SelectValue />

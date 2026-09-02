@@ -62,13 +62,14 @@ export function TaskItem({ task, onEdit }: { task: Task; onEdit: (task: Task) =>
           onClick={() => toggleTask(task.id)}
           aria-label={task.done ? `Reabrir ${task.title}` : `Concluir ${task.title}`}
           aria-pressed={task.done}
-          className={`pop-check mt-0.5 flex size-6 shrink-0 items-center justify-center rounded-full border transition-all ${
+          title={task.done ? "Reabrir tarefa" : "Concluir tarefa"}
+          className={`pop-check mt-0.5 flex size-6 shrink-0 cursor-pointer items-center justify-center rounded-full border transition-all ${
             task.done
-              ? "border-success bg-success text-success-foreground scale-105"
-              : "border-border/80 bg-background/50 text-transparent hover:border-primary hover:scale-105"
+              ? "border-success bg-success text-success-foreground scale-105 shadow-sm"
+              : "border-border/80 bg-background/50 text-muted-foreground/0 hover:text-muted-foreground hover:border-primary hover:scale-105"
           }`}
         >
-          <FlaticonCheck size={14} />
+          <FlaticonCheck size={13} className="transition-opacity" />
         </button>
 
         {/* Informações da Tarefa */}
@@ -82,39 +83,46 @@ export function TaskItem({ task, onEdit }: { task: Task; onEdit: (task: Task) =>
               {task.title}
             </p>
 
-            {/* Badge de Status */}
-            {status === "completed" && (
-              <Badge
-                variant="outline"
-                className="bg-success/15 text-success border-success/30 text-[11px] gap-1 py-0 px-2"
-              >
-                <FlaticonCheckCircle size={12} /> {STATUS_LABEL.completed}
-              </Badge>
-            )}
-            {status === "overdue" && (
-              <Badge
-                variant="outline"
-                className="bg-destructive/15 text-destructive border-destructive/30 text-[11px] gap-1 py-0 px-2"
-              >
-                <FlaticonAlertCircle size={12} /> {STATUS_LABEL.overdue}
-              </Badge>
-            )}
-            {status === "in_progress" && (
-              <Badge
-                variant="outline"
-                className="bg-primary/15 text-primary border-primary/30 text-[11px] gap-1 py-0 px-2"
-              >
-                <FlaticonPlayCircle size={12} /> {STATUS_LABEL.in_progress}
-              </Badge>
-            )}
-            {status === "pending" && (
-              <Badge
-                variant="outline"
-                className="bg-muted text-muted-foreground border-border/50 text-[11px] gap-1 py-0 px-2"
-              >
-                <FlaticonClock size={12} /> {STATUS_LABEL.pending}
-              </Badge>
-            )}
+            {/* Badge de Status Clicável */}
+            <button
+              type="button"
+              onClick={() => toggleTask(task.id)}
+              className="cursor-pointer transition-transform hover:scale-105"
+              title="Clique para alternar conclusão"
+            >
+              {status === "completed" && (
+                <Badge
+                  variant="outline"
+                  className="bg-success/15 text-success border-success/30 text-[11px] gap-1 py-0 px-2 cursor-pointer"
+                >
+                  <FlaticonCheckCircle size={12} /> {STATUS_LABEL.completed}
+                </Badge>
+              )}
+              {status === "overdue" && (
+                <Badge
+                  variant="outline"
+                  className="bg-destructive/15 text-destructive border-destructive/30 text-[11px] gap-1 py-0 px-2 cursor-pointer"
+                >
+                  <FlaticonAlertCircle size={12} /> {STATUS_LABEL.overdue}
+                </Badge>
+              )}
+              {status === "in_progress" && (
+                <Badge
+                  variant="outline"
+                  className="bg-primary/15 text-primary border-primary/30 text-[11px] gap-1 py-0 px-2 cursor-pointer"
+                >
+                  <FlaticonPlayCircle size={12} /> {STATUS_LABEL.in_progress}
+                </Badge>
+              )}
+              {status === "pending" && (
+                <Badge
+                  variant="outline"
+                  className="bg-muted text-muted-foreground border-border/50 text-[11px] gap-1 py-0 px-2 cursor-pointer"
+                >
+                  <FlaticonClock size={12} /> {STATUS_LABEL.pending}
+                </Badge>
+              )}
+            </button>
           </div>
 
           {task.description && (

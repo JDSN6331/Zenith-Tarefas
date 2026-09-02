@@ -85,35 +85,55 @@ export function saveData(data: AppData): void {
 /* ==================== TAREFAS ==================== */
 
 export function createTask(data: AppData, draft: TaskDraft): AppData {
-  const isDone = draft.done ?? false;
+  const isDone = draft.done === true || draft.status === "completed";
+  const now = new Date().toISOString();
   const task: Task = {
     ...draft,
     id: uid(),
     done: isDone,
     status: isDone ? "completed" : draft.status || "pending",
     recurrence: draft.recurrence || { frequency: "none" },
-    subtasks: draft.subtasks || [],
-    createdAt: new Date().toISOString(),
-    completedAt: isDone ? new Date().toISOString() : null,
+    subtasks: (draft.subtasks || []).map((st) => ({
+      ...st,
+      done: isDone ? true : st.done,
+    })),
+    createdAt: now,
+    completedAt: isDone ? now : null,
     deletedAt: null,
   };
   return { ...data, tasks: [task, ...data.tasks] };
 }
 
 export function updateTask(data: AppData, id: string, patch: Partial<Task>): AppData {
+  const now = new Date().toISOString();
   return {
     ...data,
     tasks: data.tasks.map((t) => {
       if (t.id !== id) return t;
       const updated = { ...t, ...patch };
-      if (patch.done !== undefined) {
+
+      if (patch.status !== undefined) {
+        if (patch.status === "completed") {
+          updated.done = true;
+          updated.completedAt = updated.completedAt || now;
+          updated.subtasks = updated.subtasks.map((st) => ({ ...st, done: true }));
+        } else {
+          updated.done = false;
+          updated.completedAt = null;
+        }
+      } else if (patch.done !== undefined) {
+        updated.done = patch.done;
         updated.status = patch.done
           ? "completed"
           : updated.status === "completed"
             ? "pending"
             : updated.status;
-        updated.completedAt = patch.done ? new Date().toISOString() : null;
+        updated.completedAt = patch.done ? (updated.completedAt || now) : null;
+        if (patch.done) {
+          updated.subtasks = updated.subtasks.map((st) => ({ ...st, done: true }));
+        }
       }
+
       return updated;
     }),
   };
@@ -183,6 +203,7 @@ export function addSubTask(data: AppData, taskId: string, title: string): AppDat
 }
 
 export function toggleSubTask(data: AppData, taskId: string, subTaskId: string): AppData {
+  const now = new Date().toISOString();
   return {
     ...data,
     tasks: data.tasks.map((t) => {
@@ -196,9 +217,9 @@ export function toggleSubTask(data: AppData, taskId: string, subTaskId: string):
       return {
         ...t,
         subtasks: nextSubtasks,
-        done: allDone ? true : t.done,
-        completedAt: allDone && !t.done ? new Date().toISOString() : t.completedAt,
-        status: allDone ? "completed" : anyDone ? "in_progress" : t.status,
+        done: allDone,
+        completedAt: allDone ? (t.completedAt || now) : null,
+        status: allDone ? "completed" : anyDone ? "in_progress" : "pending",
       };
     }),
   };
