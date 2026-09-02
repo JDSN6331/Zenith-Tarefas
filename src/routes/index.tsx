@@ -28,7 +28,7 @@ import {
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Painel · Aura — Gestão de Tarefas e Metas" },
+      { title: "Painel · Zenith" },
       {
         name: "description",
         content: "Painel de controle para organização de tarefas diárias, metas e produtividade.",
@@ -56,7 +56,7 @@ function StatCard({
   const toneClasses = {
     danger: "bg-destructive/15 text-destructive border-destructive/25",
     success: "bg-success/15 text-success border-success/25",
-    warning: "bg-warning/15 text-warning-foreground border-warning/25",
+    warning: "bg-warning/15 text-warning border-warning/25",
     info: "bg-primary/15 text-primary border-primary/25",
     default: "bg-secondary text-muted-foreground border-border/40",
   }[tone];
@@ -171,8 +171,8 @@ function Dashboard() {
               </h2>
               <p className="text-xs text-muted-foreground">Histórico diário de entregas</p>
             </div>
-            <div className="flex items-center gap-1.5 rounded-xl bg-warning/15 px-3 py-1.5 text-xs font-semibold text-warning-foreground border border-warning/30">
-              <FlaticonFlame size={14} className="text-warning" />
+            <div className="flex items-center gap-1.5 rounded-xl bg-warning/15 px-3 py-1.5 text-xs font-bold text-warning border border-warning/30 shadow-xs">
+              <FlaticonFlame size={14} className="text-warning shrink-0" />
               <span>{stats.streak} dias de sequência</span>
             </div>
           </div>

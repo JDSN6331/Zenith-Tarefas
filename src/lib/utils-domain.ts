@@ -259,23 +259,22 @@ export function calculatePerformanceStats(tasks: Task[], goals: Goal[], categori
 
   // Score de Produtividade (0 a 100)
   // 1. Pontualidade / Saúde dos prazos (até 50 pts):
-  const onTimeRatio = total > 0 ? (total - overdueTasks.length) / total : 1;
+  const onTimeRatio = total > 0 ? (total - overdueTasks.length) / total : 0;
   const onTimePoints = Math.round(onTimeRatio * 50);
 
   // 2. Progresso de Execução (até 35 pts): tarefas concluídas (peso 1.0) + em andamento (peso 0.5)
   const progressRatio =
-    total > 0 ? (completedTasks.length + inProgressTasks.length * 0.5) / total : 1;
+    total > 0 ? (completedTasks.length + inProgressTasks.length * 0.5) / total : 0;
   const progressPoints = Math.round(progressRatio * 35);
 
   // 3. Consistência / Sequência Recente (até 15 pts)
   const weeklyCompletions = weeklyData.reduce((acc, curr) => acc + curr.value, 0);
   const consistencyPoints = Math.min(15, streak * 3 + weeklyCompletions * 2);
 
-  // Se todas as tarefas estão em dia e o usuário está planejando, garante baseline saudável (80+)
   const rawScore =
     total === 0
-      ? 100
-      : Math.min(100, Math.max(10, onTimePoints + progressPoints + consistencyPoints));
+      ? 0
+      : Math.min(100, Math.max(0, onTimePoints + progressPoints + consistencyPoints));
 
   return {
     total,
@@ -285,7 +284,7 @@ export function calculatePerformanceStats(tasks: Task[], goals: Goal[], categori
     pending: pendingTasks.length,
     completionRate,
     streak,
-    score: total === 0 ? 100 : rawScore,
+    score: total === 0 ? 0 : rawScore,
     weeklyData,
     categoryDistribution,
     activeGoals: goals.filter((g) => !g.deletedAt).length,

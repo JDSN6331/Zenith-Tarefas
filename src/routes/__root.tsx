@@ -86,15 +86,15 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "mobile-web-app-capable", content: "yes" },
       { name: "apple-mobile-web-app-capable", content: "yes" },
       { name: "apple-mobile-web-app-status-bar-style", content: "black-translucent" },
-      { name: "apple-mobile-web-app-title", content: "Aura" },
-      { name: "application-name", content: "Aura" },
-      { title: "Aura · Gestão de Tarefas e Metas" },
+      { name: "apple-mobile-web-app-title", content: "Zenith" },
+      { name: "application-name", content: "Zenith" },
+      { title: "Zenith" },
       {
         name: "description",
         content:
           "Sistema moderno para planejamento de tarefas, acompanhamento de metas com medição e análise de produtividade.",
       },
-      { property: "og:title", content: "Aura · Gestão de Tarefas e Metas" },
+      { property: "og:title", content: "Zenith" },
       {
         property: "og:description",
         content:
@@ -107,8 +107,9 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         rel: "stylesheet",
         href: appCss,
       },
-      { rel: "icon", href: "/favicon.svg", type: "image/svg+xml" },
-      { rel: "apple-touch-icon", href: "/apple-touch-icon.png" },
+      { rel: "icon", href: "/favicon.svg?v=3", type: "image/svg+xml" },
+      { rel: "alternate icon", href: "/favicon.svg?v=3" },
+      { rel: "apple-touch-icon", href: "/pwa-192x192.svg?v=3" },
       { rel: "manifest", href: "/manifest.json" },
     ],
   }),
@@ -121,7 +122,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
 const themeScript = `
   (function() {
     try {
-      var storedMode = localStorage.getItem('aura.theme.mode');
+      var storedMode = localStorage.getItem('zenith.theme.mode') || localStorage.getItem('aura.theme.mode');
       var dark = storedMode === 'dark' || (!storedMode && window.matchMedia('(prefers-color-scheme: dark)').matches);
       if (dark) {
         document.documentElement.classList.add('dark');
@@ -129,7 +130,7 @@ const themeScript = `
         document.documentElement.classList.remove('dark');
       }
 
-      var storedPalette = localStorage.getItem('aura.theme.palette') || 'linear';
+      var storedPalette = localStorage.getItem('zenith.theme.palette') || localStorage.getItem('aura.theme.palette') || 'gold';
       document.documentElement.setAttribute('data-palette', storedPalette);
     } catch(e) {}
   })();
@@ -137,7 +138,7 @@ const themeScript = `
 
 function RootShell({ children }: { children: ReactNode }) {
   return (
-    <html lang="pt-BR" data-palette="linear" suppressHydrationWarning>
+    <html lang="pt-BR" data-palette="gold" suppressHydrationWarning>
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
         <HeadContent />
@@ -160,7 +161,7 @@ function RootComponent() {
         navigator.serviceWorker
           .register("/sw.js")
           .then((reg) => {
-            console.log("Aura PWA Service Worker registrado:", reg.scope);
+            console.log("Zenith PWA Service Worker registrado:", reg.scope);
           })
           .catch((err) => {
             console.error("Falha ao registrar Service Worker do PWA:", err);

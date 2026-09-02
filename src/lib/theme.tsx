@@ -59,8 +59,10 @@ interface ThemeContextValue {
 
 const ThemeContext = createContext<ThemeContextValue | null>(null);
 
-const THEME_STORAGE_KEY = "aura.theme.mode";
-const PALETTE_STORAGE_KEY = "aura.theme.palette";
+const THEME_STORAGE_KEY = "zenith.theme.mode";
+const PALETTE_STORAGE_KEY = "zenith.theme.palette";
+const LEGACY_THEME_STORAGE_KEY = "aura.theme.mode";
+const LEGACY_PALETTE_STORAGE_KEY = "aura.theme.palette";
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
   const [theme, setThemeState] = useState<ThemeMode>("dark");
@@ -68,7 +70,9 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     // 1. Carregar Modo Claro/Escuro
-    const storedTheme = window.localStorage.getItem(THEME_STORAGE_KEY) as ThemeMode | null;
+    const storedTheme =
+      (window.localStorage.getItem(THEME_STORAGE_KEY) as ThemeMode | null) ||
+      (window.localStorage.getItem(LEGACY_THEME_STORAGE_KEY) as ThemeMode | null);
     let initialTheme: ThemeMode = "dark";
     if (storedTheme === "light" || storedTheme === "dark") {
       initialTheme = storedTheme;
@@ -80,7 +84,9 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     document.documentElement.classList.toggle("dark", initialTheme === "dark");
 
     // 2. Carregar Paleta de Cores
-    const storedPalette = window.localStorage.getItem(PALETTE_STORAGE_KEY) as ThemePalette | null;
+    const storedPalette =
+      (window.localStorage.getItem(PALETTE_STORAGE_KEY) as ThemePalette | null) ||
+      (window.localStorage.getItem(LEGACY_PALETTE_STORAGE_KEY) as ThemePalette | null);
     const initialPalette: ThemePalette =
       storedPalette && ["gold", "linear", "emerald", "violet", "monochrome"].includes(storedPalette)
         ? storedPalette

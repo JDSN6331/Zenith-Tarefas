@@ -1,14 +1,39 @@
 <svg width="192" height="192" viewBox="0 0 192 192" fill="none" xmlns="http://www.w3.org/2000/svg">
   <defs>
-    <linearGradient id="aura-gold-192" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#EAB308" />
-      <stop offset="60%" stop-color="#FDE047" />
-      <stop offset="100%" stop-color="#F59E0B" />
+    <linearGradient id="pwa-192-star" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FFFFFF" />
+      <stop offset="40%" stop-color="#FEF08A" />
+      <stop offset="100%" stop-color="#EAB308" />
     </linearGradient>
+
+    <linearGradient id="pwa-192-z" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FEF08A" />
+      <stop offset="50%" stop-color="#EAB308" />
+      <stop offset="100%" stop-color="#D97706" />
+    </linearGradient>
+
+    <radialGradient id="pwa-192-halo" cx="50%" cy="20%" r="65%">
+      <stop offset="0%" stop-color="#EAB308" stop-opacity="0.45" />
+      <stop offset="60%" stop-color="#FDE047" stop-opacity="0.1" />
+      <stop offset="100%" stop-color="transparent" />
+    </radialGradient>
   </defs>
-  <rect width="192" height="192" rx="42" fill="#080809"/>
-  <circle cx="96" cy="96" r="72" fill="url(#aura-gold-192)" fill-opacity="0.18" />
-  <rect x="32" y="32" width="128" height="128" rx="34" stroke="url(#aura-gold-192)" stroke-width="8" fill="none"/>
-  <path d="M96 54L134 116H58L96 54Z" fill="url(#aura-gold-192)" stroke="#FDE047" stroke-width="5" stroke-linejoin="round"/>
-  <circle cx="96" cy="96" r="12" fill="#080809" stroke="#EAB308" stroke-width="4" />
+
+  <rect width="192" height="192" rx="44" fill="#080809"/>
+  <rect x="10" y="10" width="172" height="172" rx="38" stroke="#EAB308" stroke-opacity="0.25" stroke-width="4" fill="none"/>
+  <circle cx="96" cy="80" r="76" fill="url(#pwa-192-halo)" />
+
+  <path d="M32 136C52 156 140 156 160 136" stroke="#EAB308" stroke-opacity="0.4" stroke-width="5.5" stroke-linecap="round"/>
+
+  <ellipse cx="96" cy="104" rx="56" ry="28" stroke="#FDE047" stroke-opacity="0.3" stroke-width="4" stroke-dasharray="8 12"/>
+
+  <path d="M56 72H136" stroke="url(#pwa-192-z)" stroke-width="11" stroke-linecap="round"/>
+  <path d="M136 72L56 128" stroke="url(#pwa-192-z)" stroke-width="13.5" stroke-linecap="round"/>
+  <path d="M56 128H136" stroke="url(#pwa-192-z)" stroke-width="11" stroke-linecap="round"/>
+
+  <line x1="96" y1="4" x2="96" y2="68" stroke="#FEF08A" stroke-width="5" stroke-linecap="round"/>
+  <line x1="64" y1="36" x2="128" y2="36" stroke="#FEF08A" stroke-width="5" stroke-linecap="round"/>
+
+  <path d="M96 12Q96 36 72 36Q96 36 96 60Q96 36 120 36Q96 36 96 12Z" fill="url(#pwa-192-star)"/>
+  <circle cx="96" cy="36" r="6" fill="#FFFFFF"/>
 </svg>

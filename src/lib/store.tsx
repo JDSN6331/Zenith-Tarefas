@@ -1,5 +1,5 @@
 /**
- * Estado Global e Camada Reativa da Aplicação Aura.
+ * Estado Global e Camada Reativa da Aplicação Zenith.
  */
 import { createContext, useCallback, useContext, useEffect, useState, type ReactNode } from "react";
 import * as db from "./storage";

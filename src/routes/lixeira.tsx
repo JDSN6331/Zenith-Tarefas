@@ -25,7 +25,7 @@ import { formatDate } from "@/lib/utils-domain";
 export const Route = createFileRoute("/lixeira")({
   head: () => ({
     meta: [
-      { title: "Lixeira · Aura — Recuperação de Itens" },
+      { title: "Lixeira · Zenith" },
       {
         name: "description",
         content: "Lixeira com opção de restauração e exclusão permanente de tarefas e metas.",

@@ -18,7 +18,7 @@ import { calculatePerformanceStats } from "@/lib/utils-domain";
 export const Route = createFileRoute("/desempenho")({
   head: () => ({
     meta: [
-      { title: "Desempenho · Aura — Análise de Produtividade" },
+      { title: "Desempenho · Zenith" },
       {
         name: "description",
         content:
@@ -99,7 +99,7 @@ export function DesempenhoPage() {
         <MetricCard
           title="Score Geral"
           value={`${stats.score}/100`}
-          subtitle="Eficiência e pontualidade"
+          subtitle={stats.total === 0 ? "Cadastre tarefas para pontuar" : "Eficiência e pontualidade"}
           icon={FlaticonAnalytics}
           colorClass="bg-primary/15 text-primary border-primary/25"
         />
@@ -108,7 +108,7 @@ export function DesempenhoPage() {
           value={`${stats.streak} dias`}
           subtitle="Dias seguidos com entregas"
           icon={FlaticonFlame}
-          colorClass="bg-warning/15 text-warning-foreground border-warning/25"
+          colorClass="bg-warning/15 text-warning border-warning/25"
         />
         <MetricCard
           title="Metas Ativas"

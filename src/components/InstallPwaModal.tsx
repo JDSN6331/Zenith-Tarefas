@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { AuraLogo } from "./AuraLogo";
-import { FlaticonSparkles } from "./icons/FlaticonIcons";
+import { ZenithLogo } from "./ZenithLogo";
+import { FlaticonCheckCircle, FlaticonDownload, FlaticonSparkles } from "./icons/FlaticonIcons";
 
 interface BeforeInstallPromptEvent extends Event {
   prompt: () => Promise<void>;
@@ -94,10 +94,10 @@ export function InstallPwaModal({
       <DialogContent className="glass-card max-w-sm rounded-3xl p-6 border-border/70">
         <DialogHeader className="flex flex-col items-center text-center">
           <div className="mb-2 flex size-16 items-center justify-center rounded-2xl bg-primary/15 shadow-inner">
-            <AuraLogo size={42} />
+            <ZenithLogo size={42} />
           </div>
           <DialogTitle className="font-display text-xl font-bold tracking-tight text-foreground">
-            Instalar o Aura no seu celular
+            Instalar o Zenith no seu celular
           </DialogTitle>
           <DialogDescription className="text-xs text-muted-foreground mt-1">
             Tenha acesso rápido direto da tela inicial com modo tela cheia e notificações.
@@ -106,8 +106,9 @@ export function InstallPwaModal({
 
         <div className="mt-4 space-y-3">
           {isInstalled ? (
-            <div className="rounded-xl bg-primary/10 p-3 text-center text-xs font-semibold text-primary">
-              ✨ O Aura já está instalado como aplicativo neste dispositivo!
+            <div className="flex items-center justify-center gap-2 rounded-xl bg-primary/10 p-3 text-center text-xs font-semibold text-primary">
+              <FlaticonCheckCircle size={16} className="text-primary shrink-0" />
+              <span>O Zenith já está instalado como aplicativo neste dispositivo!</span>
             </div>
           ) : isIos ? (
             <div className="rounded-2xl bg-secondary/50 p-4 text-xs text-foreground space-y-2.5 border border-border/40">
@@ -128,17 +129,19 @@ export function InstallPwaModal({
             </div>
           ) : (
             <div className="space-y-3">
-              <div className="rounded-xl bg-secondary/40 p-3 text-xs text-muted-foreground">
-                ⚡ Aplicativo ultraleve, sem necessidade de baixar pela loja de aplicativos.
+              <div className="flex items-center gap-2 rounded-xl bg-secondary/40 p-3 text-xs text-muted-foreground">
+                <FlaticonSparkles size={15} className="text-primary shrink-0" />
+                <span>Aplicativo ultraleve com execução instantânea e suporte offline.</span>
               </div>
               <Button
                 onClick={() => {
                   onInstall();
                   onOpenChange(false);
                 }}
-                className="w-full rounded-xl bg-primary text-primary-foreground font-semibold py-2.5 shadow-md hover:scale-[1.02] transition-transform"
+                className="w-full rounded-xl bg-primary text-primary-foreground font-semibold py-2.5 shadow-md hover:scale-[1.02] transition-transform flex items-center justify-center gap-2"
               >
-                Instalar Aplicativo Agora
+                <FlaticonDownload size={16} />
+                <span>Instalar Aplicativo Agora</span>
               </Button>
             </div>
           )}

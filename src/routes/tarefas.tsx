@@ -30,7 +30,7 @@ import { computeTaskStatus, isOverdue, sortTasks, type SortKey } from "@/lib/uti
 export const Route = createFileRoute("/tarefas")({
   head: () => ({
     meta: [
-      { title: "Tarefas · Aura — Gestão e Produtividade" },
+      { title: "Tarefas · Zenith" },
       {
         name: "description",
         content:

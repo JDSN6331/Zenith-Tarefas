@@ -1,5 +1,5 @@
 /**
- * Camada de dados do Aura: CRUD unificado com persistência local e fallback robusto.
+ * Camada de dados do Zenith: CRUD unificado com persistência local e fallback robusto.
  */
 import { DEFAULT_CATEGORIES } from "./types";
 import type {
@@ -14,7 +14,8 @@ import type {
 } from "./types";
 import { calculateNextDueDate } from "./utils-domain";
 
-const STORAGE_KEY = "aura.app.data.v2";
+const STORAGE_KEY = "zenith.app.data.v1";
+const LEGACY_AURA_KEY = "aura.app.data.v2";
 
 const EMPTY: AppData = {
   tasks: [],
@@ -32,9 +33,13 @@ const uid = (): string =>
 export function loadData(): AppData {
   if (!isBrowser()) return EMPTY;
   try {
-    const raw = window.localStorage.getItem(STORAGE_KEY);
+    let raw = window.localStorage.getItem(STORAGE_KEY);
     if (!raw) {
-      // Migração da v1 se existir
+      // Fallback para chave Aura
+      raw = window.localStorage.getItem(LEGACY_AURA_KEY);
+    }
+    if (!raw) {
+      // Migração da v1 legada se existir
       const oldRaw = window.localStorage.getItem("focus.app.data.v1");
       if (oldRaw) {
         const oldParsed = JSON.parse(oldRaw);

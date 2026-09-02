@@ -1,7 +1,7 @@
 /**
- * Camada de Acesso ao Banco de Dados da Aplicação Aura.
- * Suporta:
- * - SQLite localmente (data/aura.db)
+ * Camada de Acesso ao Banco de Dados da Aplicação Zenith.
+ * Suporta dois modos de persistência:
+ * - SQLite localmente (data/zenith.db)
  * - PostgreSQL em produção (Hostinger VPS / Easypanel via DATABASE_URL)
  */
 
@@ -20,7 +20,7 @@ export function getDatabaseConfig(): DbConfig {
   }
   return {
     type: "sqlite",
-    connectionString: process.env.SQLITE_PATH || "./data/aura.db",
+    connectionString: process.env.SQLITE_PATH || "./data/zenith.db",
   };
 }
 

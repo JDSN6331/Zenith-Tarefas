@@ -50,7 +50,7 @@ import { calculateGoalProgress, formatDate, formatCurrency } from "@/lib/utils-d
 export const Route = createFileRoute("/metas")({
   head: () => ({
     meta: [
-      { title: "Metas · Aura — Acompanhamento com Alvos" },
+      { title: "Metas · Zenith" },
       {
         name: "description",
         content: "Metas com medição por alvos financeiros, numéricos, percentuais e tarefas.",

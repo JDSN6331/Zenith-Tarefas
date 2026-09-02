@@ -1,14 +1,39 @@
 <svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
   <defs>
-    <linearGradient id="aura-gold-512" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#EAB308" />
-      <stop offset="60%" stop-color="#FDE047" />
-      <stop offset="100%" stop-color="#F59E0B" />
+    <linearGradient id="pwa-512-star" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FFFFFF" />
+      <stop offset="40%" stop-color="#FEF08A" />
+      <stop offset="100%" stop-color="#EAB308" />
     </linearGradient>
+
+    <linearGradient id="pwa-512-z" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FEF08A" />
+      <stop offset="50%" stop-color="#EAB308" />
+      <stop offset="100%" stop-color="#D97706" />
+    </linearGradient>
+
+    <radialGradient id="pwa-512-halo" cx="50%" cy="20%" r="65%">
+      <stop offset="0%" stop-color="#EAB308" stop-opacity="0.45" />
+      <stop offset="60%" stop-color="#FDE047" stop-opacity="0.1" />
+      <stop offset="100%" stop-color="transparent" />
+    </radialGradient>
   </defs>
-  <rect width="512" height="512" rx="112" fill="#080809"/>
-  <circle cx="256" cy="256" r="190" fill="url(#aura-gold-512)" fill-opacity="0.18" />
-  <rect x="86" y="86" width="340" height="340" rx="90" stroke="url(#aura-gold-512)" stroke-width="22" fill="none"/>
-  <path d="M256 145L358 310H154L256 145Z" fill="url(#aura-gold-512)" stroke="#FDE047" stroke-width="14" stroke-linejoin="round"/>
-  <circle cx="256" cy="256" r="32" fill="#080809" stroke="#EAB308" stroke-width="10" />
+
+  <rect width="512" height="512" rx="118" fill="#080809"/>
+  <rect x="28" y="28" width="456" height="456" rx="100" stroke="#EAB308" stroke-opacity="0.25" stroke-width="11" fill="none"/>
+  <circle cx="256" cy="214" r="202" fill="url(#pwa-512-halo)" />
+
+  <path d="M85 362C138 416 374 416 427 362" stroke="#EAB308" stroke-opacity="0.4" stroke-width="15" stroke-linecap="round"/>
+
+  <ellipse cx="256" cy="277" rx="150" ry="75" stroke="#FDE047" stroke-opacity="0.3" stroke-width="10" stroke-dasharray="20 30"/>
+
+  <path d="M150 192H362" stroke="url(#pwa-512-z)" stroke-width="29" stroke-linecap="round"/>
+  <path d="M362 192L150 341" stroke="url(#pwa-512-z)" stroke-width="36" stroke-linecap="round"/>
+  <path d="M150 341H362" stroke="url(#pwa-512-z)" stroke-width="29" stroke-linecap="round"/>
+
+  <line x1="256" y1="10" x2="256" y2="182" stroke="#FEF08A" stroke-width="13" stroke-linecap="round"/>
+  <line x1="170" y1="96" x2="342" y2="96" stroke="#FEF08A" stroke-width="13" stroke-linecap="round"/>
+
+  <path d="M256 32Q256 96 192 96Q256 96 256 160Q256 96 320 96Q256 96 256 32Z" fill="url(#pwa-512-star)"/>
+  <circle cx="256" cy="96" r="16" fill="#FFFFFF"/>
 </svg>

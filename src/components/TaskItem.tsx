@@ -26,7 +26,7 @@ import { computeTaskStatus, formatDate, isOverdue } from "@/lib/utils-domain";
 
 const priorityStyle: Record<Task["priority"], string> = {
   alta: "bg-destructive/15 text-destructive border-destructive/30",
-  media: "bg-warning/15 text-warning-foreground border-warning/30",
+  media: "bg-warning/15 text-warning border-warning/30",
   baixa: "bg-secondary text-secondary-foreground border-border/50",
 };
 

@@ -579,3 +579,41 @@ export const FlaticonMore = ({ size = 20, className = "", ...props }: IconProps)
     <circle cx="5" cy="12" r="1.5" fill="currentColor" />
   </svg>
 );
+
+export const FlaticonDownload = ({ size = 20, className = "", ...props }: IconProps) => (
+  <svg
+    width={size}
+    height={size}
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    className={className}
+    {...props}
+  >
+    <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" />
+    <polyline points="7 10 12 15 17 10" />
+    <line x1="12" y1="15" x2="12" y2="3" />
+  </svg>
+);
+
+export const FlaticonSmartphone = ({ size = 20, className = "", ...props }: IconProps) => (
+  <svg
+    width={size}
+    height={size}
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    className={className}
+    {...props}
+  >
+    <rect x="5" y="2" width="14" height="20" rx="2" ry="2" />
+    <line x1="12" y1="18" x2="12.01" y2="18" />
+  </svg>
+);
+

@@ -25,7 +25,7 @@ import type { Category } from "@/lib/types";
 export const Route = createFileRoute("/categorias")({
   head: () => ({
     meta: [
-      { title: "Categorias · Aura — Gestão e Tags" },
+      { title: "Categorias · Zenith" },
       {
         name: "description",
         content: "Gerenciamento de categorias para organização de tarefas e metas.",

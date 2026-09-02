@@ -1,4 +1,4 @@
-/** Domínio da aplicação Aura — tipagem forte e desacoplada. */
+/** Domínio da aplicação Zenith — tipagem forte e desacoplada. */
 
 export type Priority = "baixa" | "media" | "alta";
 

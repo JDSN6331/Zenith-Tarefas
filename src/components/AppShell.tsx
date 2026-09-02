@@ -1,14 +1,16 @@
 import { Link, useRouterState } from "@tanstack/react-router";
 import { useState, type ReactNode } from "react";
-import { AuraLogo } from "./AuraLogo";
+import { ZenithLogo } from "./ZenithLogo";
 import { ThemeSelectorModal } from "./ThemeSelector";
 import {
   FlaticonAnalytics,
   FlaticonCategories,
   FlaticonDashboard,
+  FlaticonDownload,
   FlaticonGoals,
   FlaticonMoon,
   FlaticonMore,
+  FlaticonSmartphone,
   FlaticonSparkles,
   FlaticonSun,
   FlaticonTasks,
@@ -63,11 +65,11 @@ export function AppShell({ children }: { children: ReactNode }) {
       <header className="glass-nav sticky top-0 z-40 transition-colors">
         <div className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-4 py-3 sm:px-6">
           {/* Logo e Nome */}
-          <Link to="/" className="group flex items-center gap-2.5" aria-label="Aura Início">
-            <AuraLogo size={32} />
+          <Link to="/" className="group flex items-center gap-2.5" aria-label="Zenith Início">
+            <ZenithLogo size={32} />
             <div className="flex flex-col">
               <span className="font-display text-lg font-bold tracking-tight text-foreground transition-colors group-hover:text-primary sm:text-xl">
-                Aura
+                Zenith
               </span>
               <span className="hidden text-[10px] font-medium tracking-wider uppercase text-muted-foreground sm:inline-block">
                 Foco & Metas
@@ -121,7 +123,8 @@ export function AppShell({ children }: { children: ReactNode }) {
                 onClick={handleInstallClick}
                 aria-label="Instalar Aplicativo"
               >
-                <span>📲 Instalar App</span>
+                <FlaticonDownload size={14} className="text-primary" />
+                <span>Instalar App</span>
               </Button>
             )}
 
@@ -243,7 +246,7 @@ export function AppShell({ children }: { children: ReactNode }) {
                 className="flex w-full items-center justify-between rounded-xl bg-primary/15 border border-primary/30 p-3.5 text-sm font-semibold text-primary transition-colors hover:bg-primary/25"
               >
                 <div className="flex items-center gap-3">
-                  <span className="text-lg">📲</span>
+                  <FlaticonSmartphone size={20} className="text-primary shrink-0" />
                   <span>Instalar Aplicativo (PWA)</span>
                 </div>
                 <span className="rounded-lg bg-primary text-primary-foreground text-[10px] px-2 py-0.5 font-bold uppercase">
