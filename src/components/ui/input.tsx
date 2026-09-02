@@ -3,12 +3,21 @@ import * as React from "react";
 import { cn } from "@/lib/utils";
 
 const Input = React.forwardRef<HTMLInputElement, React.ComponentProps<"input">>(
-  ({ className, type, ...props }, ref) => {
+  ({ className, type, value, defaultValue, ...props }, ref) => {
+    const isDateEmpty =
+      type === "date" &&
+      (value === "" || value === undefined || value === null) &&
+      (defaultValue === "" || defaultValue === undefined || defaultValue === null);
+
     return (
       <input
         type={type}
+        value={value}
+        defaultValue={defaultValue}
+        data-empty={isDateEmpty ? "true" : "false"}
         className={cn(
           "flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-base shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 md:text-sm",
+          type === "date" && isDateEmpty && "text-muted-foreground",
           className,
         )}
         ref={ref}

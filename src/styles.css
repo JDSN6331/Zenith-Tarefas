@@ -612,8 +612,17 @@ body {
 }
 
 /* =========================================================================
-   DATE PICKER & CALENDAR INDICATOR STYLES
+   DATE PICKER & PLACEHOLDER THEME STYLING
    ========================================================================= */
+
+/* Padronização de textos de exemplo (placeholders) em todos os inputs e textareas */
+input::placeholder,
+textarea::placeholder {
+  color: var(--muted-foreground) !important;
+  opacity: 0.8 !important;
+}
+
+/* Padronização de campos de data nativos (dd/mm/aaaa) para acompanhar a cor do tema */
 input[type="date"] {
   position: relative;
   cursor: pointer;
@@ -622,6 +631,39 @@ input[type="date"] {
 
 :root:not(.dark) input[type="date"] {
   color-scheme: light;
+}
+
+/* Quando o input[type="date"] está vazio (exibe texto de exemplo dd/mm/aaaa) */
+input[type="date"][data-empty="true"],
+input[type="date"][value=""] {
+  color: var(--muted-foreground) !important;
+}
+
+input[type="date"][data-empty="true"]::-webkit-datetime-edit,
+input[type="date"][data-empty="true"]::-webkit-datetime-edit-fields-wrapper,
+input[type="date"][data-empty="true"]::-webkit-datetime-edit-text,
+input[type="date"][data-empty="true"]::-webkit-datetime-edit-month-field,
+input[type="date"][data-empty="true"]::-webkit-datetime-edit-day-field,
+input[type="date"][data-empty="true"]::-webkit-datetime-edit-year-field,
+input[type="date"][value=""]::-webkit-datetime-edit,
+input[type="date"][value=""]::-webkit-datetime-edit-fields-wrapper,
+input[type="date"][value=""]::-webkit-datetime-edit-text,
+input[type="date"][value=""]::-webkit-datetime-edit-month-field,
+input[type="date"][value=""]::-webkit-datetime-edit-day-field,
+input[type="date"][value=""]::-webkit-datetime-edit-year-field {
+  color: var(--muted-foreground) !important;
+  opacity: 0.8 !important;
+}
+
+/* Quando uma data for efetivamente preenchida pelo usuário */
+input[type="date"]:not([data-empty="true"]):not([value=""])::-webkit-datetime-edit,
+input[type="date"]:not([data-empty="true"]):not([value=""])::-webkit-datetime-edit-fields-wrapper,
+input[type="date"]:not([data-empty="true"]):not([value=""])::-webkit-datetime-edit-text,
+input[type="date"]:not([data-empty="true"]):not([value=""])::-webkit-datetime-edit-month-field,
+input[type="date"]:not([data-empty="true"]):not([value=""])::-webkit-datetime-edit-day-field,
+input[type="date"]:not([data-empty="true"]):not([value=""])::-webkit-datetime-edit-year-field {
+  color: var(--foreground) !important;
+  opacity: 1 !important;
 }
 
 input[type="date"]::-webkit-calendar-picker-indicator {

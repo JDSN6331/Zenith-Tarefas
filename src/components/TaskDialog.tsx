@@ -28,6 +28,7 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { useStore } from "@/lib/store";
+import { cn } from "@/lib/utils";
 import {
   PRIORITY_LABEL,
   RECURRENCE_LABEL,
@@ -405,7 +406,13 @@ export function TaskDialog({ open, onOpenChange, task, defaultGoalId = null }: P
                 value={draft.goalId ?? "none"}
                 onValueChange={(v) => setDraft({ ...draft, goalId: v === "none" ? null : v })}
               >
-                <SelectTrigger id="task-goal" className="bg-background/50">
+                <SelectTrigger
+                  id="task-goal"
+                  className={cn(
+                    "bg-background/50",
+                    (!draft.goalId || draft.goalId === "none") ? "text-muted-foreground" : "text-foreground font-medium"
+                  )}
+                >
                   <SelectValue placeholder="Nenhuma" />
                 </SelectTrigger>
                 <SelectContent>

@@ -27,6 +27,7 @@ import {
 import { useStore } from "@/lib/store";
 import type { Task, TaskStatus } from "@/lib/types";
 import { computeTaskStatus, isOverdue, sortTasks, type SortKey } from "@/lib/utils-domain";
+import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/tarefas")({
   head: () => ({
@@ -226,7 +227,13 @@ export function TarefasPage() {
             Prioridade
           </Label>
           <Select value={priorityFilter} onValueChange={setPriorityFilter}>
-            <SelectTrigger id="f-priority" className="bg-background/50 h-9 text-sm">
+            <SelectTrigger
+              id="f-priority"
+              className={cn(
+                "bg-background/50 h-9 text-sm",
+                priorityFilter === "todas" ? "text-muted-foreground" : "text-foreground font-medium"
+              )}
+            >
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -247,7 +254,13 @@ export function TarefasPage() {
             Categoria
           </Label>
           <Select value={categoryFilter} onValueChange={setCategoryFilter}>
-            <SelectTrigger id="f-category" className="bg-background/50 h-9 text-sm">
+            <SelectTrigger
+              id="f-category"
+              className={cn(
+                "bg-background/50 h-9 text-sm",
+                categoryFilter === "todas" ? "text-muted-foreground" : "text-foreground font-medium"
+              )}
+            >
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
