@@ -193,7 +193,7 @@ html[data-palette="claro"].dark {
   --secondary: rgba(30, 58, 138, 0.4);
   --secondary-foreground: #f8fafc;
   --muted: rgba(20, 35, 58, 0.6);
-  --muted-foreground: #93c5fd;
+  --muted-foreground: #94a3b8;
   --accent: #00f2fe;
   --accent-foreground: #071527;
   --destructive: #f87171;
@@ -277,7 +277,7 @@ html[data-palette="verde"].dark {
   --secondary: rgba(6, 78, 59, 0.6);
   --secondary-foreground: #f0fdf4;
   --muted: rgba(6, 44, 34, 0.6);
-  --muted-foreground: #86efac;
+  --muted-foreground: #94a3b8;
   --accent: #4ade80;
   --accent-foreground: #04140d;
   --destructive: #f87171;
@@ -361,7 +361,7 @@ html[data-palette="quente"].dark {
   --secondary: rgba(69, 26, 3, 0.6);
   --secondary-foreground: #fefce8;
   --muted: rgba(43, 22, 8, 0.6);
-  --muted-foreground: #fcd34d;
+  --muted-foreground: #a8a29e;
   --accent: #ea580c;
   --accent-foreground: #ffffff;
   --destructive: #f87171;
@@ -445,7 +445,7 @@ html[data-palette="roxo"].dark {
   --secondary: rgba(59, 7, 100, 0.6);
   --secondary-foreground: #fdf4ff;
   --muted: rgba(38, 15, 58, 0.6);
-  --muted-foreground: #e879f9;
+  --muted-foreground: #94a3b8;
   --accent: #ec4899;
   --accent-foreground: #ffffff;
   --destructive: #f87171;
@@ -615,14 +615,20 @@ body {
    DATE PICKER & PLACEHOLDER THEME STYLING
    ========================================================================= */
 
-/* Padronização de textos de exemplo (placeholders) em todos os inputs e textareas */
-input::placeholder,
-textarea::placeholder {
-  color: var(--muted-foreground) !important;
-  opacity: 0.8 !important;
+/* Padronização elegante de textos de exemplo (placeholders) em tom próximo de branco no modo escuro */
+.dark input::placeholder,
+.dark textarea::placeholder {
+  color: rgba(255, 255, 255, 0.48) !important;
+  opacity: 1 !important;
 }
 
-/* Padronização de campos de data nativos (dd/mm/aaaa) para acompanhar a cor do tema */
+:root:not(.dark) input::placeholder,
+:root:not(.dark) textarea::placeholder {
+  color: rgba(15, 23, 42, 0.45) !important;
+  opacity: 1 !important;
+}
+
+/* Padronização de campos de data nativos (dd/mm/aaaa) para tom suave próximo do branco */
 input[type="date"] {
   position: relative;
   cursor: pointer;
@@ -633,36 +639,52 @@ input[type="date"] {
   color-scheme: light;
 }
 
-/* Quando o input[type="date"] está vazio (exibe texto de exemplo dd/mm/aaaa) */
-input[type="date"][data-empty="true"],
-input[type="date"][value=""] {
-  color: var(--muted-foreground) !important;
+/* Quando o input[type="date"] está vazio (exibe máscara de exemplo dd/mm/aaaa) */
+.dark input[type="date"][data-empty="true"],
+.dark input[type="date"][value=""] {
+  color: rgba(255, 255, 255, 0.48) !important;
 }
 
-input[type="date"][data-empty="true"]::-webkit-datetime-edit,
-input[type="date"][data-empty="true"]::-webkit-datetime-edit-fields-wrapper,
-input[type="date"][data-empty="true"]::-webkit-datetime-edit-text,
-input[type="date"][data-empty="true"]::-webkit-datetime-edit-month-field,
-input[type="date"][data-empty="true"]::-webkit-datetime-edit-day-field,
-input[type="date"][data-empty="true"]::-webkit-datetime-edit-year-field,
-input[type="date"][value=""]::-webkit-datetime-edit,
-input[type="date"][value=""]::-webkit-datetime-edit-fields-wrapper,
-input[type="date"][value=""]::-webkit-datetime-edit-text,
-input[type="date"][value=""]::-webkit-datetime-edit-month-field,
-input[type="date"][value=""]::-webkit-datetime-edit-day-field,
-input[type="date"][value=""]::-webkit-datetime-edit-year-field {
-  color: var(--muted-foreground) !important;
-  opacity: 0.8 !important;
+.dark input[type="date"][data-empty="true"]::-webkit-datetime-edit,
+.dark input[type="date"][data-empty="true"]::-webkit-datetime-edit-fields-wrapper,
+.dark input[type="date"][data-empty="true"]::-webkit-datetime-edit-text,
+.dark input[type="date"][data-empty="true"]::-webkit-datetime-edit-month-field,
+.dark input[type="date"][data-empty="true"]::-webkit-datetime-edit-day-field,
+.dark input[type="date"][data-empty="true"]::-webkit-datetime-edit-year-field,
+.dark input[type="date"][value=""]::-webkit-datetime-edit,
+.dark input[type="date"][value=""]::-webkit-datetime-edit-fields-wrapper,
+.dark input[type="date"][value=""]::-webkit-datetime-edit-text,
+.dark input[type="date"][value=""]::-webkit-datetime-edit-month-field,
+.dark input[type="date"][value=""]::-webkit-datetime-edit-day-field,
+.dark input[type="date"][value=""]::-webkit-datetime-edit-year-field {
+  color: rgba(255, 255, 255, 0.48) !important;
+  opacity: 1 !important;
+}
+
+:root:not(.dark) input[type="date"][data-empty="true"]::-webkit-datetime-edit,
+:root:not(.dark) input[type="date"][data-empty="true"]::-webkit-datetime-edit-fields-wrapper,
+:root:not(.dark) input[type="date"][data-empty="true"]::-webkit-datetime-edit-text,
+:root:not(.dark) input[type="date"][data-empty="true"]::-webkit-datetime-edit-month-field,
+:root:not(.dark) input[type="date"][data-empty="true"]::-webkit-datetime-edit-day-field,
+:root:not(.dark) input[type="date"][data-empty="true"]::-webkit-datetime-edit-year-field,
+:root:not(.dark) input[type="date"][value=""]::-webkit-datetime-edit,
+:root:not(.dark) input[type="date"][value=""]::-webkit-datetime-edit-fields-wrapper,
+:root:not(.dark) input[type="date"][value=""]::-webkit-datetime-edit-text,
+:root:not(.dark) input[type="date"][value=""]::-webkit-datetime-edit-month-field,
+:root:not(.dark) input[type="date"][value=""]::-webkit-datetime-edit-day-field,
+:root:not(.dark) input[type="date"][value=""]::-webkit-datetime-edit-year-field {
+  color: rgba(15, 23, 42, 0.45) !important;
+  opacity: 1 !important;
 }
 
 /* Quando uma data for efetivamente preenchida pelo usuário */
-input[type="date"]:not([data-empty="true"]):not([value=""])::-webkit-datetime-edit,
-input[type="date"]:not([data-empty="true"]):not([value=""])::-webkit-datetime-edit-fields-wrapper,
-input[type="date"]:not([data-empty="true"]):not([value=""])::-webkit-datetime-edit-text,
-input[type="date"]:not([data-empty="true"]):not([value=""])::-webkit-datetime-edit-month-field,
-input[type="date"]:not([data-empty="true"]):not([value=""])::-webkit-datetime-edit-day-field,
-input[type="date"]:not([data-empty="true"]):not([value=""])::-webkit-datetime-edit-year-field {
-  color: var(--foreground) !important;
+.dark input[type="date"]:not([data-empty="true"]):not([value=""])::-webkit-datetime-edit,
+.dark input[type="date"]:not([data-empty="true"]):not([value=""])::-webkit-datetime-edit-fields-wrapper,
+.dark input[type="date"]:not([data-empty="true"]):not([value=""])::-webkit-datetime-edit-text,
+.dark input[type="date"]:not([data-empty="true"]):not([value=""])::-webkit-datetime-edit-month-field,
+.dark input[type="date"]:not([data-empty="true"]):not([value=""])::-webkit-datetime-edit-day-field,
+.dark input[type="date"]:not([data-empty="true"]):not([value=""])::-webkit-datetime-edit-year-field {
+  color: rgba(255, 255, 255, 0.95) !important;
   opacity: 1 !important;
 }
 

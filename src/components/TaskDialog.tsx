@@ -406,13 +406,7 @@ export function TaskDialog({ open, onOpenChange, task, defaultGoalId = null }: P
                 value={draft.goalId ?? "none"}
                 onValueChange={(v) => setDraft({ ...draft, goalId: v === "none" ? null : v })}
               >
-                <SelectTrigger
-                  id="task-goal"
-                  className={cn(
-                    "bg-background/50",
-                    (!draft.goalId || draft.goalId === "none") ? "text-muted-foreground" : "text-foreground font-medium"
-                  )}
-                >
+                <SelectTrigger id="task-goal" className="bg-background/50 text-foreground">
                   <SelectValue placeholder="Nenhuma" />
                 </SelectTrigger>
                 <SelectContent>

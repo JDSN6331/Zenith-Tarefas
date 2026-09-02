@@ -227,13 +227,7 @@ export function TarefasPage() {
             Prioridade
           </Label>
           <Select value={priorityFilter} onValueChange={setPriorityFilter}>
-            <SelectTrigger
-              id="f-priority"
-              className={cn(
-                "bg-background/50 h-9 text-sm",
-                priorityFilter === "todas" ? "text-muted-foreground" : "text-foreground font-medium"
-              )}
-            >
+            <SelectTrigger id="f-priority" className="bg-background/50 h-9 text-sm text-foreground">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -254,13 +248,7 @@ export function TarefasPage() {
             Categoria
           </Label>
           <Select value={categoryFilter} onValueChange={setCategoryFilter}>
-            <SelectTrigger
-              id="f-category"
-              className={cn(
-                "bg-background/50 h-9 text-sm",
-                categoryFilter === "todas" ? "text-muted-foreground" : "text-foreground font-medium"
-              )}
-            >
+            <SelectTrigger id="f-category" className="bg-background/50 h-9 text-sm text-foreground">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
