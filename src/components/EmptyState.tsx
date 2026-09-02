@@ -1,4 +1,4 @@
-import type { LucideIcon } from "lucide-react";
+import type { ComponentType } from "react";
 
 /** Mensagem de estado vazio com ícone ilustrativo. */
 export function EmptyState({
@@ -6,7 +6,7 @@ export function EmptyState({
   title,
   hint,
 }: {
-  icon: LucideIcon;
+  icon: ComponentType<{ size?: number | string; className?: string }>;
   title: string;
   hint?: string;
 }) {

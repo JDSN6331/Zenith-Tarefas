@@ -11,7 +11,7 @@ export interface DbConfig {
 }
 
 export function getDatabaseConfig(): DbConfig {
-  const url = process.env.DATABASE_URL || process.env.POSTGRES_URL;
+  const url = process.env["DATABASE_URL"] || process.env["POSTGRES_URL"];
   if (url && url.startsWith("postgres")) {
     return {
       type: "postgres",
@@ -20,7 +20,7 @@ export function getDatabaseConfig(): DbConfig {
   }
   return {
     type: "sqlite",
-    connectionString: process.env.SQLITE_PATH || "./data/zenith.db",
+    connectionString: process.env["SQLITE_PATH"] || "./data/zenith.db",
   };
 }
 

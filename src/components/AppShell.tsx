@@ -22,14 +22,21 @@ import { useStore } from "@/lib/store";
 import { useTheme } from "@/lib/theme";
 import { usePwaInstall, InstallPwaModal } from "./InstallPwaModal";
 
-const DESKTOP_NAV_ITEMS = [
+interface NavItem {
+  to: string;
+  label: string;
+  icon: (props: any) => React.JSX.Element;
+  isTrash?: boolean;
+}
+
+const DESKTOP_NAV_ITEMS: NavItem[] = [
   { to: "/", label: "Painel", icon: FlaticonDashboard },
   { to: "/tarefas", label: "Tarefas", icon: FlaticonTasks },
   { to: "/metas", label: "Metas", icon: FlaticonGoals },
   { to: "/desempenho", label: "Desempenho", icon: FlaticonAnalytics },
   { to: "/categorias", label: "Categorias", icon: FlaticonCategories },
   { to: "/lixeira", label: "Lixeira", icon: FlaticonTrash, isTrash: true },
-] as const;
+];
 
 const MOBILE_PRIMARY_TABS = [
   { to: "/", label: "Painel", icon: FlaticonDashboard },

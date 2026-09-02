@@ -44,19 +44,19 @@ export function loadData(): AppData {
       if (oldRaw) {
         const oldParsed = JSON.parse(oldRaw);
         return {
-          tasks: (oldParsed.tasks || []).map((t: Record<string, unknown>) => ({
+          tasks: (oldParsed.tasks || []).map((t: Record<string, any>) => ({
             ...t,
-            subtasks: t.subtasks || [],
-            recurrence: t.recurrence || { frequency: "none" },
-            status: t.done ? "completed" : "pending",
+            subtasks: t["subtasks"] || [],
+            recurrence: t["recurrence"] || { frequency: "none" },
+            status: t["done"] ? "completed" : "pending",
             deletedAt: null,
-            categoryId: typeof t.category === "string" ? t.category.toLowerCase() : "pessoal",
+            categoryId: typeof t["category"] === "string" ? t["category"].toLowerCase() : "pessoal",
           })),
-          goals: (oldParsed.goals || []).map((g: Record<string, unknown>) => ({
+          goals: (oldParsed.goals || []).map((g: Record<string, any>) => ({
             ...g,
-            targets: g.targets || [],
+            targets: g["targets"] || [],
             deletedAt: null,
-            categoryId: typeof g.category === "string" ? g.category : "pessoal",
+            categoryId: typeof g["category"] === "string" ? g["category"] : "pessoal",
           })),
           categories: DEFAULT_CATEGORIES,
         };
@@ -319,6 +319,7 @@ export function restoreGoal(data: AppData, id: string): AppData {
 
 export function permanentDeleteGoal(data: AppData, id: string): AppData {
   return {
+    ...data,
     goals: data.goals.filter((g) => g.id !== id),
     tasks: data.tasks.map((t) => (t.goalId === id ? { ...t, goalId: null } : t)),
   };

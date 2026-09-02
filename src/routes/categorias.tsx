@@ -56,12 +56,12 @@ export function CategoriasPage() {
   const [modalOpen, setModalOpen] = useState(false);
   const [editingCat, setEditingCat] = useState<Category | null>(null);
   const [name, setName] = useState("");
-  const [color, setColor] = useState(PRESET_COLORS[0]);
+  const [color, setColor] = useState<string>(PRESET_COLORS[0] ?? "#eab308");
 
   const openNew = () => {
     setEditingCat(null);
     setName("");
-    setColor(PRESET_COLORS[0]);
+    setColor(PRESET_COLORS[0] ?? "#eab308");
     setModalOpen(true);
   };
 

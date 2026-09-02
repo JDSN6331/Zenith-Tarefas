@@ -6,6 +6,7 @@ import { TaskDialog } from "@/components/TaskDialog";
 import { TaskItem } from "@/components/TaskItem";
 import {
   FlaticonAlertCircle,
+  FlaticonCalendar,
   FlaticonCheckCircle,
   FlaticonClock,
   FlaticonPlayCircle,
