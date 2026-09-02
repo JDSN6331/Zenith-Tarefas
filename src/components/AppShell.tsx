@@ -17,13 +17,20 @@ import {
   FlaticonTrash,
 } from "./icons/FlaticonIcons";
 import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { useStore } from "@/lib/store";
 import { useTheme } from "@/lib/theme";
 import { useAuth } from "@/lib/auth";
 import { usePwaInstall, InstallPwaModal } from "./InstallPwaModal";
 import { AvatarModal } from "./AvatarModal";
-import { LogOut, User as UserIcon, RefreshCw, ShieldCheck } from "lucide-react";
+import { LogOut, User as UserIcon, RefreshCw, ShieldCheck, ChevronDown } from "lucide-react";
 
 interface NavItem {
   to: string;
@@ -33,11 +40,14 @@ interface NavItem {
   adminOnly?: boolean;
 }
 
-const DESKTOP_NAV_ITEMS: NavItem[] = [
+const PRIMARY_NAV_ITEMS: NavItem[] = [
   { to: "/", label: "Painel", icon: FlaticonDashboard },
   { to: "/tarefas", label: "Tarefas", icon: FlaticonTasks },
   { to: "/metas", label: "Metas", icon: FlaticonGoals },
   { to: "/desempenho", label: "Desempenho", icon: FlaticonAnalytics },
+];
+
+const SECONDARY_NAV_ITEMS: NavItem[] = [
   { to: "/categorias", label: "Categorias", icon: FlaticonCategories },
   { to: "/lixeira", label: "Lixeira", icon: FlaticonTrash, isTrash: true },
 ];
@@ -74,78 +84,179 @@ export function AppShell({ children }: { children: ReactNode }) {
 
   const userInitial = user?.name ? user.name.trim().charAt(0).toUpperCase() : "U";
 
+  const isSecondaryActive = pathname === "/categorias" || pathname === "/lixeira" || pathname === "/admin";
+
   return (
     <div className="relative min-h-screen">
       {/* Header Superior (Desktop e Mobile) */}
-      {/* Header Superior (Desktop e Mobile) */}
       <header className="glass-nav sticky top-0 z-40 transition-colors w-full">
-        <div className="mx-auto flex max-w-7xl items-center justify-between gap-2 px-3 sm:px-5 lg:px-6 py-2.5 sm:py-3">
+        <div className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 sm:px-6 py-2.5 sm:py-3">
           {/* Logo e Nome */}
-          <Link to="/" className="group flex items-center gap-2 shrink-0" aria-label="Zenith Início">
-            <ZenithLogo size={34} variant="badge" />
+          <Link to="/" className="group flex items-center gap-2.5 shrink-0" aria-label="Zenith Início">
+            <ZenithLogo size={36} variant="badge" />
             <div className="flex flex-col min-w-fit">
               <span className="font-display text-lg font-bold tracking-tight text-foreground transition-colors group-hover:text-primary sm:text-xl leading-none">
                 ZENITH
               </span>
-              <span className="hidden text-[8.5px] font-semibold tracking-wider uppercase text-muted-foreground xl:inline-block whitespace-nowrap pt-0.5">
+              <span className="hidden text-[8.5px] font-semibold tracking-wider uppercase text-muted-foreground 2xl:inline-block whitespace-nowrap pt-0.5">
                 Foco • Organize • Conquiste
               </span>
             </div>
           </Link>
 
-          {/* Navegação Desktop (Visível a partir de md: com espaçamento fluido para notebooks) */}
-          <nav aria-label="Navegação desktop" className="hidden md:flex items-center gap-0.5 lg:gap-1 xl:gap-1.5 min-w-0">
-            {DESKTOP_NAV_ITEMS.map(({ to, label, icon: Icon, isTrash }) => {
+          {/* Navegação Desktop com espaçamento agradável e sem sobreposições */}
+          <nav aria-label="Navegação desktop" className="hidden md:flex items-center gap-2 lg:gap-2.5">
+            {/* Abas Principais (Sempre visíveis com espaçamento confortável) */}
+            {PRIMARY_NAV_ITEMS.map(({ to, label, icon: Icon }) => {
               const active = pathname === to;
-              const hasTrashItems = isTrash && trashCount > 0;
-
               return (
                 <Link
                   key={to}
                   to={to}
                   aria-current={active ? "page" : undefined}
-                  className={`relative flex items-center gap-1.5 rounded-xl px-2 lg:px-2.5 xl:px-3 py-1.5 text-xs lg:text-sm font-medium transition-all shrink-0 ${
+                  className={`relative flex items-center gap-2 rounded-xl px-3 py-2 text-sm font-medium transition-all shrink-0 ${
                     active
                       ? "bg-primary text-primary-foreground shadow-sm"
                       : "text-muted-foreground hover:bg-secondary/80 hover:text-foreground"
                   }`}
                 >
                   <Icon size={16} aria-hidden />
-                  <span className="whitespace-nowrap">{label}</span>
-                  {hasTrashItems && (
-                    <span
-                      className={`flex h-4 min-w-4 items-center justify-center rounded-full px-1 text-[10px] font-bold ${
-                        active
-                          ? "bg-primary-foreground text-primary"
-                          : "bg-destructive text-destructive-foreground"
-                      }`}
-                    >
-                      {trashCount}
-                    </span>
-                  )}
+                  <span>{label}</span>
                 </Link>
               );
             })}
 
-            {/* Menu Administrativo para o Primeiro Usuário (Admin) */}
-            {user?.role === "admin" && (
-              <Link
-                to="/admin"
-                aria-current={pathname === "/admin" ? "page" : undefined}
-                className={`relative flex items-center gap-1.5 rounded-xl px-2 lg:px-2.5 xl:px-3 py-1.5 text-xs lg:text-sm font-semibold transition-all shrink-0 ${
-                  pathname === "/admin"
-                    ? "bg-primary text-primary-foreground shadow-sm"
-                    : "text-primary/90 hover:bg-primary/10 hover:text-primary"
-                }`}
-              >
-                <ShieldCheck size={16} aria-hidden />
-                <span className="whitespace-nowrap">Gestão</span>
-              </Link>
-            )}
+            {/* Abas Secundárias em Telas Grandes (>= xl) */}
+            <div className="hidden xl:flex items-center gap-2 lg:gap-2.5">
+              {SECONDARY_NAV_ITEMS.map(({ to, label, icon: Icon, isTrash }) => {
+                const active = pathname === to;
+                const hasTrashItems = isTrash && trashCount > 0;
+                return (
+                  <Link
+                    key={to}
+                    to={to}
+                    aria-current={active ? "page" : undefined}
+                    className={`relative flex items-center gap-2 rounded-xl px-3 py-2 text-sm font-medium transition-all shrink-0 ${
+                      active
+                        ? "bg-primary text-primary-foreground shadow-sm"
+                        : "text-muted-foreground hover:bg-secondary/80 hover:text-foreground"
+                    }`}
+                  >
+                    <Icon size={16} aria-hidden />
+                    <span>{label}</span>
+                    {hasTrashItems && (
+                      <span
+                        className={`flex h-4 min-w-4 items-center justify-center rounded-full px-1 text-[10px] font-bold ${
+                          active
+                            ? "bg-primary-foreground text-primary"
+                            : "bg-destructive text-destructive-foreground"
+                        }`}
+                      >
+                        {trashCount}
+                      </span>
+                    )}
+                  </Link>
+                );
+              })}
+
+              {/* Acesso Admin em Telas Grandes */}
+              {user?.role === "admin" && (
+                <Link
+                  to="/admin"
+                  aria-current={pathname === "/admin" ? "page" : undefined}
+                  className={`relative flex items-center gap-2 rounded-xl px-3 py-2 text-sm font-semibold transition-all shrink-0 ${
+                    pathname === "/admin"
+                      ? "bg-primary text-primary-foreground shadow-sm"
+                      : "text-primary/90 hover:bg-primary/10 hover:text-primary"
+                  }`}
+                >
+                  <ShieldCheck size={16} aria-hidden />
+                  <span>Gestão</span>
+                </Link>
+              )}
+            </div>
+
+            {/* Menu "Mais ▾" Elegante para Telas de Notebook (< xl) */}
+            <div className="xl:hidden">
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <button
+                    type="button"
+                    className={`relative flex items-center gap-1.5 rounded-xl px-3 py-2 text-sm font-medium transition-all shrink-0 cursor-pointer ${
+                      isSecondaryActive
+                        ? "bg-primary text-primary-foreground shadow-sm font-semibold"
+                        : "text-muted-foreground hover:bg-secondary/80 hover:text-foreground"
+                    }`}
+                  >
+                    <FlaticonMore size={16} aria-hidden />
+                    <span>Mais</span>
+                    {trashCount > 0 && (
+                      <span className="size-2 rounded-full bg-destructive" />
+                    )}
+                    <ChevronDown size={14} className="opacity-70 ml-0.5" />
+                  </button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="start" className="glass-card w-52 p-1.5 shadow-xl">
+                  <DropdownMenuItem asChild>
+                    <Link
+                      to="/categorias"
+                      className={`flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-sm cursor-pointer ${
+                        pathname === "/categorias"
+                          ? "bg-primary text-primary-foreground font-semibold"
+                          : "text-foreground hover:bg-secondary"
+                      }`}
+                    >
+                      <FlaticonCategories size={16} />
+                      <span>Categorias</span>
+                    </Link>
+                  </DropdownMenuItem>
+
+                  <DropdownMenuItem asChild>
+                    <Link
+                      to="/lixeira"
+                      className={`flex w-full items-center justify-between rounded-lg px-3 py-2 text-sm cursor-pointer ${
+                        pathname === "/lixeira"
+                          ? "bg-primary text-primary-foreground font-semibold"
+                          : "text-foreground hover:bg-secondary"
+                      }`}
+                    >
+                      <div className="flex items-center gap-2.5">
+                        <FlaticonTrash size={16} />
+                        <span>Lixeira</span>
+                      </div>
+                      {trashCount > 0 && (
+                        <span className="flex h-4 min-w-4 items-center justify-center rounded-full bg-destructive px-1 text-[10px] font-bold text-destructive-foreground">
+                          {trashCount}
+                        </span>
+                      )}
+                    </Link>
+                  </DropdownMenuItem>
+
+                  {user?.role === "admin" && (
+                    <>
+                      <DropdownMenuSeparator className="my-1 border-border/50" />
+                      <DropdownMenuItem asChild>
+                        <Link
+                          to="/admin"
+                          className={`flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-semibold cursor-pointer ${
+                            pathname === "/admin"
+                              ? "bg-primary text-primary-foreground"
+                              : "text-primary hover:bg-primary/10"
+                          }`}
+                        >
+                          <ShieldCheck size={16} />
+                          <span>Gestão do Sistema</span>
+                        </Link>
+                      </DropdownMenuItem>
+                    </>
+                  )}
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
           </nav>
 
-          {/* Ações de Tema, Sincronização e Usuário no Topo (Com shrink-0 para nunca cortar) */}
-          <div className="flex items-center gap-1 sm:gap-1.5 shrink-0">
+          {/* Ações de Tema, Sincronização e Usuário no Topo com espaçamento agradável */}
+          <div className="flex items-center gap-2 shrink-0">
             {/* Indicador de Sincronização PostgreSQL */}
             <Button
               variant="ghost"
@@ -157,18 +268,18 @@ export function AppShell({ children }: { children: ReactNode }) {
               <RefreshCw size={14} className={isSyncing ? "animate-spin text-primary" : ""} />
             </Button>
 
-            {/* Botão de Instalar App (Desktop / Tablet / Notebook) */}
+            {/* Botão de Instalar App */}
             {!isInstalled && (
               <Button
                 variant="outline"
                 size="sm"
-                className="hidden sm:inline-flex items-center gap-1.5 rounded-xl border-primary/30 bg-primary/10 text-primary text-xs font-semibold hover:bg-primary/20 shrink-0 px-2.5 xl:px-3"
+                className="hidden sm:inline-flex items-center gap-1.5 rounded-xl border-primary/30 bg-primary/10 text-primary text-xs font-semibold hover:bg-primary/20 shrink-0 px-2.5"
                 onClick={handleInstallClick}
                 title="Instalar Aplicativo no Computador"
                 aria-label="Instalar Aplicativo"
               >
                 <FlaticonDownload size={14} className="text-primary" />
-                <span className="hidden xl:inline">Instalar App</span>
+                <span className="hidden 2xl:inline">Instalar App</span>
               </Button>
             )}
 
@@ -206,16 +317,16 @@ export function AppShell({ children }: { children: ReactNode }) {
               )}
             </Button>
 
-            {/* Perfil do Usuário e Botão Sair no Topo (Sempre visíveis e protegidos) */}
+            {/* Perfil do Usuário e Botão Sair com espaçamento limpo e sem cortes */}
             {user && (
-              <div className="flex items-center gap-1 sm:gap-1.5 pl-1.5 sm:pl-2 border-l border-border/60 shrink-0">
+              <div className="flex items-center gap-2 pl-2.5 border-l border-border/60 shrink-0">
                 <button
                   type="button"
                   onClick={() => setAvatarModalOpen(true)}
-                  className="group flex items-center gap-1.5 rounded-xl bg-secondary/60 hover:bg-secondary py-1 px-1.5 sm:px-2 text-xs transition-all cursor-pointer ring-1 ring-border/40 hover:ring-primary/40 shrink-0"
+                  className="group flex items-center gap-2 rounded-xl bg-secondary/60 hover:bg-secondary py-1 px-2 text-xs transition-all cursor-pointer ring-1 ring-border/40 hover:ring-primary/40 shrink-0"
                   title="Clique para alterar sua foto de perfil"
                 >
-                  <div className="flex size-6 sm:size-7 items-center justify-center rounded-lg bg-primary font-bold text-primary-foreground text-[11px] sm:text-xs shadow-sm overflow-hidden shrink-0">
+                  <div className="flex size-7 items-center justify-center rounded-lg bg-primary font-bold text-primary-foreground text-xs shadow-sm overflow-hidden shrink-0">
                     {user.avatarUrl ? (
                       <img
                         src={user.avatarUrl}
@@ -226,7 +337,7 @@ export function AppShell({ children }: { children: ReactNode }) {
                       userInitial
                     )}
                   </div>
-                  <span className="hidden lg:inline-block font-medium text-foreground max-w-[80px] xl:max-w-[110px] truncate group-hover:text-primary transition-colors">
+                  <span className="hidden lg:inline-block font-medium text-foreground max-w-[90px] xl:max-w-[120px] truncate group-hover:text-primary transition-colors">
                     {user.name.split(" ")[0]}
                   </span>
                 </button>
