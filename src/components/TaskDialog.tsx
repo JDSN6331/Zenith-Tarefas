@@ -182,18 +182,30 @@ export function TaskDialog({ open, onOpenChange, task, defaultGoalId = null }: P
           {/* Data e Recorrência */}
           <div className="grid gap-3 sm:grid-cols-2">
             <div className="space-y-1.5">
-              <Label
-                htmlFor="task-due"
-                className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-muted-foreground"
-              >
-                <FlaticonCalendar size={14} /> Vencimento
-              </Label>
+              <div className="flex items-center justify-between">
+                <Label
+                  htmlFor="task-due"
+                  className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-muted-foreground"
+                >
+                  <FlaticonCalendar size={14} className="text-primary" /> Vencimento
+                </Label>
+                {draft.dueDate && (
+                  <button
+                    type="button"
+                    onClick={() => setDraft({ ...draft, dueDate: null })}
+                    className="text-[11px] text-muted-foreground hover:text-destructive transition-colors"
+                  >
+                    Limpar data
+                  </button>
+                )}
+              </div>
               <Input
                 id="task-due"
                 type="date"
                 value={draft.dueDate ?? ""}
                 onChange={(e) => setDraft({ ...draft, dueDate: e.target.value || null })}
-                className="bg-background/50"
+                onClick={(e) => e.currentTarget.showPicker?.()}
+                className="bg-background/50 cursor-pointer"
               />
             </div>
 

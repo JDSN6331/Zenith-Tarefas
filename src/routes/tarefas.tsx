@@ -263,20 +263,32 @@ export function TarefasPage() {
           </Select>
         </div>
 
-        {/* Data */}
+        {/* Filtro por Data */}
         <div className="space-y-1.5">
-          <Label
-            htmlFor="f-date"
-            className="text-xs font-semibold uppercase tracking-wider text-muted-foreground"
-          >
-            Data Específica
-          </Label>
+          <div className="flex items-center justify-between">
+            <Label
+              htmlFor="f-date"
+              className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-muted-foreground"
+            >
+              <FlaticonCalendar size={14} className="text-primary" /> Data Específica
+            </Label>
+            {dueDateFilter && (
+              <button
+                type="button"
+                onClick={() => setDueDateFilter("")}
+                className="text-[11px] text-muted-foreground hover:text-destructive transition-colors"
+              >
+                Limpar
+              </button>
+            )}
+          </div>
           <Input
             id="f-date"
             type="date"
             value={dueDateFilter}
             onChange={(e) => setDueDateFilter(e.target.value)}
-            className="bg-background/50 h-9 text-sm"
+            onClick={(e) => e.currentTarget.showPicker?.()}
+            className="bg-background/50 h-9 text-sm cursor-pointer"
           />
         </div>
 

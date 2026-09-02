@@ -518,12 +518,23 @@ export function MetasPage() {
               </div>
 
               <div className="space-y-1.5">
-                <Label
-                  htmlFor="goal-date"
-                  className="text-xs font-semibold uppercase tracking-wider text-muted-foreground"
-                >
-                  Data Alvo
-                </Label>
+                <div className="flex items-center justify-between">
+                  <Label
+                    htmlFor="goal-date"
+                    className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-muted-foreground"
+                  >
+                    <FlaticonCalendar size={14} className="text-primary" /> Data Alvo
+                  </Label>
+                  {goalDraft.targetDate && (
+                    <button
+                      type="button"
+                      onClick={() => setGoalDraft({ ...goalDraft, targetDate: null })}
+                      className="text-[11px] text-muted-foreground hover:text-destructive transition-colors"
+                    >
+                      Limpar data
+                    </button>
+                  )}
+                </div>
                 <Input
                   id="goal-date"
                   type="date"
@@ -531,7 +542,8 @@ export function MetasPage() {
                   onChange={(e) =>
                     setGoalDraft({ ...goalDraft, targetDate: e.target.value || null })
                   }
-                  className="bg-background/50"
+                  onClick={(e) => e.currentTarget.showPicker?.()}
+                  className="bg-background/50 cursor-pointer"
                 />
               </div>
             </div>
