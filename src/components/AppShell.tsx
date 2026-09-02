@@ -77,23 +77,24 @@ export function AppShell({ children }: { children: ReactNode }) {
   return (
     <div className="relative min-h-screen">
       {/* Header Superior (Desktop e Mobile) */}
-      <header className="glass-nav sticky top-0 z-40 transition-colors">
-        <div className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-4 py-3 sm:px-6">
+      {/* Header Superior (Desktop e Mobile) */}
+      <header className="glass-nav sticky top-0 z-40 transition-colors w-full">
+        <div className="mx-auto flex max-w-7xl items-center justify-between gap-2 px-3 sm:px-5 lg:px-6 py-2.5 sm:py-3">
           {/* Logo e Nome */}
-          <Link to="/" className="group flex items-center gap-2.5 shrink-0" aria-label="Zenith Início">
-            <ZenithLogo size={36} variant="badge" />
+          <Link to="/" className="group flex items-center gap-2 shrink-0" aria-label="Zenith Início">
+            <ZenithLogo size={34} variant="badge" />
             <div className="flex flex-col min-w-fit">
               <span className="font-display text-lg font-bold tracking-tight text-foreground transition-colors group-hover:text-primary sm:text-xl leading-none">
                 ZENITH
               </span>
-              <span className="hidden text-[8.5px] font-semibold tracking-wider uppercase text-muted-foreground sm:inline-block whitespace-nowrap pt-1">
+              <span className="hidden text-[8.5px] font-semibold tracking-wider uppercase text-muted-foreground xl:inline-block whitespace-nowrap pt-0.5">
                 Foco • Organize • Conquiste
               </span>
             </div>
           </Link>
 
-          {/* Navegação Desktop (Visível apenas a partir de telas médias md:) */}
-          <nav aria-label="Navegação desktop" className="hidden md:flex items-center gap-1.5">
+          {/* Navegação Desktop (Visível a partir de md: com espaçamento fluido para notebooks) */}
+          <nav aria-label="Navegação desktop" className="hidden md:flex items-center gap-0.5 lg:gap-1 xl:gap-1.5 min-w-0">
             {DESKTOP_NAV_ITEMS.map(({ to, label, icon: Icon, isTrash }) => {
               const active = pathname === to;
               const hasTrashItems = isTrash && trashCount > 0;
@@ -103,14 +104,14 @@ export function AppShell({ children }: { children: ReactNode }) {
                   key={to}
                   to={to}
                   aria-current={active ? "page" : undefined}
-                  className={`relative flex items-center gap-2 rounded-xl px-3 py-2 text-sm font-medium transition-all ${
+                  className={`relative flex items-center gap-1.5 rounded-xl px-2 lg:px-2.5 xl:px-3 py-1.5 text-xs lg:text-sm font-medium transition-all shrink-0 ${
                     active
                       ? "bg-primary text-primary-foreground shadow-sm"
                       : "text-muted-foreground hover:bg-secondary/80 hover:text-foreground"
                   }`}
                 >
-                  <Icon size={17} aria-hidden />
-                  <span>{label}</span>
+                  <Icon size={16} aria-hidden />
+                  <span className="whitespace-nowrap">{label}</span>
                   {hasTrashItems && (
                     <span
                       className={`flex h-4 min-w-4 items-center justify-center rounded-full px-1 text-[10px] font-bold ${
@@ -131,42 +132,43 @@ export function AppShell({ children }: { children: ReactNode }) {
               <Link
                 to="/admin"
                 aria-current={pathname === "/admin" ? "page" : undefined}
-                className={`relative flex items-center gap-2 rounded-xl px-3 py-2 text-sm font-semibold transition-all ${
+                className={`relative flex items-center gap-1.5 rounded-xl px-2 lg:px-2.5 xl:px-3 py-1.5 text-xs lg:text-sm font-semibold transition-all shrink-0 ${
                   pathname === "/admin"
                     ? "bg-primary text-primary-foreground shadow-sm"
                     : "text-primary/90 hover:bg-primary/10 hover:text-primary"
                 }`}
               >
-                <ShieldCheck size={17} aria-hidden />
-                <span>Gestão</span>
+                <ShieldCheck size={16} aria-hidden />
+                <span className="whitespace-nowrap">Gestão</span>
               </Link>
             )}
           </nav>
 
-          {/* Ações de Tema, Sincronização e Usuário no Topo */}
-          <div className="flex items-center gap-1.5">
+          {/* Ações de Tema, Sincronização e Usuário no Topo (Com shrink-0 para nunca cortar) */}
+          <div className="flex items-center gap-1 sm:gap-1.5 shrink-0">
             {/* Indicador de Sincronização PostgreSQL */}
             <Button
               variant="ghost"
               size="icon"
-              className="size-8 rounded-xl text-muted-foreground hover:text-foreground hover:bg-secondary/80"
+              className="size-8 rounded-xl text-muted-foreground hover:text-foreground hover:bg-secondary/80 shrink-0"
               title={isSyncing ? "Sincronizando com PostgreSQL..." : "Sincronizado com PostgreSQL"}
               onClick={() => refreshData()}
             >
               <RefreshCw size={14} className={isSyncing ? "animate-spin text-primary" : ""} />
             </Button>
 
-            {/* Botão de Instalar App (Desktop / Tablet) */}
+            {/* Botão de Instalar App (Desktop / Tablet / Notebook) */}
             {!isInstalled && (
               <Button
                 variant="outline"
                 size="sm"
-                className="hidden sm:inline-flex items-center gap-1.5 rounded-xl border-primary/30 bg-primary/10 text-primary text-xs font-semibold hover:bg-primary/20"
+                className="hidden sm:inline-flex items-center gap-1.5 rounded-xl border-primary/30 bg-primary/10 text-primary text-xs font-semibold hover:bg-primary/20 shrink-0 px-2.5 xl:px-3"
                 onClick={handleInstallClick}
+                title="Instalar Aplicativo no Computador"
                 aria-label="Instalar Aplicativo"
               >
                 <FlaticonDownload size={14} className="text-primary" />
-                <span>Instalar App</span>
+                <span className="hidden xl:inline">Instalar App</span>
               </Button>
             )}
 
@@ -174,8 +176,9 @@ export function AppShell({ children }: { children: ReactNode }) {
             <Button
               variant="ghost"
               size="icon"
-              className="size-8 rounded-xl hover:bg-secondary/80 text-primary"
+              className="size-8 rounded-xl hover:bg-secondary/80 text-primary shrink-0"
               aria-label="Personalizar Paleta de Cores"
+              title="Personalizar Tema & Cores"
               onClick={() => setThemeModalOpen(true)}
             >
               <FlaticonSparkles size={16} />
@@ -185,8 +188,9 @@ export function AppShell({ children }: { children: ReactNode }) {
             <Button
               variant="ghost"
               size="icon"
-              className="size-8 rounded-xl hover:bg-secondary/80"
+              className="size-8 rounded-xl hover:bg-secondary/80 shrink-0"
               aria-label={theme === "dark" ? "Ativar modo claro" : "Ativar modo escuro"}
+              title={theme === "dark" ? "Ativar modo claro" : "Ativar modo escuro"}
               onClick={toggleTheme}
             >
               {theme === "dark" ? (
@@ -202,16 +206,16 @@ export function AppShell({ children }: { children: ReactNode }) {
               )}
             </Button>
 
-            {/* Perfil do Usuário e Botão Sair no Desktop */}
+            {/* Perfil do Usuário e Botão Sair no Topo (Sempre visíveis e protegidos) */}
             {user && (
-              <div className="hidden sm:flex items-center gap-2 pl-2 border-l border-border/60">
+              <div className="flex items-center gap-1 sm:gap-1.5 pl-1.5 sm:pl-2 border-l border-border/60 shrink-0">
                 <button
                   type="button"
                   onClick={() => setAvatarModalOpen(true)}
-                  className="group flex items-center gap-1.5 rounded-xl bg-secondary/60 hover:bg-secondary py-1 px-2 text-xs transition-all cursor-pointer ring-1 ring-border/40 hover:ring-primary/40"
+                  className="group flex items-center gap-1.5 rounded-xl bg-secondary/60 hover:bg-secondary py-1 px-1.5 sm:px-2 text-xs transition-all cursor-pointer ring-1 ring-border/40 hover:ring-primary/40 shrink-0"
                   title="Clique para alterar sua foto de perfil"
                 >
-                  <div className="flex size-6 items-center justify-center rounded-lg bg-primary font-bold text-primary-foreground text-[11px] shadow-sm overflow-hidden shrink-0">
+                  <div className="flex size-6 sm:size-7 items-center justify-center rounded-lg bg-primary font-bold text-primary-foreground text-[11px] sm:text-xs shadow-sm overflow-hidden shrink-0">
                     {user.avatarUrl ? (
                       <img
                         src={user.avatarUrl}
@@ -222,14 +226,15 @@ export function AppShell({ children }: { children: ReactNode }) {
                       userInitial
                     )}
                   </div>
-                  <span className="font-medium text-foreground max-w-[100px] truncate group-hover:text-primary transition-colors">
+                  <span className="hidden lg:inline-block font-medium text-foreground max-w-[80px] xl:max-w-[110px] truncate group-hover:text-primary transition-colors">
                     {user.name.split(" ")[0]}
                   </span>
                 </button>
+
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="size-8 rounded-xl text-muted-foreground hover:text-destructive hover:bg-destructive/10"
+                  className="size-8 rounded-xl text-muted-foreground hover:text-destructive hover:bg-destructive/10 shrink-0"
                   title="Sair da Conta"
                   onClick={() => logout()}
                 >
@@ -241,8 +246,8 @@ export function AppShell({ children }: { children: ReactNode }) {
         </div>
       </header>
 
-      {/* Conteúdo Principal (com padding inferior maior no mobile para não sobrepor a barra de abas) */}
-      <main className="mx-auto max-w-6xl animate-rise px-4 pb-28 pt-5 sm:px-6 md:pb-24">
+      {/* Conteúdo Principal (com padding fluido e adaptado) */}
+      <main className="mx-auto max-w-7xl animate-rise px-3 sm:px-5 lg:px-6 pb-28 pt-5 md:pb-24">
         {children}
       </main>
 
