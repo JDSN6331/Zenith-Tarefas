@@ -241,14 +241,6 @@ export function MetasPage() {
                       <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                         Alvos de Medição ({targets.length})
                       </p>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => openAddTarget(goal)}
-                        className="h-7 text-xs gap-1 text-primary hover:text-primary hover:bg-primary/10"
-                      >
-                        <FlaticonPlus size={13} /> Adicionar Alvo
-                      </Button>
                     </div>
 
                     {targets.length === 0 ? (
