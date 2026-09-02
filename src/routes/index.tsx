@@ -20,6 +20,7 @@ import { useStore } from "@/lib/store";
 import {
   calculateGoalProgress,
   calculatePerformanceStats,
+  computeTaskStatus,
   formatDate,
   isOverdue,
   todayISO,
@@ -82,12 +83,9 @@ function Dashboard() {
 
   const today = todayISO();
   const activeTasks = tasks;
-  const pending = activeTasks.filter((t) => !t.done && !isOverdue(t));
-  const inProgress = activeTasks.filter(
-    (t) =>
-      !t.done && (t.status === "in_progress" || (t.subtasks && t.subtasks.some((st) => st.done))),
-  );
-  const overdue = activeTasks.filter(isOverdue);
+  const pending = activeTasks.filter((t) => computeTaskStatus(t) === "pending");
+  const inProgress = activeTasks.filter((t) => computeTaskStatus(t) === "in_progress");
+  const overdue = activeTasks.filter((t) => computeTaskStatus(t) === "overdue");
   const doneToday = activeTasks.filter((t) => t.completedAt?.slice(0, 10) === today);
 
   const stats = calculatePerformanceStats(tasks, goals, categories);

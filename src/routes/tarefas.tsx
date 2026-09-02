@@ -193,7 +193,7 @@ export function TarefasPage() {
       {/* Seção de Filtros Detalhados */}
       <section
         aria-label="Filtros Detalhados"
-        className="glass-card grid gap-3.5 p-4 sm:grid-cols-2 lg:grid-cols-5"
+        className="glass-card grid gap-3.5 p-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6"
       >
         {/* Campo de Busca */}
         <div className="space-y-1.5">
@@ -216,6 +216,28 @@ export function TarefasPage() {
               className="pl-8 bg-background/50 text-sm h-9"
             />
           </div>
+        </div>
+
+        {/* Status */}
+        <div className="space-y-1.5">
+          <Label
+            htmlFor="f-status"
+            className="text-xs font-semibold uppercase tracking-wider text-muted-foreground"
+          >
+            Status
+          </Label>
+          <Select value={statusFilter} onValueChange={(v) => setStatusFilter(v as FilterStatus)}>
+            <SelectTrigger id="f-status" className="bg-background/50 h-9 text-sm text-foreground">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="todas">Todos os status</SelectItem>
+              <SelectItem value="pending">Não Iniciadas</SelectItem>
+              <SelectItem value="in_progress">Em Andamento</SelectItem>
+              <SelectItem value="overdue">Atrasadas</SelectItem>
+              <SelectItem value="completed">Concluídas</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
 
         {/* Prioridade */}
