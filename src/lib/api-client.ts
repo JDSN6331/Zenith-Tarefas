@@ -12,6 +12,8 @@ export interface UserProfile {
   role: "admin" | "user";
   status: "active" | "inactive";
   avatarUrl?: string | null;
+  themeMode?: "light" | "dark";
+  themePalette?: "claro" | "escuro" | "verde" | "quente" | "roxo";
   createdAt: string;
 }
 
@@ -155,6 +157,14 @@ export const apiClient = {
     const res = await request("/api/user/avatar", {
       method: "POST",
       body: JSON.stringify({ avatarUrl }),
+    });
+    return res.ok;
+  },
+
+  async updatePreferences(prefs: { themeMode?: "light" | "dark"; themePalette?: string }): Promise<boolean> {
+    const res = await request("/api/user/preferences", {
+      method: "POST",
+      body: JSON.stringify(prefs),
     });
     return res.ok;
   },

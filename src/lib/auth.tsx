@@ -24,6 +24,7 @@ interface AuthContextType {
   }) => Promise<{ ok: boolean; error?: string }>;
   logout: () => Promise<void>;
   updateAvatar: (avatarUrl: string | null) => Promise<boolean>;
+  updateUserPreferences: (prefs: { themeMode?: "light" | "dark"; themePalette?: any }) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | null>(null);
@@ -123,6 +124,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return ok;
   }, []);
 
+  const updateUserPreferences = useCallback(
+    async (prefs: { themeMode?: "light" | "dark"; themePalette?: any }) => {
+      setUser((prev) => (prev ? { ...prev, ...prefs } : null));
+      try {
+        await apiClient.updatePreferences(prefs);
+      } catch (err) {
+        console.error("Erro ao sincronizar preferências do usuário:", err);
+      }
+    },
+    []
+  );
+
   return (
     <AuthContext.Provider
       value={{
@@ -133,6 +146,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         register,
         logout,
         updateAvatar,
+        updateUserPreferences,
       }}
     >
       {children}

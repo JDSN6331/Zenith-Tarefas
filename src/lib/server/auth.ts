@@ -13,6 +13,8 @@ export interface SafeUser {
   role: "admin" | "user";
   status: "active" | "inactive";
   avatarUrl?: string | null;
+  themeMode?: "light" | "dark";
+  themePalette?: "claro" | "escuro" | "verde" | "quente" | "roxo";
   createdAt: string;
 }
 
@@ -83,10 +85,14 @@ export async function validateSession(token: string | null | undefined): Promise
         role: string;
         status: string;
         avatar_url: string | null;
+        theme_mode: string | null;
+        theme_palette: string | null;
         created_at: string;
         expires_at: string;
       }>(
-        `SELECT u.id, u.name, u.login, COALESCE(u.role, 'user') as role, COALESCE(u.status, 'active') as status, u.avatar_url, u.created_at, s.expires_at
+        `SELECT u.id, u.name, u.login, COALESCE(u.role, 'user') as role, COALESCE(u.status, 'active') as status, 
+                u.avatar_url, COALESCE(u.theme_mode, 'dark') as theme_mode, COALESCE(u.theme_palette, 'escuro') as theme_palette, 
+                u.created_at, s.expires_at
          FROM sessions s
          JOIN users u ON s.user_id = u.id
          WHERE s.token = $1 AND s.expires_at > $2`,
@@ -103,6 +109,8 @@ export async function validateSession(token: string | null | undefined): Promise
         role: (row.role || "user") as "admin" | "user",
         status: (row.status || "active") as "active" | "inactive",
         avatarUrl: row.avatar_url || null,
+        themeMode: (row.theme_mode === "light" ? "light" : "dark"),
+        themePalette: (row.theme_palette as any) || "escuro",
         createdAt: row.created_at,
       };
     } else {
@@ -117,6 +125,8 @@ export async function validateSession(token: string | null | undefined): Promise
         role: (user.role || "user") as "admin" | "user",
         status: (user.status || "active") as "active" | "inactive",
         avatarUrl: user.avatar_url || null,
+        themeMode: (user.theme_mode === "light" ? "light" : "dark"),
+        themePalette: (user.theme_palette as any) || "escuro",
         createdAt: user.created_at,
       };
     }
@@ -256,6 +266,8 @@ export async function loginUser(params: {
     role: string;
     status: string;
     avatar_url?: string | null;
+    theme_mode?: string | null;
+    theme_palette?: string | null;
     created_at: string;
   } | undefined;
 
@@ -268,9 +280,13 @@ export async function loginUser(params: {
       role: string;
       status: string;
       avatar_url: string | null;
+      theme_mode: string | null;
+      theme_palette: string | null;
       created_at: string;
     }>(
-      `SELECT id, name, login, password_hash, COALESCE(role, 'user') as role, COALESCE(status, 'active') as status, avatar_url, created_at 
+      `SELECT id, name, login, password_hash, COALESCE(role, 'user') as role, COALESCE(status, 'active') as status, 
+              avatar_url, COALESCE(theme_mode, 'dark') as theme_mode, COALESCE(theme_palette, 'escuro') as theme_palette, 
+              created_at 
        FROM users WHERE login = $1`,
       [login]
     );
@@ -302,6 +318,8 @@ export async function loginUser(params: {
       role: (userRecord.role || "user") as "admin" | "user",
       status: (userRecord.status || "active") as "active" | "inactive",
       avatarUrl: userRecord.avatar_url || null,
+      themeMode: (userRecord.theme_mode === "light" ? "light" : "dark"),
+      themePalette: (userRecord.theme_palette as any) || "escuro",
       createdAt: userRecord.created_at,
     },
     token,

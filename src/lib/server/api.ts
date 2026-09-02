@@ -639,6 +639,37 @@ export async function handleApiRequest(request: Request): Promise<Response> {
       return jsonResponse({ ok: true, avatarUrl });
     }
 
+    // ---------------- USER: UPDATE PREFERENCES (THEME & PALETTE) ----------------
+    if (path === "/api/user/preferences" && method === "POST") {
+      const body = await request.json();
+      const themeMode = body.themeMode === "light" ? "light" : body.themeMode === "dark" ? "dark" : null;
+      const validPalettes = ["claro", "escuro", "verde", "quente", "roxo"];
+      const themePalette = validPalettes.includes(body.themePalette) ? body.themePalette : null;
+
+      const hasPg = !!getDbPool();
+      if (hasPg) {
+        if (themeMode && themePalette) {
+          await query(`UPDATE users SET theme_mode = $1, theme_palette = $2 WHERE id = $3`, [
+            themeMode,
+            themePalette,
+            user.id,
+          ]);
+        } else if (themeMode) {
+          await query(`UPDATE users SET theme_mode = $1 WHERE id = $2`, [themeMode, user.id]);
+        } else if (themePalette) {
+          await query(`UPDATE users SET theme_palette = $1 WHERE id = $2`, [themePalette, user.id]);
+        }
+      } else {
+        const u = memoryStore.users.find((x) => x.id === user.id);
+        if (u) {
+          if (themeMode) u.theme_mode = themeMode;
+          if (themePalette) u.theme_palette = themePalette;
+        }
+      }
+
+      return jsonResponse({ ok: true, themeMode, themePalette });
+    }
+
     // ---------------- ADMIN: GESTÃO DE USUÁRIOS E SISTEMA (LGPD COMPLIANT) ----------------
     // O administrador NÃO tem acesso ao conteúdo individual das tarefas de outros usuários
     if (path === "/api/admin/users" && method === "GET") {

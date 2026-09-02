@@ -24,6 +24,8 @@ interface MemoryDb {
     role: string;
     status: string;
     avatar_url?: string | null;
+    theme_mode?: string;
+    theme_palette?: string;
     created_at: string;
   }>;
   sessions: Array<{
@@ -303,6 +305,8 @@ export async function initDb(): Promise<void> {
     await query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS role TEXT DEFAULT 'user';`);
     await query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS status TEXT DEFAULT 'active';`);
     await query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS avatar_url TEXT;`);
+    await query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS theme_mode TEXT DEFAULT 'dark';`);
+    await query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS theme_palette TEXT DEFAULT 'escuro';`);
     await query(`ALTER TABLE categories ADD COLUMN IF NOT EXISTS user_id TEXT;`);
     await query(`ALTER TABLE goals ADD COLUMN IF NOT EXISTS user_id TEXT;`);
     await query(`ALTER TABLE tasks ADD COLUMN IF NOT EXISTS user_id TEXT;`);

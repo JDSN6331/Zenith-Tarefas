@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useEffect, useState, type ReactNode } from "react";
+import { useAuth } from "./auth";
 
 export type ThemeMode = "light" | "dark";
 export type ThemePalette = "claro" | "escuro" | "verde" | "quente" | "roxo";
@@ -67,6 +68,7 @@ const ThemeContext = createContext<ThemeContextValue | null>(null);
 
 const THEME_STORAGE_KEY = "zenith.theme.mode";
 const PALETTE_STORAGE_KEY = "zenith.theme.palette";
+const VALID_PALETTES: ThemePalette[] = ["claro", "escuro", "verde", "quente", "roxo"];
 const LEGACY_PALETTES: Record<string, ThemePalette> = {
   gold: "quente",
   linear: "escuro",
@@ -76,45 +78,83 @@ const LEGACY_PALETTES: Record<string, ThemePalette> = {
 };
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
+  const { user, updateUserPreferences } = useAuth();
   const [theme, setThemeState] = useState<ThemeMode>("dark");
   const [palette, setPaletteState] = useState<ThemePalette>("escuro");
 
+  // Sincroniza o tema sempre que o usuário ativo mudar ou carregar da sessão
   useEffect(() => {
-    // 1. Carregar Modo Claro/Escuro
-    const storedTheme = window.localStorage.getItem(THEME_STORAGE_KEY) as ThemeMode | null;
-    let initialTheme: ThemeMode = "dark";
-    if (storedTheme === "light" || storedTheme === "dark") {
-      initialTheme = storedTheme;
-    } else {
-      const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-      initialTheme = prefersDark ? "dark" : "light";
-    }
-    setThemeState(initialTheme);
-    document.documentElement.classList.toggle("dark", initialTheme === "dark");
+    if (!user) {
+      // Estado sem usuário logado: usa o último tema global da tela inicial ou o padrão escuro
+      const storedTheme = window.localStorage.getItem(THEME_STORAGE_KEY) as ThemeMode | null;
+      const initialTheme: ThemeMode = storedTheme === "light" ? "light" : "dark";
 
-    // 2. Carregar Paleta de Cores
-    const storedPalette = window.localStorage.getItem(PALETTE_STORAGE_KEY);
-    let initialPalette: ThemePalette = "escuro";
+      const storedPalette = window.localStorage.getItem(PALETTE_STORAGE_KEY);
+      let initialPalette: ThemePalette = "escuro";
+      if (storedPalette && VALID_PALETTES.includes(storedPalette as ThemePalette)) {
+        initialPalette = storedPalette as ThemePalette;
+      } else if (storedPalette && LEGACY_PALETTES[storedPalette]) {
+        initialPalette = LEGACY_PALETTES[storedPalette];
+      }
 
-    if (storedPalette && ["claro", "escuro", "verde", "quente", "roxo"].includes(storedPalette)) {
-      initialPalette = storedPalette as ThemePalette;
-    } else if (storedPalette && LEGACY_PALETTES[storedPalette]) {
-      initialPalette = LEGACY_PALETTES[storedPalette];
+      setThemeState(initialTheme);
+      setPaletteState(initialPalette);
+      document.documentElement.classList.toggle("dark", initialTheme === "dark");
+      document.documentElement.setAttribute("data-palette", initialPalette);
+      return;
     }
-    
-    setPaletteState(initialPalette);
-    document.documentElement.setAttribute("data-palette", initialPalette);
-  }, []);
+
+    // Usuário autenticado: restaura as preferências individuais salvas na conta deste usuário
+    const userPrefTheme =
+      user.themeMode ||
+      (window.localStorage.getItem(`${THEME_STORAGE_KEY}.${user.id}`) as ThemeMode | null) ||
+      "dark";
+
+    const userPrefPaletteRaw =
+      user.themePalette ||
+      window.localStorage.getItem(`${PALETTE_STORAGE_KEY}.${user.id}`) ||
+      "escuro";
+
+    let finalPalette: ThemePalette = "escuro";
+    if (VALID_PALETTES.includes(userPrefPaletteRaw as ThemePalette)) {
+      finalPalette = userPrefPaletteRaw as ThemePalette;
+    } else if (LEGACY_PALETTES[userPrefPaletteRaw]) {
+      finalPalette = LEGACY_PALETTES[userPrefPaletteRaw];
+    }
+
+    const finalTheme: ThemeMode = userPrefTheme === "light" ? "light" : "dark";
+
+    setThemeState(finalTheme);
+    setPaletteState(finalPalette);
+    document.documentElement.classList.toggle("dark", finalTheme === "dark");
+    document.documentElement.setAttribute("data-palette", finalPalette);
+
+    // Salva no cache isolado por usuário para carregamento instantâneo
+    window.localStorage.setItem(`${THEME_STORAGE_KEY}.${user.id}`, finalTheme);
+    window.localStorage.setItem(`${PALETTE_STORAGE_KEY}.${user.id}`, finalPalette);
+  }, [user?.id, user?.themeMode, user?.themePalette]);
 
   const setTheme = (newTheme: ThemeMode) => {
     setThemeState(newTheme);
     document.documentElement.classList.toggle("dark", newTheme === "dark");
+
+    // Salva na conta do usuário individual
+    if (user?.id) {
+      window.localStorage.setItem(`${THEME_STORAGE_KEY}.${user.id}`, newTheme);
+      updateUserPreferences({ themeMode: newTheme });
+    }
     window.localStorage.setItem(THEME_STORAGE_KEY, newTheme);
   };
 
   const setPalette = (newPalette: ThemePalette) => {
     setPaletteState(newPalette);
     document.documentElement.setAttribute("data-palette", newPalette);
+
+    // Salva na conta do usuário individual
+    if (user?.id) {
+      window.localStorage.setItem(`${PALETTE_STORAGE_KEY}.${user.id}`, newPalette);
+      updateUserPreferences({ themePalette: newPalette });
+    }
     window.localStorage.setItem(PALETTE_STORAGE_KEY, newPalette);
   };
 
