@@ -78,6 +78,7 @@ export function MetasPage() {
     tasks,
     categories,
     addGoal,
+    editGoal,
     removeGoal,
     updateGoalTarget,
     removeGoalTarget,
@@ -85,6 +86,7 @@ export function MetasPage() {
   } = useStore();
 
   const [goalModalOpen, setGoalModalOpen] = useState(false);
+  const [editingGoal, setEditingGoal] = useState<Goal | null>(null);
   const [goalDraft, setGoalDraft] = useState<GoalDraft>(EMPTY_GOAL_DRAFT);
 
   // Alvo ClickUp Dialog
@@ -96,17 +98,41 @@ export function MetasPage() {
   const [taskDialogOpen, setTaskDialogOpen] = useState(false);
   const [goalForNewTask, setGoalForNewTask] = useState<string | null>(null);
 
-  useEffect(() => {
-    if (goalModalOpen) {
-      setGoalDraft(EMPTY_GOAL_DRAFT);
-    }
-  }, [goalModalOpen]);
+  const openCreateGoal = () => {
+    setEditingGoal(null);
+    setGoalDraft(EMPTY_GOAL_DRAFT);
+    setGoalModalOpen(true);
+  };
 
-  const handleCreateGoal = (e: React.FormEvent) => {
+  const openEditGoal = (goal: Goal) => {
+    setEditingGoal(goal);
+    setGoalDraft({
+      title: goal.title,
+      description: goal.description,
+      horizon: goal.horizon,
+      categoryId: goal.categoryId,
+      targetDate: goal.targetDate,
+    });
+    setGoalModalOpen(true);
+  };
+
+  const handleSaveGoal = (e: React.FormEvent) => {
     e.preventDefault();
     if (!goalDraft.title.trim()) return;
-    addGoal(goalDraft);
+
+    if (editingGoal) {
+      editGoal(editingGoal.id, {
+        title: goalDraft.title.trim(),
+        description: goalDraft.description.trim(),
+        horizon: goalDraft.horizon,
+        categoryId: goalDraft.categoryId,
+        targetDate: goalDraft.targetDate,
+      });
+    } else {
+      addGoal(goalDraft);
+    }
     setGoalModalOpen(false);
+    setEditingGoal(null);
   };
 
   const openAddTarget = (goal: Goal) => {
@@ -155,7 +181,7 @@ export function MetasPage() {
         </div>
 
         <Button
-          onClick={() => setGoalModalOpen(true)}
+          onClick={openCreateGoal}
           className="gap-2 bg-primary text-primary-foreground"
         >
           <FlaticonPlus size={16} /> Nova Meta
@@ -209,15 +235,26 @@ export function MetasPage() {
                       </div>
                     </div>
 
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className="size-8 rounded-lg text-muted-foreground hover:text-destructive hover:bg-destructive/10 shrink-0"
-                      aria-label={`Mover meta ${goal.title} para a lixeira`}
-                      onClick={() => removeGoal(goal.id)}
-                    >
-                      <FlaticonTrash size={16} />
-                    </Button>
+                    <div className="flex items-center gap-1 shrink-0">
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="size-8 rounded-lg text-muted-foreground hover:text-foreground hover:bg-secondary/50 transition-colors"
+                        aria-label={`Editar meta ${goal.title}`}
+                        onClick={() => openEditGoal(goal)}
+                      >
+                        <FlaticonEdit size={16} />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="size-8 rounded-lg text-muted-foreground hover:text-destructive hover:bg-destructive/10 shrink-0 transition-colors"
+                        aria-label={`Mover meta ${goal.title} para a lixeira`}
+                        onClick={() => removeGoal(goal.id)}
+                      >
+                        <FlaticonTrash size={16} />
+                      </Button>
+                    </div>
                   </div>
 
                   {goal.description && (
@@ -410,13 +447,21 @@ export function MetasPage() {
         </div>
       )}
 
-      {/* Modal de Criação de Meta */}
-      <Dialog open={goalModalOpen} onOpenChange={setGoalModalOpen}>
+      {/* Modal de Criação / Edição de Meta */}
+      <Dialog
+        open={goalModalOpen}
+        onOpenChange={(open) => {
+          setGoalModalOpen(open);
+          if (!open) setEditingGoal(null);
+        }}
+      >
         <DialogContent className="glass-card sm:max-w-lg">
           <DialogHeader>
-            <DialogTitle className="font-display text-xl font-bold">Criar Nova Meta</DialogTitle>
+            <DialogTitle className="font-display text-xl font-bold">
+              {editingGoal ? "Editar Meta" : "Criar Nova Meta"}
+            </DialogTitle>
           </DialogHeader>
-          <form onSubmit={handleCreateGoal} className="space-y-4 pt-2">
+          <form onSubmit={handleSaveGoal} className="space-y-4 pt-2">
             <div className="space-y-1.5">
               <Label
                 htmlFor="goal-title"
@@ -543,11 +588,18 @@ export function MetasPage() {
             </div>
 
             <DialogFooter className="pt-2">
-              <Button type="button" variant="ghost" onClick={() => setGoalModalOpen(false)}>
+              <Button
+                type="button"
+                variant="ghost"
+                onClick={() => {
+                  setGoalModalOpen(false);
+                  setEditingGoal(null);
+                }}
+              >
                 Cancelar
               </Button>
               <Button type="submit" className="bg-primary text-primary-foreground">
-                Criar Meta
+                {editingGoal ? "Salvar Alterações" : "Criar Meta"}
               </Button>
             </DialogFooter>
           </form>
