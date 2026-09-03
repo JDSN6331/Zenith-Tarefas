@@ -186,7 +186,7 @@ export function MetasPage() {
 
         <Button
           onClick={openCreateGoal}
-          className="gap-2 bg-primary text-primary-foreground"
+          className="w-full sm:w-auto gap-2 bg-primary text-primary-foreground"
         >
           <FlaticonPlus size={16} /> Nova Meta
         </Button>
@@ -200,7 +200,7 @@ export function MetasPage() {
           hint="Defina suas metas de curto, médio e longo prazo e acompanhe a evolução com alvos mensuráveis."
         />
       ) : (
-        <div className="grid gap-5 md:grid-cols-2">
+        <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
           {goals.map((goal) => {
             const p = calculateGoalProgress(goal, tasks);
             const linkedTasks = tasks.filter((t) => t.goalId === goal.id);
@@ -210,29 +210,29 @@ export function MetasPage() {
             return (
               <article
                 key={goal.id}
-                className="glass-card flex flex-col justify-between p-5 transition-all hover:shadow-lift"
+                className="glass-card flex flex-col justify-between p-4 sm:p-5 transition-all hover:shadow-lift min-w-0 w-full overflow-hidden"
               >
-                <div>
+                <div className="min-w-0">
                   {/* Topo do Card */}
                   <div className="flex items-start justify-between gap-3">
                     <div className="min-w-0 flex-1">
-                      <h2 className="font-display text-xl font-bold leading-snug text-foreground">
+                      <h2 className="font-display text-xl font-bold leading-snug text-foreground break-words">
                         {goal.title}
                       </h2>
                       <div className="mt-2 flex flex-wrap items-center gap-1.5 text-xs">
-                        <Badge variant="secondary" className="font-medium">
+                        <Badge variant="secondary" className="font-medium shrink-0">
                           {HORIZON_LABEL[goal.horizon]}
                         </Badge>
                         {category && (
-                          <span className="inline-flex items-center gap-1.5 rounded-lg bg-secondary/80 px-2 py-1 text-foreground">
+                          <span className="inline-flex items-center gap-1.5 rounded-lg bg-secondary/80 px-2 py-1 text-foreground max-w-full">
                             <span
-                              className="size-2 rounded-full"
+                              className="size-2 rounded-full shrink-0"
                               style={{ backgroundColor: category.color }}
                             />
-                            {category.name}
+                            <span className="truncate">{category.name}</span>
                           </span>
                         )}
-                        <span className="inline-flex items-center gap-1 rounded-lg bg-muted px-2 py-1 text-muted-foreground">
+                        <span className="inline-flex items-center gap-1 rounded-lg bg-muted px-2 py-1 text-muted-foreground shrink-0">
                           <FlaticonCalendar size={13} />
                           {formatDate(goal.targetDate)}
                         </span>
@@ -262,22 +262,22 @@ export function MetasPage() {
                   </div>
 
                   {goal.description && (
-                    <p className="mt-3 text-sm text-muted-foreground">{goal.description}</p>
+                    <p className="mt-3 text-sm text-muted-foreground break-words">{goal.description}</p>
                   )}
 
                   {/* Barra de Progresso Geral da Meta */}
-                  <div className="mt-5 rounded-xl bg-secondary/40 p-3.5 border border-border/40">
-                    <div className="mb-2 flex items-center justify-between text-xs font-semibold">
-                      <span className="text-muted-foreground">
+                  <div className="mt-5 rounded-xl bg-secondary/40 p-3 sm:p-3.5 border border-border/40 min-w-0">
+                    <div className="mb-2 flex flex-wrap items-center justify-between gap-1.5 text-xs font-semibold">
+                      <span className="text-muted-foreground min-w-0 truncate">
                         Progresso Geral ({p.completedTargets}/{p.total} alvos concluídos)
                       </span>
-                      <span className="text-primary font-bold text-sm">{p.percent}%</span>
+                      <span className="text-primary font-bold text-sm shrink-0">{p.percent}%</span>
                     </div>
-                    <Progress value={p.percent} className="h-2 bg-secondary" />
+                    <Progress value={p.percent} className="h-2 bg-secondary w-full" />
                   </div>
 
                   {/* Lista de Alvos ClickUp */}
-                  <div className="mt-4 space-y-2">
+                  <div className="mt-4 space-y-2 min-w-0">
                     <div className="flex items-center justify-between">
                       <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                         Alvos de Medição ({targets.length})
@@ -289,7 +289,7 @@ export function MetasPage() {
                         Nenhum alvo de medição numérico ou financeiro cadastrado ainda.
                       </p>
                     ) : (
-                      <ul className="space-y-2">
+                      <ul className="space-y-2 min-w-0">
                         {targets.map((tgt) => {
                           const range = tgt.targetValue - (tgt.startValue || 0);
                           const curr = tgt.currentValue - (tgt.startValue || 0);
@@ -305,23 +305,23 @@ export function MetasPage() {
                           return (
                             <li
                               key={tgt.id}
-                              className="rounded-xl bg-background/50 p-2.5 border border-border/40 text-xs flex flex-col gap-1.5"
+                              className="rounded-xl bg-background/50 p-2.5 border border-border/40 text-xs flex flex-col gap-1.5 min-w-0 overflow-hidden"
                             >
-                              <div className="flex items-center justify-between gap-2">
-                                <div className="flex items-center gap-1.5 truncate">
+                              <div className="flex items-center justify-between gap-2 min-w-0">
+                                <div className="flex items-center gap-1.5 truncate min-w-0 flex-1">
                                   {tgt.type === "currency" && (
-                                    <FlaticonDollar size={13} className="text-success" />
+                                    <FlaticonDollar size={13} className="text-success shrink-0" />
                                   )}
                                   {tgt.type === "number" && (
-                                    <FlaticonHash size={13} className="text-primary" />
+                                    <FlaticonHash size={13} className="text-primary shrink-0" />
                                   )}
                                   {tgt.type === "percent" && (
-                                    <FlaticonPercent size={13} className="text-info" />
+                                    <FlaticonPercent size={13} className="text-info shrink-0" />
                                   )}
                                   {tgt.type === "boolean" && (
-                                    <FlaticonCheck size={13} className="text-accent" />
+                                    <FlaticonCheck size={13} className="text-accent shrink-0" />
                                   )}
-                                  <span className="font-semibold text-foreground truncate">
+                                  <span className="font-semibold text-foreground truncate min-w-0">
                                     {tgt.title}
                                   </span>
                                 </div>
@@ -331,7 +331,7 @@ export function MetasPage() {
                                     variant="ghost"
                                     size="icon"
                                     onClick={() => openEditTarget(goal, tgt)}
-                                    className="size-6 text-muted-foreground hover:text-foreground"
+                                    className="size-6 text-muted-foreground hover:text-foreground shrink-0"
                                   >
                                     <FlaticonEdit size={12} />
                                   </Button>
@@ -339,7 +339,7 @@ export function MetasPage() {
                                     variant="ghost"
                                     size="icon"
                                     onClick={() => removeGoalTarget(goal.id, tgt.id)}
-                                    className="size-6 text-muted-foreground hover:text-destructive"
+                                    className="size-6 text-muted-foreground hover:text-destructive shrink-0"
                                   >
                                     <FlaticonTrash size={12} />
                                   </Button>
@@ -347,11 +347,11 @@ export function MetasPage() {
                               </div>
 
                               {/* Barra de Progresso do Alvo */}
-                              <Progress value={pct} className="h-1.5 bg-secondary" />
+                              <Progress value={pct} className="h-1.5 bg-secondary w-full" />
 
                               {/* Controles Rápidos de Atualização */}
-                              <div className="flex items-center justify-between pt-0.5 text-muted-foreground">
-                                <span>
+                              <div className="flex flex-wrap items-center justify-between gap-2 pt-0.5 text-muted-foreground min-w-0">
+                                <span className="truncate min-w-0 text-[11px] sm:text-xs">
                                   {tgt.type === "currency" &&
                                     `${formatCurrency(tgt.currentValue)} de ${formatCurrency(tgt.targetValue)}`}
                                   {tgt.type === "number" &&
@@ -367,7 +367,7 @@ export function MetasPage() {
                                     size="sm"
                                     variant={tgt.completed ? "default" : "outline"}
                                     onClick={() => handleToggleBooleanTarget(goal, tgt)}
-                                    className={`h-6 text-[10px] px-2.5 font-semibold gap-1 transition-all ${
+                                    className={`h-6 text-[10px] px-2.5 font-semibold gap-1 shrink-0 transition-all ${
                                       tgt.completed
                                         ? "bg-success text-success-foreground hover:bg-success/90 border-transparent shadow-sm"
                                         : "border-border text-muted-foreground hover:text-foreground hover:bg-secondary"
@@ -384,12 +384,12 @@ export function MetasPage() {
                                     )}
                                   </Button>
                                 ) : (
-                                  <div className="flex items-center gap-1">
+                                  <div className="flex items-center gap-1 shrink-0">
                                     <Button
                                       size="icon"
                                       variant="secondary"
                                       onClick={() => handleQuickIncrement(goal, tgt, -1)}
-                                      className="size-5 text-xs font-bold"
+                                      className="size-5 text-xs font-bold shrink-0"
                                     >
                                       -
                                     </Button>
@@ -397,7 +397,7 @@ export function MetasPage() {
                                       size="icon"
                                       variant="secondary"
                                       onClick={() => handleQuickIncrement(goal, tgt, 1)}
-                                      className="size-5 text-xs font-bold"
+                                      className="size-5 text-xs font-bold shrink-0"
                                     >
                                       +
                                     </Button>
@@ -413,21 +413,21 @@ export function MetasPage() {
 
                   {/* Tarefas Vinculadas */}
                   {linkedTasks.length > 0 && (
-                    <div className="mt-4 pt-3 border-t border-border/40 space-y-1.5">
+                    <div className="mt-4 pt-3 border-t border-border/40 space-y-1.5 min-w-0">
                       <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                         Tarefas Vinculadas ({linkedTasks.filter((t) => t.done).length}/
                         {linkedTasks.length})
                       </p>
-                      <ul className="space-y-1 text-xs">
+                      <ul className="space-y-1 text-xs min-w-0">
                         {linkedTasks.slice(0, 3).map((t) => (
                           <li
                             key={t.id}
-                            className={`flex items-center gap-2 ${t.done ? "task-done" : ""}`}
+                            className={`flex items-center gap-2 min-w-0 ${t.done ? "task-done" : ""}`}
                           >
                             <span
-                              className={`size-1.5 rounded-full ${t.done ? "bg-success" : "bg-muted-foreground/50"}`}
+                              className={`size-1.5 rounded-full shrink-0 ${t.done ? "bg-success" : "bg-muted-foreground/50"}`}
                             />
-                            <span className="truncate">{t.title}</span>
+                            <span className="truncate min-w-0 flex-1">{t.title}</span>
                           </li>
                         ))}
                       </ul>
@@ -436,25 +436,27 @@ export function MetasPage() {
                 </div>
 
                 {/* Botões de Ação no Rodapé */}
-                <div className="mt-5 pt-3 border-t border-border/40 flex gap-2">
+                <div className="mt-5 pt-3 border-t border-border/40 grid grid-cols-2 gap-2">
                   <Button
                     variant="outline"
                     size="sm"
-                    className="flex-1 gap-1.5 text-xs bg-background/50"
+                    className="w-full gap-1.5 text-xs bg-background/50 justify-center px-2"
                     onClick={() => {
                       setGoalForNewTask(goal.id);
                       setTaskDialogOpen(true);
                     }}
                   >
-                    <FlaticonPlus size={14} /> Vincular Tarefa
+                    <FlaticonPlus size={14} className="shrink-0" />
+                    <span className="truncate">Vincular Tarefa</span>
                   </Button>
                   <Button
                     variant="secondary"
                     size="sm"
-                    className="flex-1 gap-1.5 text-xs"
+                    className="w-full gap-1.5 text-xs justify-center px-2"
                     onClick={() => openAddTarget(goal)}
                   >
-                    <FlaticonTarget size={14} /> Novo Alvo
+                    <FlaticonTarget size={14} className="shrink-0" />
+                    <span className="truncate">Novo Alvo</span>
                   </Button>
                 </div>
               </article>
@@ -471,7 +473,7 @@ export function MetasPage() {
           if (!open) setEditingGoal(null);
         }}
       >
-        <DialogContent className="glass-card sm:max-w-lg">
+        <DialogContent className="glass-card w-[calc(100vw-2rem)] max-w-lg max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="font-display text-xl font-bold">
               {editingGoal ? "Editar Meta" : "Criar Nova Meta"}
@@ -512,7 +514,7 @@ export function MetasPage() {
               />
             </div>
 
-            <div className="grid gap-3 sm:grid-cols-3">
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
               <div className="space-y-1.5">
                 <Label
                   htmlFor="goal-horizon"

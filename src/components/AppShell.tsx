@@ -93,10 +93,7 @@ export function AppShell({ children }: { children: ReactNode }) {
         <div className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 sm:px-6 py-2.5 sm:py-3">
           {/* Logo e Nome */}
           <Link to="/" className="group flex items-center gap-2.5 shrink-0" aria-label="Zenith Início">
-            <ZenithLogo size={36} variant="badge" />
-            <span className="font-display text-lg font-bold tracking-tight text-foreground transition-colors group-hover:text-primary sm:text-xl leading-none">
-              ZENITH
-            </span>
+            <ZenithLogo size={38} variant="wordmark" />
           </Link>
 
           {/* Navegação Desktop com espaçamento agradável e sem sobreposições */}

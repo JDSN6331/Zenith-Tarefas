@@ -1,59 +1,59 @@
 <svg width="512" height="512" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
   <defs>
     <!-- Background Gradient -->
-    <linearGradient id="bg-escuro" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#060B17" />
-      <stop offset="100%" stop-color="#0B152B" />
+    <linearGradient id="bg-claro" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#091326" />
+      <stop offset="100%" stop-color="#102042" />
     </linearGradient>
 
     <!-- Core Ambient Radial Glow -->
-    <radialGradient id="glow-escuro" cx="50%" cy="46%" r="46%">
-      <stop offset="0%" stop-color="rgba(0, 229, 255, 0.35)" />
+    <radialGradient id="glow-claro" cx="50%" cy="46%" r="46%">
+      <stop offset="0%" stop-color="rgba(56, 189, 248, 0.35)" />
       <stop offset="100%" stop-color="transparent" />
     </radialGradient>
 
     <!-- Upper Facet: Top Bar + Apex Wedge -->
-    <linearGradient id="facet-top-escuro" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#E0F7FA" />
-      <stop offset="35%" stop-color="#00E5FF" />
-      <stop offset="100%" stop-color="#00B0FF" />
+    <linearGradient id="facet-top-claro" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#F0F9FF" />
+      <stop offset="35%" stop-color="#38BDF8" />
+      <stop offset="100%" stop-color="#0284C7" />
     </linearGradient>
 
     <!-- Diagonal Blade: Center Precision Prism -->
-    <linearGradient id="blade-escuro" x1="0%" y1="100%" x2="100%" y2="0%">
-      <stop offset="0%" stop-color="#6366F1" />
-      <stop offset="50%" stop-color="#00B0FF" />
-      <stop offset="100%" stop-color="#00E5FF" />
+    <linearGradient id="blade-claro" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#4F46E5" />
+      <stop offset="50%" stop-color="#0284C7" />
+      <stop offset="100%" stop-color="#38BDF8" />
     </linearGradient>
 
     <!-- Lower Facet: Base Wing Foundation -->
-    <linearGradient id="facet-bot-escuro" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#00E5FF" />
-      <stop offset="60%" stop-color="#00B0FF" />
-      <stop offset="100%" stop-color="#6366F1" />
+    <linearGradient id="facet-bot-claro" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#38BDF8" />
+      <stop offset="60%" stop-color="#0284C7" />
+      <stop offset="100%" stop-color="#4F46E5" />
     </linearGradient>
 
     <!-- Star Radiant Flare -->
-    <radialGradient id="star-flare-escuro" cx="50%" cy="50%" r="50%">
+    <radialGradient id="star-flare-claro" cx="50%" cy="50%" r="50%">
       <stop offset="0%" stop-color="#FFFFFF" />
-      <stop offset="35%" stop-color="#00E5FF" stop-opacity="0.95" />
-      <stop offset="100%" stop-color="#00E5FF" stop-opacity="0" />
+      <stop offset="35%" stop-color="#38BDF8" stop-opacity="0.95" />
+      <stop offset="100%" stop-color="#38BDF8" stop-opacity="0" />
     </radialGradient>
 
     <!-- Drop Shadow for Upper Elements -->
-    <filter id="shadow-escuro" x="-20%" y="-20%" width="140%" height="140%">
+    <filter id="shadow-claro" x="-20%" y="-20%" width="140%" height="140%">
       <feDropShadow dx="0" dy="3.5" stdDeviation="4" flood-color="#000000" flood-opacity="0.55"/>
     </filter>
   </defs>
 
   <!-- Luxury Squircle Badge -->
-  <rect x="2" y="2" width="96" height="96" rx="24" fill="url(#bg-escuro)" />
-  <circle cx="50" cy="46" r="42" fill="url(#glow-escuro)" />
-  <rect x="2" y="2" width="96" height="96" rx="24" stroke="rgba(0, 229, 255, 0.35)" stroke-width="1.2" fill="none" />
-  <rect x="3.5" y="3.5" width="93" height="93" rx="22.5" stroke="rgba(255, 255, 255, 0.08)" stroke-width="0.8" fill="none" />
+  <rect x="2" y="2" width="96" height="96" rx="24" fill="url(#bg-claro)" />
+  <circle cx="50" cy="46" r="42" fill="url(#glow-claro)" />
+  <rect x="2" y="2" width="96" height="96" rx="24" stroke="rgba(56, 189, 248, 0.35)" stroke-width="1.2" fill="none" />
+  <rect x="3.5" y="3.5" width="93" height="93" rx="22.5" stroke="rgba(255, 255, 255, 0.1)" stroke-width="0.8" fill="none" />
 
   <!-- Astronomical Orbit Arc (Celestial Trajectory) -->
-  <ellipse cx="50" cy="50" rx="36" ry="17" transform="rotate(-28 50 50)" stroke="#00E5FF" stroke-width="1.2" stroke-dasharray="3 4" opacity="0.3" fill="none" />
+  <ellipse cx="50" cy="50" rx="36" ry="17" transform="rotate(-28 50 50)" stroke="#38BDF8" stroke-width="1.2" stroke-dasharray="3 4" opacity="0.3" fill="none" />
 
   <!-- === THE ZENITH APEX Z MONOGRAM === -->
   <!-- 
@@ -67,21 +67,21 @@
   <!-- 1. Base Wing (Ground / Foundation) -->
   <path
     d="M 28 66 H 72 C 75.5 66 77.5 70 75 73 L 73 75 C 71.5 76.5 69.5 76.5 67.5 76.5 H 24 C 20.5 76.5 18.5 72.5 21 69.5 L 24 66 Z"
-    fill="url(#facet-bot-escuro)"
+    fill="url(#facet-bot-claro)"
   />
 
   <!-- 2. Diagonal Blade (Connecting Prism) -->
   <path
     d="M 68 31 L 28 73 C 26 75 22 74 23 71 L 27 65 L 61 27 C 63 25 67 26 66 29 L 68 31 Z"
-    fill="url(#blade-escuro)"
+    fill="url(#blade-claro)"
   />
 
   <!-- 3. Upper Apex Wing (Reaching the Zenith) with Shadow -->
-  <g filter="url(#shadow-escuro)">
+  <g filter="url(#shadow-claro)">
     <!-- Main Top Bar -->
     <path
       d="M 24 25 H 68 C 72 25 74 28 72 31.5 L 70 34 C 68.5 36 66 36 63.5 36 H 32 C 28.5 36 26.5 32 29 29 L 32 25 Z"
-      fill="url(#facet-top-escuro)"
+      fill="url(#facet-top-claro)"
     />
 
     <!-- Apex Needle Crest pointing up to star -->
@@ -98,7 +98,7 @@
 
   <!-- === THE RADIANT ZENITH SUMMIT STAR === -->
   <!-- Ambient Flare at (74, 21) -->
-  <circle cx="74" cy="21" r="14" fill="url(#star-flare-escuro)" />
+  <circle cx="74" cy="21" r="14" fill="url(#star-flare-claro)" />
 
   <!-- 4-point Diamond Star -->
   <path

@@ -99,11 +99,8 @@ export function AuthScreen() {
         {/* Cabeçalho com Logotipo */}
         <div className="mb-6 flex flex-col items-center text-center">
           <div className="mb-3 transition-transform hover:scale-105">
-            <ZenithLogo size={56} variant="badge" />
+            <ZenithLogo size={56} variant="wordmark" />
           </div>
-          <h1 className="font-display text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
-            ZENITH
-          </h1>
           <p className="mt-1 text-xs font-semibold tracking-wider uppercase text-muted-foreground sm:text-xs">
             Foco • Organize • Conquiste
           </p>

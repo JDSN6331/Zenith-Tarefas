@@ -94,7 +94,7 @@ export function InstallPwaModal({
       <DialogContent className="glass-card max-w-sm rounded-3xl p-6 border-border/70">
         <DialogHeader className="flex flex-col items-center text-center">
           <div className="mb-2 flex size-16 items-center justify-center rounded-2xl bg-primary/15 shadow-inner">
-            <ZenithLogo size={42} />
+            <ZenithLogo size={48} variant="badge" />
           </div>
           <DialogTitle className="font-display text-xl font-bold tracking-tight text-foreground">
             Instalar o Zenith no seu celular

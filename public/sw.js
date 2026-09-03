@@ -3,7 +3,7 @@
  * Habilita instalação no Android/iOS/Desktop e suporte a cache offline
  */
 
-const CACHE_NAME = "zenith-pwa-v1";
+const CACHE_NAME = "zenith-pwa-v6";
 
 const PRECACHE_RESOURCES = [
   "/",

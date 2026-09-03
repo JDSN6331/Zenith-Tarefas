@@ -103,7 +103,7 @@ export function GoalTargetDialog({ open, onOpenChange, goal, target }: Props) {
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="glass-card sm:max-w-md">
+      <DialogContent className="glass-card w-[calc(100vw-2rem)] max-w-md max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="font-display text-xl font-bold">
             {target ? "Editar Alvo de Medição" : "Novo Alvo de Medição"}
@@ -173,7 +173,7 @@ export function GoalTargetDialog({ open, onOpenChange, goal, target }: Props) {
 
           {/* Campos condicionais baseados no tipo */}
           {type === "boolean" ? (
-            <div className="flex items-center justify-between rounded-xl bg-secondary/50 p-4 border border-border/40">
+            <div className="flex flex-wrap sm:flex-nowrap items-center justify-between gap-3 rounded-xl bg-secondary/50 p-3.5 sm:p-4 border border-border/40">
               <div>
                 <p className="text-sm font-semibold text-foreground">Status do Alvo</p>
                 <p className="text-xs text-muted-foreground">
@@ -205,7 +205,7 @@ export function GoalTargetDialog({ open, onOpenChange, goal, target }: Props) {
             </div>
           ) : (
             <div className="space-y-3">
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div className="space-y-1.5">
                   <Label
                     htmlFor="curr-val"
