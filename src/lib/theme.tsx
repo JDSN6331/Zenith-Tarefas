@@ -77,6 +77,17 @@ const LEGACY_PALETTES: Record<string, ThemePalette> = {
   monochrome: "escuro",
 };
 
+function updateFavicon(palette: ThemePalette) {
+  try {
+    const link = document.querySelector<HTMLLinkElement>('link[rel="icon"]');
+    if (link) {
+      link.href = `/logos/zenith-${palette}.svg?v=9`;
+    }
+  } catch {
+    // ignora em ambientes não-DOM
+  }
+}
+
 export function ThemeProvider({ children }: { children: ReactNode }) {
   const { user, updateUserPreferences } = useAuth();
   const [theme, setThemeState] = useState<ThemeMode>("dark");
@@ -101,6 +112,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
       setPaletteState(initialPalette);
       document.documentElement.classList.toggle("dark", initialTheme === "dark");
       document.documentElement.setAttribute("data-palette", initialPalette);
+      updateFavicon(initialPalette);
       return;
     }
 
@@ -128,6 +140,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     setPaletteState(finalPalette);
     document.documentElement.classList.toggle("dark", finalTheme === "dark");
     document.documentElement.setAttribute("data-palette", finalPalette);
+    updateFavicon(finalPalette);
 
     // Salva no cache isolado por usuário para carregamento instantâneo
     window.localStorage.setItem(`${THEME_STORAGE_KEY}.${user.id}`, finalTheme);
@@ -149,6 +162,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
   const setPalette = (newPalette: ThemePalette) => {
     setPaletteState(newPalette);
     document.documentElement.setAttribute("data-palette", newPalette);
+    updateFavicon(newPalette);
 
     // Salva na conta do usuário individual
     if (user?.id) {

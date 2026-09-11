@@ -122,10 +122,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         rel: "stylesheet",
         href: appCss,
       },
-      { rel: "icon", href: "/favicon.svg?v=8", type: "image/svg+xml" },
-      { rel: "alternate icon", href: "/favicon.ico?v=8" },
-      { rel: "apple-touch-icon", href: "/apple-touch-icon.png?v=8" },
-      { rel: "manifest", href: "/manifest.json?v=8" },
+      { rel: "icon", href: "/favicon.svg?v=9", type: "image/svg+xml" },
+      { rel: "alternate icon", href: "/favicon.ico?v=9" },
+      { rel: "apple-touch-icon", href: "/apple-touch-icon.png?v=9" },
+      { rel: "manifest", href: "/manifest.json?v=9" },
     ],
   }),
   shellComponent: RootShell,
@@ -151,6 +151,11 @@ const themeScript = `
         storedPalette = legacyMap[storedPalette];
       }
       document.documentElement.setAttribute('data-palette', storedPalette);
+
+      var faviconLink = document.querySelector('link[rel="icon"]');
+      if (faviconLink && storedPalette) {
+        faviconLink.setAttribute('href', '/logos/zenith-' + storedPalette + '.svg?v=9');
+      }
     } catch(e) {}
   })();
 `;

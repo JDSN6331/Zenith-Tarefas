@@ -3,205 +3,167 @@ const path = require('path');
 const fs = require('fs');
 
 /**
- * Palettes configuration for the new Zenith Brand Identity
+ * Palettes configuration matching ZenithLogo.tsx
  */
 const PALETTES = {
   escuro: {
     id: 'escuro',
     name: 'Escuro (Midnight Cyan)',
-    bg1: '#060B17',
-    bg2: '#0B152B',
-    border: 'rgba(0, 229, 255, 0.35)',
-    innerRim: 'rgba(255, 255, 255, 0.08)',
-    glow: 'rgba(0, 229, 255, 0.35)',
-    c1: '#E0F7FA', // white/cyan highlight
-    c2: '#00E5FF', // electric cyan
-    c3: '#00B0FF', // deep cyan
-    c4: '#6366F1', // indigo accent
+    bg1: '#0A1628',
+    bg2: '#060B17',
+    border: 'rgba(0, 229, 255, 0.30)',
+    innerRim: 'rgba(255, 255, 255, 0.06)',
+    glow: 'rgba(0, 229, 255, 0.20)',
+    g1: '#6366F1',
+    g2: '#00E5FF',
     star: '#00E5FF',
     accent: '#00E5FF',
-    subtext: '#38BDF8',
   },
   claro: {
     id: 'claro',
     name: 'Claro (Sky Cyan & Navy)',
-    bg1: '#091326',
-    bg2: '#102042',
-    border: 'rgba(56, 189, 248, 0.35)',
-    innerRim: 'rgba(255, 255, 255, 0.1)',
-    glow: 'rgba(56, 189, 248, 0.35)',
-    c1: '#F0F9FF',
-    c2: '#38BDF8',
-    c3: '#0284C7',
-    c4: '#4F46E5',
+    bg1: '#102042',
+    bg2: '#091326',
+    border: 'rgba(56, 189, 248, 0.30)',
+    innerRim: 'rgba(255, 255, 255, 0.08)',
+    glow: 'rgba(56, 189, 248, 0.20)',
+    g1: '#0284C7',
+    g2: '#00F2FE',
     star: '#38BDF8',
     accent: '#0284C7',
-    subtext: '#0284C7',
   },
   verde: {
     id: 'verde',
     name: 'Verde (Emerald Aurora)',
-    bg1: '#03140C',
-    bg2: '#062617',
-    border: 'rgba(74, 222, 128, 0.35)',
-    innerRim: 'rgba(255, 255, 255, 0.08)',
-    glow: 'rgba(16, 185, 129, 0.35)',
-    c1: '#F0FDF4',
-    c2: '#4ADE80',
-    c3: '#10B981',
-    c4: '#059669',
+    bg1: '#062617',
+    bg2: '#03140C',
+    border: 'rgba(74, 222, 128, 0.30)',
+    innerRim: 'rgba(255, 255, 255, 0.06)',
+    glow: 'rgba(16, 185, 129, 0.20)',
+    g1: '#059669',
+    g2: '#4ADE80',
     star: '#4ADE80',
     accent: '#10B981',
-    subtext: '#4ADE80',
   },
   quente: {
     id: 'quente',
     name: 'Quente (Amber Sunset)',
-    bg1: '#180B03',
-    bg2: '#2B1405',
-    border: 'rgba(245, 158, 11, 0.35)',
-    innerRim: 'rgba(255, 255, 255, 0.08)',
-    glow: 'rgba(245, 158, 11, 0.35)',
-    c1: '#FEFCE8',
-    c2: '#FDE047',
-    c3: '#F59E0B',
-    c4: '#EA580C',
+    bg1: '#2B1405',
+    bg2: '#180B03',
+    border: 'rgba(245, 158, 11, 0.30)',
+    innerRim: 'rgba(255, 255, 255, 0.06)',
+    glow: 'rgba(245, 158, 11, 0.20)',
+    g1: '#EA580C',
+    g2: '#FDE047',
     star: '#FDE047',
     accent: '#F59E0B',
-    subtext: '#F59E0B',
   },
   roxo: {
     id: 'roxo',
     name: 'Roxo (Cosmic Amethyst)',
-    bg1: '#140420',
-    bg2: '#25073B',
-    border: 'rgba(236, 72, 153, 0.35)',
-    innerRim: 'rgba(255, 255, 255, 0.08)',
-    glow: 'rgba(168, 85, 247, 0.35)',
-    c1: '#FDF2F8',
-    c2: '#F472B6',
-    c3: '#EC4899',
-    c4: '#A855F7',
+    bg1: '#25073B',
+    bg2: '#140420',
+    border: 'rgba(168, 85, 247, 0.30)',
+    innerRim: 'rgba(255, 255, 255, 0.06)',
+    glow: 'rgba(168, 85, 247, 0.20)',
+    g1: '#EC4899',
+    g2: '#A855F7',
     star: '#F472B6',
     accent: '#EC4899',
-    subtext: '#EC4899',
   },
 };
 
 /**
- * Builds the pure SVG for the Zenith Apex Emblem
+ * Builds the exact SVG for the Zenith Badge Emblem
  */
 function buildZenithSvg(p, size = 512) {
   return `
 <svg width="${size}" height="${size}" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
   <defs>
-    <!-- Background Gradient -->
-    <linearGradient id="bg-${p.id}" x1="0%" y1="0%" x2="100%" y2="100%">
+    <linearGradient id="bb-${p.id}" x1="50%" y1="0%" x2="50%" y2="100%">
       <stop offset="0%" stop-color="${p.bg1}" />
       <stop offset="100%" stop-color="${p.bg2}" />
     </linearGradient>
-
-    <!-- Core Ambient Radial Glow -->
-    <radialGradient id="glow-${p.id}" cx="50%" cy="46%" r="46%">
+    <radialGradient id="bg-${p.id}" cx="50%" cy="45%" r="45%">
       <stop offset="0%" stop-color="${p.glow}" />
       <stop offset="100%" stop-color="transparent" />
     </radialGradient>
-
-    <!-- Upper Facet: Top Bar + Apex Wedge -->
-    <linearGradient id="facet-top-${p.id}" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="${p.c1}" />
-      <stop offset="35%" stop-color="${p.c2}" />
-      <stop offset="100%" stop-color="${p.c3}" />
+    <linearGradient id="zg-${p.id}" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="${p.g1}" />
+      <stop offset="100%" stop-color="${p.g2}" />
     </linearGradient>
-
-    <!-- Diagonal Blade: Center Precision Prism -->
-    <linearGradient id="blade-${p.id}" x1="0%" y1="100%" x2="100%" y2="0%">
-      <stop offset="0%" stop-color="${p.c4}" />
-      <stop offset="50%" stop-color="${p.c3}" />
-      <stop offset="100%" stop-color="${p.c2}" />
+    <linearGradient id="ag-${p.id}" x1="0%" y1="50%" x2="100%" y2="50%">
+      <stop offset="0%" stop-color="${p.g1}" stop-opacity="0.6" />
+      <stop offset="50%" stop-color="${p.g2}" />
+      <stop offset="100%" stop-color="${p.g2}" stop-opacity="0.6" />
     </linearGradient>
-
-    <!-- Lower Facet: Base Wing Foundation -->
-    <linearGradient id="facet-bot-${p.id}" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="${p.c2}" />
-      <stop offset="60%" stop-color="${p.c3}" />
-      <stop offset="100%" stop-color="${p.c4}" />
-    </linearGradient>
-
-    <!-- Star Radiant Flare -->
-    <radialGradient id="star-flare-${p.id}" cx="50%" cy="50%" r="50%">
+    <radialGradient id="sf-${p.id}" cx="50%" cy="50%" r="50%">
       <stop offset="0%" stop-color="#FFFFFF" />
-      <stop offset="35%" stop-color="${p.star}" stop-opacity="0.95" />
+      <stop offset="30%" stop-color="${p.star}" stop-opacity="0.9" />
       <stop offset="100%" stop-color="${p.star}" stop-opacity="0" />
     </radialGradient>
-
-    <!-- Drop Shadow for Upper Elements -->
-    <filter id="shadow-${p.id}" x="-20%" y="-20%" width="140%" height="140%">
-      <feDropShadow dx="0" dy="3.5" stdDeviation="4" flood-color="#000000" flood-opacity="0.55"/>
+    <filter id="ds-${p.id}" x="-15%" y="-10%" width="130%" height="130%">
+      <feDropShadow dx="0" dy="2" stdDeviation="2.5" flood-color="#000000" flood-opacity="0.4" />
     </filter>
+    <clipPath id="cp-${p.id}">
+      <rect x="2" y="2" width="96" height="96" rx="24" />
+    </clipPath>
   </defs>
 
-  <!-- Luxury Squircle Badge -->
-  <rect x="2" y="2" width="96" height="96" rx="24" fill="url(#bg-${p.id})" />
-  <circle cx="50" cy="46" r="42" fill="url(#glow-${p.id})" />
-  <rect x="2" y="2" width="96" height="96" rx="24" stroke="${p.border}" stroke-width="1.2" fill="none" />
-  <rect x="3.5" y="3.5" width="93" height="93" rx="22.5" stroke="${p.innerRim}" stroke-width="0.8" fill="none" />
+  <!-- Fundo squircle -->
+  <rect x="2" y="2" width="96" height="96" rx="24" fill="url(#bb-${p.id})" />
+  <circle cx="50" cy="45" r="40" fill="url(#bg-${p.id})" />
 
-  <!-- Astronomical Orbit Arc (Celestial Trajectory) -->
-  <ellipse cx="50" cy="50" rx="36" ry="17" transform="rotate(-28 50 50)" stroke="${p.c2}" stroke-width="1.2" stroke-dasharray="3 4" opacity="0.3" fill="none" />
-
-  <!-- === THE ZENITH APEX Z MONOGRAM === -->
-  <!-- 
-    Master Geometry:
-    An ultra-clean, architectural Z composed of three solid precision-beveled components:
-    1. Base Foundation Bar: anchors the bottom with forward momentum.
-    2. Diagonal Blade: a sharp 48-degree dynamic chiseled prism.
-    3. Upper Apex Wing: ascends upward and forms a sharp mountain peak / arrow pointing to the zenith star.
-  -->
-
-  <!-- 1. Base Wing (Ground / Foundation) -->
-  <path
-    d="M 28 66 H 72 C 75.5 66 77.5 70 75 73 L 73 75 C 71.5 76.5 69.5 76.5 67.5 76.5 H 24 C 20.5 76.5 18.5 72.5 21 69.5 L 24 66 Z"
-    fill="url(#facet-bot-${p.id})"
-  />
-
-  <!-- 2. Diagonal Blade (Connecting Prism) -->
-  <path
-    d="M 68 31 L 28 73 C 26 75 22 74 23 71 L 27 65 L 61 27 C 63 25 67 26 66 29 L 68 31 Z"
-    fill="url(#blade-${p.id})"
-  />
-
-  <!-- 3. Upper Apex Wing (Reaching the Zenith) with Shadow -->
-  <g filter="url(#shadow-${p.id})">
-    <!-- Main Top Bar -->
+  <g clip-path="url(#cp-${p.id})">
+    <!-- Arco decorativo semicircular atras do Z -->
     <path
-      d="M 24 25 H 68 C 72 25 74 28 72 31.5 L 70 34 C 68.5 36 66 36 63.5 36 H 32 C 28.5 36 26.5 32 29 29 L 32 25 Z"
-      fill="url(#facet-top-${p.id})"
+      d="M 18 68 A 34 34 0 0 1 82 68"
+      stroke="url(#ag-${p.id})"
+      stroke-width="2.5"
+      stroke-linecap="round"
+      fill="none"
+      opacity="0.45"
     />
 
-    <!-- Apex Needle Crest pointing up to star -->
+    <!-- Z geometrico bold — bloco estilizado -->
+    <g filter="url(#ds-${p.id})">
+      <!-- Barra superior do Z -->
+      <path
+        d="M 24 26 H 76 L 74 36 H 42"
+        fill="url(#zg-${p.id})"
+      />
+      <!-- Diagonal do Z -->
+      <path
+        d="M 42 36 L 74 36 L 58 64 L 26 64"
+        fill="url(#zg-${p.id})"
+        opacity="0.85"
+      />
+      <!-- Barra inferior do Z -->
+      <path
+        d="M 26 64 H 58 L 24 74 H 76 L 58 64"
+        fill="url(#zg-${p.id})"
+      />
+      <!-- Highlight de brilho na aresta superior -->
+      <path
+        d="M 24 26 H 76"
+        stroke="rgba(255,255,255,0.5)"
+        stroke-width="1"
+        stroke-linecap="round"
+      />
+    </g>
+
+    <!-- Sparkle / Estrela no canto superior direito -->
+    <circle cx="78" cy="22" r="10" fill="url(#sf-${p.id})" />
     <path
-      d="M 62 25 L 74 21 L 70 33 Z"
+      d="M 78 14 Q 78 22 72 22 Q 78 22 78 30 Q 78 22 84 22 Q 78 22 78 14 Z"
       fill="#FFFFFF"
-      opacity="0.9"
     />
-
-    <!-- Razor Specular Highlight Line on Upper Crest -->
-    <line x1="28" y1="26" x2="69" y2="26" stroke="#FFFFFF" stroke-width="1.2" stroke-linecap="round" opacity="0.9" />
-    <line x1="64" y1="28" x2="29" y2="69" stroke="#FFFFFF" stroke-width="1.2" stroke-linecap="round" opacity="0.8" />
+    <circle cx="78" cy="22" r="1.4" fill="#FFFFFF" />
   </g>
 
-  <!-- === THE RADIANT ZENITH SUMMIT STAR === -->
-  <!-- Ambient Flare at (74, 21) -->
-  <circle cx="74" cy="21" r="14" fill="url(#star-flare-${p.id})" />
-
-  <!-- 4-point Diamond Star -->
-  <path
-    d="M 74 9 Q 74 21 64 21 Q 74 21 74 33 Q 74 21 84 21 Q 74 21 74 9 Z"
-    fill="#FFFFFF"
-  />
-  <!-- Core Brilliant Specular Dot -->
-  <circle cx="74" cy="21" r="1.8" fill="#FFFFFF" />
+  <!-- Bordas do squircle -->
+  <rect x="2" y="2" width="96" height="96" rx="24" stroke="${p.border}" stroke-width="1.2" fill="none" />
+  <rect x="3.5" y="3.5" width="93" height="93" rx="22.5" stroke="${p.innerRim}" stroke-width="0.8" fill="none" />
 </svg>
 `.trim();
 }
@@ -259,7 +221,7 @@ async function run() {
     .toFile(path.join(publicDir, 'pwa-512x512.png'));
   console.log('✓ public/pwa-512x512.png');
 
-  // 6. PWA Maskable 512x512 PNG (with 15% safe zone margin)
+  // 6. PWA Maskable 512x512 PNG (with safe zone margin)
   const innerIcon = await sharp(defaultPngBuffer)
     .resize(410, 410)
     .toBuffer();
@@ -280,6 +242,7 @@ async function run() {
   // Also update SVG PWA icons
   fs.writeFileSync(path.join(publicDir, 'pwa-192x192.svg'), buildZenithSvg(PALETTES.escuro, 192), 'utf-8');
   fs.writeFileSync(path.join(publicDir, 'pwa-512x512.svg'), buildZenithSvg(PALETTES.escuro, 512), 'utf-8');
+  console.log('✓ public/pwa-192x192.svg & pwa-512x512.svg');
 
   console.log('All brand assets generated successfully!');
 }
