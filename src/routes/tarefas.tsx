@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
+import { toast } from "sonner";
 import { AppShell } from "@/components/AppShell";
 import { EmptyState } from "@/components/EmptyState";
 import { TaskDialog } from "@/components/TaskDialog";
@@ -7,12 +8,15 @@ import { TaskItem } from "@/components/TaskItem";
 import {
   FlaticonAlertCircle,
   FlaticonCalendar,
+  FlaticonCheck,
   FlaticonCheckCircle,
+  FlaticonChevronDown,
   FlaticonClock,
   FlaticonPlayCircle,
   FlaticonPlus,
   FlaticonSearch,
   FlaticonTasks,
+  FlaticonTrash,
 } from "@/components/icons/FlaticonIcons";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -24,9 +28,16 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { useStore } from "@/lib/store";
-import type { Task, TaskStatus } from "@/lib/types";
-import { computeTaskStatus, isOverdue, sortTasks, type SortKey } from "@/lib/utils-domain";
+import type { Priority, Task, TaskStatus } from "@/lib/types";
+import { computeTaskStatus, isOverdue, sortTasks, todayISO, type SortKey } from "@/lib/utils-domain";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/tarefas")({
@@ -50,9 +61,12 @@ export const Route = createFileRoute("/tarefas")({
 type FilterStatus = "todas" | TaskStatus;
 
 export function TarefasPage() {
-  const { tasks, categories, ready } = useStore();
+  const { tasks, categories, ready, batchUpdateTasks, batchRemoveTasks } = useStore();
   const [openDialog, setOpenDialog] = useState(false);
   const [editingTask, setEditingTask] = useState<Task | null>(null);
+
+  // Seleção Múltipla em Lote
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
 
   // Filtros
   const [statusFilter, setStatusFilter] = useState<FilterStatus>("todas");
@@ -99,6 +113,99 @@ export function TarefasPage() {
 
     return sortTasks(filtered, sortKey);
   }, [tasks, statusFilter, priorityFilter, categoryFilter, dueDateFilter, searchQuery, sortKey]);
+
+  // Controles de Seleção em Lote
+  const isAllSelected =
+    visibleTasks.length > 0 && visibleTasks.every((t) => selectedIds.has(t.id));
+  const isSomeSelected = selectedIds.size > 0;
+
+  const toggleSelect = (id: string) => {
+    setSelectedIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  };
+
+  const toggleSelectAll = () => {
+    if (isAllSelected) {
+      setSelectedIds(new Set());
+    } else {
+      setSelectedIds(new Set(visibleTasks.map((t) => t.id)));
+    }
+  };
+
+  const clearSelection = () => {
+    setSelectedIds(new Set());
+  };
+
+  const getTomorrowISO = () => {
+    const d = new Date();
+    d.setDate(d.getDate() + 1);
+    return d.toISOString().slice(0, 10);
+  };
+
+  const getNextWeekISO = () => {
+    const d = new Date();
+    d.setDate(d.getDate() + 7);
+    return d.toISOString().slice(0, 10);
+  };
+
+  const handleBatchStatus = (status: TaskStatus) => {
+    const ids = Array.from(selectedIds);
+    if (ids.length === 0) return;
+    const patch: Partial<Task> = {
+      status,
+      done: status === "completed",
+    };
+    batchUpdateTasks(ids, patch);
+    const labelMap: Record<TaskStatus, string> = {
+      pending: "Não Iniciada",
+      in_progress: "Em Andamento",
+      completed: "Concluída",
+      overdue: "Atrasada",
+    };
+    toast.success(`${ids.length} tarefa(s) alterada(s) para "${labelMap[status]}"!`);
+    clearSelection();
+  };
+
+  const handleBatchDate = (dateStr: string | null) => {
+    const ids = Array.from(selectedIds);
+    if (ids.length === 0) return;
+    batchUpdateTasks(ids, { dueDate: dateStr });
+    toast.success(
+      dateStr
+        ? `${ids.length} tarefa(s) reagendada(s)!`
+        : `Prazo removido de ${ids.length} tarefa(s)!`,
+    );
+    clearSelection();
+  };
+
+  const handleBatchPriority = (priority: Priority) => {
+    const ids = Array.from(selectedIds);
+    if (ids.length === 0) return;
+    batchUpdateTasks(ids, { priority });
+    toast.success(`Prioridade de ${ids.length} tarefa(s) alterada para "${priority}"!`);
+    clearSelection();
+  };
+
+  const handleBatchCategory = (categoryId: string) => {
+    const ids = Array.from(selectedIds);
+    if (ids.length === 0) return;
+    batchUpdateTasks(ids, { categoryId });
+    toast.success(`Categoria de ${ids.length} tarefa(s) atualizada!`);
+    clearSelection();
+  };
+
+  const handleBatchDelete = () => {
+    const ids = Array.from(selectedIds);
+    if (ids.length === 0) return;
+    const count = ids.length;
+    batchRemoveTasks(ids);
+    toast.success(`${count} tarefa(s) movida(s) para a lixeira!`);
+    clearSelection();
+  };
 
   const openNew = () => {
     setEditingTask(null);
@@ -339,6 +446,50 @@ export function TarefasPage() {
         </div>
       </section>
 
+      {/* Barra de Seleção Rápida em Lote */}
+      {ready && visibleTasks.length > 0 && (
+        <div className="flex flex-wrap items-center justify-between gap-2 px-1 py-1 text-xs text-muted-foreground">
+          <button
+            type="button"
+            onClick={toggleSelectAll}
+            className="flex items-center gap-2 hover:text-foreground font-medium transition-colors cursor-pointer select-none py-1"
+          >
+            <div
+              className={`flex size-4.5 items-center justify-center rounded-md border transition-all ${
+                isAllSelected
+                  ? "border-primary bg-primary text-primary-foreground shadow-xs"
+                  : isSomeSelected
+                    ? "border-primary/80 bg-primary/20 text-primary"
+                    : "border-border/80 bg-background/50 text-transparent hover:border-primary"
+              }`}
+            >
+              <FlaticonCheck
+                size={11}
+                className={isSomeSelected || isAllSelected ? "opacity-100 stroke-[3]" : "opacity-0"}
+              />
+            </div>
+            <span>
+              {isAllSelected
+                ? "Desmarcar todas"
+                : `Selecionar todas (${visibleTasks.length})`}
+            </span>
+          </button>
+
+          {selectedIds.size > 0 && (
+            <div className="flex items-center gap-2 text-[11px] font-semibold text-primary animate-in fade-in">
+              <span>{selectedIds.size} de {visibleTasks.length} selecionada(s)</span>
+              <button
+                type="button"
+                onClick={clearSelection}
+                className="text-muted-foreground hover:text-foreground underline underline-offset-2 cursor-pointer"
+              >
+                Limpar seleção
+              </button>
+            </div>
+          )}
+        </div>
+      )}
+
       {/* Lista de Tarefas ou Empty State */}
       {ready && visibleTasks.length === 0 ? (
         <EmptyState
@@ -347,11 +498,157 @@ export function TarefasPage() {
           hint="Não encontramos tarefas correspondentes aos filtros selecionados. Altere os filtros ou crie uma nova tarefa."
         />
       ) : (
-        <ul className="space-y-3">
+        <ul className="space-y-3 pb-24">
           {visibleTasks.map((t) => (
-            <TaskItem key={t.id} task={t} onEdit={openEdit} />
+            <TaskItem
+              key={t.id}
+              task={t}
+              onEdit={openEdit}
+              isSelected={selectedIds.has(t.id)}
+              onToggleSelect={toggleSelect}
+            />
           ))}
         </ul>
+      )}
+
+      {/* Barra Flutuante de Ações em Lote (Desktop & Mobile) */}
+      {selectedIds.size > 0 && (
+        <div className="fixed bottom-4 sm:bottom-6 left-1/2 -translate-x-1/2 z-50 w-[95%] max-w-2xl px-2">
+          <div className="glass-card flex flex-wrap items-center justify-between gap-2 sm:gap-3 p-2.5 sm:p-3.5 rounded-2xl shadow-2xl border-primary/40 bg-card/95 backdrop-blur-xl ring-1 ring-primary/25 animate-in fade-in slide-in-from-bottom-4 duration-200">
+            {/* Contador de selecionadas & botão de limpar */}
+            <div className="flex items-center gap-2">
+              <span className="flex size-7 items-center justify-center rounded-lg bg-primary text-primary-foreground text-xs font-bold shadow-sm">
+                {selectedIds.size}
+              </span>
+              <span className="text-xs font-semibold text-foreground hidden xs:inline">
+                {selectedIds.size === 1 ? "selecionada" : "selecionadas"}
+              </span>
+              <button
+                type="button"
+                onClick={clearSelection}
+                className="text-xs text-muted-foreground hover:text-foreground underline underline-offset-2 ml-1 cursor-pointer"
+              >
+                Limpar
+              </button>
+            </div>
+
+            {/* Ações em Lote */}
+            <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
+              {/* Alterar Status */}
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="h-8 gap-1.5 text-xs font-medium border-border/80 bg-background/60 hover:bg-secondary cursor-pointer"
+                  >
+                    <FlaticonPlayCircle size={14} className="text-primary" />
+                    <span>Status</span>
+                    <FlaticonChevronDown size={11} className="text-muted-foreground" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-48 p-1">
+                  <DropdownMenuItem onClick={() => handleBatchStatus("pending")} className="gap-2 text-xs cursor-pointer">
+                    <FlaticonClock size={14} className="text-muted-foreground" />
+                    Não Iniciada
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => handleBatchStatus("in_progress")} className="gap-2 text-xs cursor-pointer">
+                    <FlaticonPlayCircle size={14} className="text-primary" />
+                    Em Andamento
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => handleBatchStatus("completed")} className="gap-2 text-xs cursor-pointer">
+                    <FlaticonCheckCircle size={14} className="text-success" />
+                    Concluída
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+
+              {/* Reagendar / Alterar Data */}
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="h-8 gap-1.5 text-xs font-medium border-border/80 bg-background/60 hover:bg-secondary cursor-pointer"
+                  >
+                    <FlaticonCalendar size={14} className="text-primary" />
+                    <span>Data</span>
+                    <FlaticonChevronDown size={11} className="text-muted-foreground" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-56 p-1.5 space-y-1">
+                  <DropdownMenuItem onClick={() => handleBatchDate(todayISO())} className="text-xs cursor-pointer">
+                    Hoje
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => handleBatchDate(getTomorrowISO())} className="text-xs cursor-pointer">
+                    Amanhã
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => handleBatchDate(getNextWeekISO())} className="text-xs cursor-pointer">
+                    Próxima Semana (+7d)
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <div className="px-2 py-1 space-y-1">
+                    <span className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+                      Data Específica:
+                    </span>
+                    <Input
+                      type="date"
+                      onChange={(e) => {
+                        if (e.target.value) handleBatchDate(e.target.value);
+                      }}
+                      className="h-7 text-xs bg-background/80 cursor-pointer"
+                    />
+                  </div>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem
+                    onClick={() => handleBatchDate(null)}
+                    className="text-xs text-destructive focus:text-destructive cursor-pointer"
+                  >
+                    Remover Prazo
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+
+              {/* Alterar Prioridade */}
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="h-8 gap-1.5 text-xs font-medium border-border/80 bg-background/60 hover:bg-secondary cursor-pointer"
+                  >
+                    <FlaticonAlertCircle size={14} className="text-primary" />
+                    <span className="hidden sm:inline">Prioridade</span>
+                    <FlaticonChevronDown size={11} className="text-muted-foreground" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-36 p-1">
+                  <DropdownMenuItem onClick={() => handleBatchPriority("alta")} className="gap-2 text-xs cursor-pointer">
+                    <span className="size-2 rounded-full bg-destructive" /> Alta
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => handleBatchPriority("media")} className="gap-2 text-xs cursor-pointer">
+                    <span className="size-2 rounded-full bg-warning" /> Média
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => handleBatchPriority("baixa")} className="gap-2 text-xs cursor-pointer">
+                    <span className="size-2 rounded-full bg-muted-foreground" /> Baixa
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+
+              {/* Excluir em Lote */}
+              <Button
+                variant="destructive"
+                size="sm"
+                onClick={handleBatchDelete}
+                className="h-8 gap-1.5 text-xs font-semibold shadow-sm cursor-pointer"
+                title="Mover tarefas selecionadas para a lixeira"
+              >
+                <FlaticonTrash size={13} />
+                <span>Excluir</span>
+              </Button>
+            </div>
+          </div>
+        </div>
       )}
 
       <TaskDialog open={openDialog} onOpenChange={setOpenDialog} task={editingTask} />

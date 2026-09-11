@@ -218,149 +218,100 @@ function ZenithBadgeSvg({
 }
 
 /**
- * Logo tipográfica unificada — "ZENITH" como uma peça SVG completa
- * O nome É a logo: Z geométrico + letras futuristas + sparkle no I + arco underline
+ * Logo tipográfica criativa — "ZENITH"
+ * Destaque para o Z com gradiente temático, letras futuristas e a Estrela do Zênite sobre o "I"
  */
-function ZenithWordmarkSvg({
-  height,
+function ZenithWordmarkText({
+  size,
   config,
-  uniqueId,
   showSubtitle,
 }: {
-  height: number;
+  size: number;
   config: PaletteConfig;
-  uniqueId: string;
   showSubtitle: boolean;
 }) {
-  // Proporção: viewBox largura é proporcional à altura
-  const vbHeight = showSubtitle ? 58 : 44;
-  const vbWidth = 200;
-  const width = (height / vbHeight) * vbWidth;
+  // Proporção de escala proporcional ao size do badge
+  const textSize = Math.max(16, Math.round(size * 0.56));
+  const starSize = Math.max(10, Math.round(size * 0.32));
 
   return (
-    <svg
-      width={width}
-      height={height}
-      viewBox={`0 0 ${vbWidth} ${vbHeight}`}
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      className="shrink-0 select-none transition-transform duration-200 group-hover:scale-[1.02]"
-    >
-      <defs>
-        <linearGradient id={`wg-${uniqueId}`} x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stopColor={config.g1} />
-          <stop offset="100%" stopColor={config.g2} />
-        </linearGradient>
-        <linearGradient id={`ul-${uniqueId}`} x1="0%" y1="50%" x2="100%" y2="50%">
-          <stop offset="0%" stopColor={config.g1} stopOpacity="0" />
-          <stop offset="15%" stopColor={config.g1} />
-          <stop offset="85%" stopColor={config.g2} />
-          <stop offset="100%" stopColor={config.g2} stopOpacity="0" />
-        </linearGradient>
-        <radialGradient id={`ws-${uniqueId}`} cx="50%" cy="50%" r="50%">
-          <stop offset="0%" stopColor="#FFFFFF" />
-          <stop offset="25%" stopColor={config.star} stopOpacity="0.95" />
-          <stop offset="100%" stopColor={config.star} stopOpacity="0" />
-        </radialGradient>
-        <filter id={`wds-${uniqueId}`} x="-5%" y="-10%" width="110%" height="130%">
-          <feDropShadow dx="0" dy="1" stdDeviation="1.5" floodColor={config.g1} floodOpacity="0.3" />
-        </filter>
-      </defs>
-
-      {/* === ZENITH — Tipografia geométrica unificada === */}
-      <g filter={`url(#wds-${uniqueId})`}>
-        {/* Z — Forma geométrica estilizada (maior destaque) */}
-        <path
-          d={`
-            M 4 6
-            H 32
-            L 30 14
-            H 16
-            L 32 30
-            L 30 38
-            H 2
-            L 4 30
-            H 18
-            L 2 14
-            Z
-          `}
-          fill={`url(#wg-${uniqueId})`}
-        />
-
-        {/* E */}
-        <path
-          d={`
-            M 38 6 H 64 L 62 14 H 46 L 46 18 H 58 L 57 24 H 45 L 45 30 H 63 L 61 38 H 37 Z
-          `}
-          fill="currentColor"
-        />
-
-        {/* N */}
-        <path
-          d={`
-            M 69 6 H 77 L 93 28 L 95 6 H 103 L 101 38 H 93 L 77 16 L 75 38 H 67 Z
-          `}
-          fill="currentColor"
-        />
-
-        {/* I — haste sem ponto (o ponto é a sparkle) */}
-        <path
-          d="M 109 14 H 117 L 115 38 H 107 Z"
-          fill="currentColor"
-        />
-
-        {/* T */}
-        <path
-          d={`
-            M 120 6 H 152 L 150 14 H 140 L 138 38 H 130 L 132 14 H 122 Z
-          `}
-          fill="currentColor"
-        />
-
-        {/* H */}
-        <path
-          d={`
-            M 156 6 H 164 L 163 18 H 175 L 176 6 H 184 L 182 38 H 174 L 175 26 H 163 L 162 38 H 154 Z
-          `}
-          fill="currentColor"
-        />
-      </g>
-
-      {/* Sparkle como ponto do "I" — a assinatura da marca */}
-      <circle cx="113" cy="6" r="6" fill={`url(#ws-${uniqueId})`} />
-      <path
-        d="M 113 0 Q 113 6 108 6 Q 113 6 113 12 Q 113 6 118 6 Q 113 6 113 0 Z"
-        fill={config.star}
-      />
-      <circle cx="113" cy="6" r="1.2" fill="#FFFFFF" />
-
-      {/* Underline / Arco gradiente elegante abaixo do nome */}
-      <line
-        x1="4"
-        y1="42"
-        x2="184"
-        y2="42"
-        stroke={`url(#ul-${uniqueId})`}
-        strokeWidth="1.5"
-        strokeLinecap="round"
-      />
-
-      {/* Subtítulo */}
-      {showSubtitle && (
-        <text
-          x="94"
-          y="54"
-          textAnchor="middle"
-          fill={config.accent}
-          fontSize="7"
-          fontFamily="'Outfit', 'Inter', system-ui, sans-serif"
-          fontWeight="700"
-          letterSpacing="3"
+    <div className="flex flex-col justify-center min-w-0 leading-none select-none">
+      <div className="flex items-center font-display font-black tracking-[0.08em] text-foreground relative">
+        {/* Z — Geométrico marcante com gradiente vibrante da paleta */}
+        <span
+          className="transition-transform duration-300 group-hover:scale-105 inline-block select-none"
+          style={{
+            fontSize: `${textSize * 1.18}px`,
+            background: `linear-gradient(135deg, ${config.g1} 0%, ${config.g2} 100%)`,
+            WebkitBackgroundClip: "text",
+            WebkitTextFillColor: "transparent",
+            filter: `drop-shadow(0 2px 8px ${config.glow})`,
+          }}
         >
-          TAREFAS &amp; METAS
-        </text>
+          Z
+        </span>
+
+        {/* E N */}
+        <span
+          className="transition-colors duration-200 group-hover:text-foreground/90 select-none"
+          style={{ fontSize: `${textSize}px` }}
+        >
+          EN
+        </span>
+
+        {/* I coroado com a Estrela do Zênite */}
+        <span className="relative inline-flex flex-col items-center mx-[1.5px] select-none">
+          {/* Estrela de 4 pontas luminosa */}
+          <svg
+            viewBox="0 0 24 24"
+            className="absolute -top-[55%] left-1/2 -translate-x-1/2 shrink-0 transition-transform duration-300 group-hover:scale-125 group-hover:rotate-12 pointer-events-none"
+            style={{ width: `${starSize}px`, height: `${starSize}px` }}
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <circle cx="12" cy="12" r="9" fill={config.star} fillOpacity="0.25" />
+            <path
+              d="M 12 2 Q 12 12 2 12 Q 12 12 12 22 Q 12 12 22 12 Q 12 12 12 2 Z"
+              fill={config.star}
+            />
+            <circle cx="12" cy="12" r="2.2" fill="#FFFFFF" />
+          </svg>
+          {/* Haste do I sem ponto (dotless ı para alinhamento e espaço para a estrela) */}
+          <span
+            className="transition-colors duration-200"
+            style={{ fontSize: `${textSize}px` }}
+          >
+            ı
+          </span>
+        </span>
+
+        {/* T H */}
+        <span
+          className="transition-colors duration-200 group-hover:text-foreground/90 select-none"
+          style={{ fontSize: `${textSize}px` }}
+        >
+          TH
+        </span>
+      </div>
+
+      {/* Traço luminoso decorativo de horizonte cósmico */}
+      <div
+        className="mt-1 h-[2px] rounded-full transition-all duration-300 opacity-80 group-hover:opacity-100 group-hover:h-[2.5px]"
+        style={{
+          background: `linear-gradient(90deg, ${config.g1} 0%, ${config.g2} 70%, transparent 100%)`,
+          boxShadow: `0 1px 6px ${config.glow}`,
+        }}
+      />
+
+      {showSubtitle && (
+        <span
+          className="text-[9px] font-bold uppercase tracking-[0.25em] mt-1 transition-colors"
+          style={{ color: config.accent }}
+        >
+          Tarefas &amp; Metas
+        </span>
       )}
-    </svg>
+    </div>
   );
 }
 
@@ -392,16 +343,15 @@ export function ZenithLogo({
     );
   }
 
-  // Wordmark — Logo tipográfica unificada
+  // Wordmark — Logo com Badge e Tipografia Criativa
   return (
     <div className={`group inline-flex items-center gap-2.5 sm:gap-3 select-none shrink-0 text-foreground ${className}`}>
       {/* Badge Z compacto */}
       <ZenithBadgeSvg size={size} config={config} uniqueId={`b-${uniqueId}`} />
-      {/* Nome ZENITH como peça tipográfica SVG */}
-      <ZenithWordmarkSvg
-        height={size * 0.85}
+      {/* Tipografia Criativa ZENITH */}
+      <ZenithWordmarkText
+        size={size}
         config={config}
-        uniqueId={`w-${uniqueId}`}
         showSubtitle={showSubtitle}
       />
     </div>

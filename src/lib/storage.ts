@@ -139,6 +139,42 @@ export function updateTask(data: AppData, id: string, patch: Partial<Task>): App
   };
 }
 
+export function batchUpdateTasks(data: AppData, ids: string[], patch: Partial<Task>): AppData {
+  const idSet = new Set(ids);
+  const now = new Date().toISOString();
+  return {
+    ...data,
+    tasks: data.tasks.map((t) => {
+      if (!idSet.has(t.id)) return t;
+      const updated = { ...t, ...patch };
+
+      if (patch.status !== undefined) {
+        if (patch.status === "completed") {
+          updated.done = true;
+          updated.completedAt = updated.completedAt || now;
+          updated.subtasks = updated.subtasks.map((st) => ({ ...st, done: true }));
+        } else {
+          updated.done = false;
+          updated.completedAt = null;
+        }
+      } else if (patch.done !== undefined) {
+        updated.done = patch.done;
+        updated.status = patch.done
+          ? "completed"
+          : updated.status === "completed"
+            ? "pending"
+            : updated.status;
+        updated.completedAt = patch.done ? (updated.completedAt || now) : null;
+        if (patch.done) {
+          updated.subtasks = updated.subtasks.map((st) => ({ ...st, done: true }));
+        }
+      }
+
+      return updated;
+    }),
+  };
+}
+
 export function toggleTask(data: AppData, id: string): AppData {
   const targetTask = data.tasks.find((t) => t.id === id);
   if (!targetTask) return data;
@@ -322,6 +358,15 @@ export function softDeleteTask(data: AppData, id: string): AppData {
   return {
     ...data,
     tasks: data.tasks.map((t) => (t.id === id ? { ...t, deletedAt: new Date().toISOString() } : t)),
+  };
+}
+
+export function batchSoftDeleteTasks(data: AppData, ids: string[]): AppData {
+  const idSet = new Set(ids);
+  const now = new Date().toISOString();
+  return {
+    ...data,
+    tasks: data.tasks.map((t) => (idSet.has(t.id) ? { ...t, deletedAt: now } : t)),
   };
 }
 

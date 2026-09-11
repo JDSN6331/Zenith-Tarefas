@@ -30,7 +30,19 @@ const priorityStyle: Record<Task["priority"], string> = {
   baixa: "bg-secondary text-secondary-foreground border-border/50",
 };
 
-export function TaskItem({ task, onEdit }: { task: Task; onEdit: (task: Task) => void }) {
+export interface TaskItemProps {
+  task: Task;
+  onEdit: (task: Task) => void;
+  isSelected?: boolean;
+  onToggleSelect?: (taskId: string) => void;
+}
+
+export function TaskItem({
+  task,
+  onEdit,
+  isSelected = false,
+  onToggleSelect,
+}: TaskItemProps) {
   const { toggleTask, removeTask, goals, categories, toggleSubTask, addSubTask, removeSubTask } =
     useStore();
   const [expanded, setExpanded] = useState(false);
@@ -54,8 +66,35 @@ export function TaskItem({ task, onEdit }: { task: Task; onEdit: (task: Task) =>
   };
 
   return (
-    <li className="glass-card flex flex-col p-4 transition-shadow duration-200 hover:shadow-lift">
-      <div className="flex items-start gap-3">
+    <li
+      className={`glass-card flex flex-col p-4 transition-all duration-200 hover:shadow-lift ${
+        isSelected
+          ? "border-primary/60 bg-primary/[0.04] shadow-md ring-1 ring-primary/40"
+          : ""
+      }`}
+    >
+      <div className="flex items-start gap-2.5 sm:gap-3">
+        {/* Checkbox de Seleção Múltipla em Lote */}
+        {onToggleSelect && (
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              onToggleSelect(task.id);
+            }}
+            aria-label={isSelected ? `Desmarcar ${task.title}` : `Selecionar ${task.title}`}
+            aria-pressed={isSelected}
+            title={isSelected ? "Desmarcar da seleção" : "Selecionar para ações em lote"}
+            className={`mt-0.5 flex size-5 sm:size-5.5 shrink-0 cursor-pointer items-center justify-center rounded-lg border transition-all ${
+              isSelected
+                ? "border-primary bg-primary text-primary-foreground shadow-sm scale-105"
+                : "border-border/70 bg-background/40 text-transparent hover:border-primary/60 hover:text-muted-foreground/40"
+            }`}
+          >
+            <FlaticonCheck size={12} className={isSelected ? "opacity-100 stroke-[3]" : "opacity-0"} />
+          </button>
+        )}
+
         {/* Checkbox Principal de Conclusão */}
         <button
           type="button"

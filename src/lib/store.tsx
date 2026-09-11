@@ -34,6 +34,8 @@ interface StoreValue {
   editTask: (id: string, patch: Partial<Task>) => void;
   toggleTask: (id: string) => void;
   removeTask: (id: string) => void; // Soft delete
+  batchUpdateTasks: (ids: string[], patch: Partial<Task>) => void;
+  batchRemoveTasks: (ids: string[]) => void;
   addSubTask: (taskId: string, title: string) => void;
   toggleSubTask: (taskId: string, subTaskId: string) => void;
   removeSubTask: (taskId: string, subTaskId: string) => void;
@@ -150,6 +152,8 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     editTask: (id, patch) => commit(db.updateTask(data, id, patch)),
     toggleTask: (id) => commit(db.toggleTask(data, id)),
     removeTask: (id) => commit(db.softDeleteTask(data, id)),
+    batchUpdateTasks: (ids, patch) => commit(db.batchUpdateTasks(data, ids, patch)),
+    batchRemoveTasks: (ids) => commit(db.batchSoftDeleteTasks(data, ids)),
     addSubTask: (taskId, title) => commit(db.addSubTask(data, taskId, title)),
     toggleSubTask: (taskId, subTaskId) => commit(db.toggleSubTask(data, taskId, subTaskId)),
     removeSubTask: (taskId, subTaskId) => commit(db.removeSubTask(data, taskId, subTaskId)),
