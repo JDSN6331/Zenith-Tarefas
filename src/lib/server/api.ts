@@ -63,7 +63,9 @@ export async function fetchUserData(userId: string): Promise<AppData> {
     const userTargets = memoryStore.goal_targets.filter((t) => userGoalIds.includes(t.goal_id));
     const userTasks = memoryStore.tasks.filter((t) => t.user_id === userId);
     const userTaskIds = userTasks.map((t) => t.id);
-    const userSubtasks = memoryStore.subtasks.filter((st) => userTaskIds.includes(st.task_id));
+    const userSubtasks = memoryStore.subtasks
+      .filter((st) => userTaskIds.includes(st.task_id))
+      .sort((a: any, b: any) => ((a.position ?? 0) - (b.position ?? 0)));
 
     return {
       categories: userCategories.map((c) => ({
@@ -114,11 +116,12 @@ export async function fetchUserData(userId: string): Promise<AppData> {
         },
         subtasks: userSubtasks
           .filter((st) => st.task_id === t.id)
-          .map((st) => ({
+          .map((st: any) => ({
             id: st.id,
             title: st.title,
             done: st.done === 1,
             createdAt: st.created_at,
+            position: typeof st.position === "number" ? st.position : 0,
           })),
         goalId: t.goal_id,
         createdAt: t.created_at,
@@ -257,14 +260,15 @@ export async function fetchUserData(userId: string): Promise<AppData> {
     title: string;
     done: number;
     created_at: string;
+    position?: number;
   }[] = [];
 
   if (taskIds.length > 0) {
     subtaskRows = await query(
-      `SELECT id, task_id, title, done, created_at 
+      `SELECT id, task_id, title, done, created_at, COALESCE(position, 0) as position 
        FROM subtasks 
        WHERE task_id = ANY($1::text[]) 
-       ORDER BY created_at ASC`,
+       ORDER BY COALESCE(position, 0) ASC, created_at ASC`,
       [taskIds]
     );
   }
@@ -277,6 +281,7 @@ export async function fetchUserData(userId: string): Promise<AppData> {
       title: st.title,
       done: Number(st.done) === 1,
       createdAt: st.created_at,
+      position: Number(st.position) || 0,
     });
     subtasksByTask.set(st.task_id, list);
   }
@@ -391,7 +396,13 @@ export async function syncUserData(userId: string, data: AppData): Promise<void>
       if (tIdx >= 0) memoryStore.tasks[tIdx] = tRow;
       else memoryStore.tasks.push(tRow);
 
-      for (const st of task.subtasks || []) {
+      const currentStIds = (task.subtasks || []).map((s) => s.id);
+      memoryStore.subtasks = memoryStore.subtasks.filter(
+        (s) => s.task_id !== task.id || currentStIds.includes(s.id)
+      );
+
+      for (let i = 0; i < (task.subtasks || []).length; i++) {
+        const st = task.subtasks[i];
         const stIdx = memoryStore.subtasks.findIndex((s) => s.id === st.id);
         const stRow = {
           id: st.id,
@@ -399,6 +410,7 @@ export async function syncUserData(userId: string, data: AppData): Promise<void>
           title: st.title,
           done: st.done ? 1 : 0,
           created_at: st.createdAt || new Date().toISOString(),
+          position: typeof st.position === "number" ? st.position : i,
         };
         if (stIdx >= 0) memoryStore.subtasks[stIdx] = stRow;
         else memoryStore.subtasks.push(stRow);
@@ -520,14 +532,27 @@ export async function syncUserData(userId: string, data: AppData): Promise<void>
       );
 
       // Sincroniza subtarefas
-      for (const st of task.subtasks || []) {
+      const currentDbStIds = (task.subtasks || []).map((st) => st.id);
+      if (currentDbStIds.length > 0) {
         await client.query(
-          `INSERT INTO subtasks (id, task_id, title, done, created_at)
-           VALUES ($1, $2, $3, $4, $5)
+          `DELETE FROM subtasks WHERE task_id = $1 AND NOT (id = ANY($2::text[]))`,
+          [task.id, currentDbStIds]
+        );
+      } else {
+        await client.query(`DELETE FROM subtasks WHERE task_id = $1`, [task.id]);
+      }
+
+      for (let i = 0; i < (task.subtasks || []).length; i++) {
+        const st = task.subtasks[i];
+        const pos = typeof st.position === "number" ? st.position : i;
+        await client.query(
+          `INSERT INTO subtasks (id, task_id, title, done, created_at, position)
+           VALUES ($1, $2, $3, $4, $5, $6)
            ON CONFLICT (id) DO UPDATE SET
              title = EXCLUDED.title,
-             done = EXCLUDED.done`,
-          [st.id, task.id, st.title, st.done ? 1 : 0, st.createdAt || new Date().toISOString()]
+             done = EXCLUDED.done,
+             position = EXCLUDED.position`,
+          [st.id, task.id, st.title, st.done ? 1 : 0, st.createdAt || new Date().toISOString(), pos]
         );
       }
     }

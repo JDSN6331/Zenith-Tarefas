@@ -8,7 +8,9 @@ import {
   FlaticonTag,
   FlaticonTarget,
   FlaticonTrash,
+  FlaticonGripVertical,
 } from "./icons/FlaticonIcons";
+import { useDraggableList } from "@/hooks/useDraggableList";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -101,6 +103,7 @@ export function TaskDialog({ open, onOpenChange, task, defaultGoalId = null }: P
       title: newSubtaskTitle.trim(),
       done: false,
       createdAt: new Date().toISOString(),
+      position: (draft.subtasks || []).length,
     };
     setDraft((prev) => ({
       ...prev,
@@ -108,6 +111,22 @@ export function TaskDialog({ open, onOpenChange, task, defaultGoalId = null }: P
     }));
     setNewSubtaskTitle("");
   };
+
+  const subtaskList = draft.subtasks || [];
+  const {
+    draggedIndex,
+    targetIndex,
+    getItemProps,
+    getHandleProps,
+  } = useDraggableList({
+    items: subtaskList,
+    onReorder: (reordered) => {
+      setDraft((prev) => ({
+        ...prev,
+        subtasks: reordered,
+      }));
+    },
+  });
 
   const handleToggleSubtask = (stId: string) => {
     setDraft((prev) => {
@@ -462,11 +481,28 @@ export function TaskDialog({ open, onOpenChange, task, defaultGoalId = null }: P
             {/* Lista de subtarefas adicionadas */}
             {draft.subtasks && draft.subtasks.length > 0 ? (
               <ul className="space-y-1.5 pt-1 max-h-60 overflow-y-auto overflow-x-hidden pr-1">
-                {draft.subtasks.map((st) => (
+                {draft.subtasks.map((st, index) => (
                   <li
                     key={st.id}
-                    className="flex items-start justify-between gap-2.5 rounded-lg bg-background/60 px-3 py-2 text-sm border border-border/40"
+                    {...getItemProps(index)}
+                    className={`group flex items-start justify-between gap-2.5 rounded-lg px-3 py-2 text-sm border transition-all ${
+                      draggedIndex === index
+                        ? "opacity-40 border-dashed border-primary/60 bg-primary/10 shadow-sm scale-[0.99]"
+                        : targetIndex === index && draggedIndex !== null
+                        ? "border-primary ring-2 ring-primary/30 bg-primary/5"
+                        : "bg-background/60 border-border/40 hover:border-border/80"
+                    }`}
                   >
+                    {/* Handle de arrastar */}
+                    <div
+                      {...getHandleProps(index)}
+                      className="mt-0.5 -ml-1 flex items-center justify-center cursor-grab active:cursor-grabbing text-muted-foreground/40 hover:text-foreground active:text-primary touch-none select-none p-0.5 rounded transition-colors"
+                      title="Arrastar para ordenar"
+                      aria-label="Arrastar para ordenar"
+                    >
+                      <FlaticonGripVertical size={14} />
+                    </div>
+
                     <button
                       type="button"
                       onClick={() => handleToggleSubtask(st.id)}
@@ -475,6 +511,7 @@ export function TaskDialog({ open, onOpenChange, task, defaultGoalId = null }: P
                           ? "border-success bg-success text-success-foreground"
                           : "border-border hover:border-primary"
                       }`}
+                      title={st.done ? "Marcar como pendente" : "Marcar como concluída"}
                     >
                       {st.done && <FlaticonCheck size={12} />}
                     </button>
@@ -489,6 +526,7 @@ export function TaskDialog({ open, onOpenChange, task, defaultGoalId = null }: P
                       type="button"
                       onClick={() => handleRemoveSubtask(st.id)}
                       className="mt-0.5 text-muted-foreground hover:text-destructive transition-colors p-1 shrink-0"
+                      title="Excluir subtarefa"
                     >
                       <FlaticonTrash size={14} />
                     </button>

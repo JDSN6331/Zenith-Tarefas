@@ -297,7 +297,8 @@ export async function initDb(): Promise<void> {
         task_id TEXT NOT NULL REFERENCES tasks(id) ON DELETE CASCADE,
         title TEXT NOT NULL,
         done INTEGER DEFAULT 0,
-        created_at TEXT NOT NULL
+        created_at TEXT NOT NULL,
+        position INTEGER DEFAULT 0
       );
     `);
 
@@ -312,6 +313,7 @@ export async function initDb(): Promise<void> {
     await query(`ALTER TABLE tasks ADD COLUMN IF NOT EXISTS user_id TEXT;`);
     await query(`ALTER TABLE tasks ADD COLUMN IF NOT EXISTS recurrence_interval INTEGER DEFAULT 1;`);
     await query(`ALTER TABLE tasks ADD COLUMN IF NOT EXISTS recurrence_days_of_week TEXT;`);
+    await query(`ALTER TABLE subtasks ADD COLUMN IF NOT EXISTS position INTEGER DEFAULT 0;`);
 
     // Índices para performance
     await query(`CREATE INDEX IF NOT EXISTS idx_users_login ON users(login);`);

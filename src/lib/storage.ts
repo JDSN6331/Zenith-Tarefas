@@ -93,9 +93,10 @@ export function createTask(data: AppData, draft: TaskDraft): AppData {
     done: isDone,
     status: isDone ? "completed" : draft.status || "pending",
     recurrence: draft.recurrence || { frequency: "none" },
-    subtasks: (draft.subtasks || []).map((st) => ({
+    subtasks: (draft.subtasks || []).map((st, idx) => ({
       ...st,
       done: isDone ? true : st.done,
+      position: typeof st.position === "number" ? st.position : idx,
     })),
     createdAt: now,
     completedAt: isDone ? now : null,
@@ -221,20 +222,23 @@ export function toggleTask(data: AppData, id: string): AppData {
 }
 
 export function addSubTask(data: AppData, taskId: string, title: string): AppData {
-  const newSubTask: SubTask = {
-    id: uid(),
-    title: title.trim(),
-    done: false,
-    createdAt: new Date().toISOString(),
-  };
-
   return {
     ...data,
-    tasks: data.tasks.map((t) =>
-      t.id === taskId
-        ? { ...t, subtasks: [...t.subtasks, newSubTask], status: t.done ? t.status : "in_progress" }
-        : t,
-    ),
+    tasks: data.tasks.map((t) => {
+      if (t.id !== taskId) return t;
+      const newSubTask: SubTask = {
+        id: uid(),
+        title: title.trim(),
+        done: false,
+        createdAt: new Date().toISOString(),
+        position: t.subtasks.length,
+      };
+      return {
+        ...t,
+        subtasks: [...t.subtasks, newSubTask],
+        status: t.done ? t.status : "in_progress",
+      };
+    }),
   };
 }
 
@@ -266,6 +270,20 @@ export function removeSubTask(data: AppData, taskId: string, subTaskId: string):
     ...data,
     tasks: data.tasks.map((t) =>
       t.id === taskId ? { ...t, subtasks: t.subtasks.filter((st) => st.id !== subTaskId) } : t,
+    ),
+  };
+}
+
+export function reorderSubtasks(data: AppData, taskId: string, subtasks: SubTask[]): AppData {
+  return {
+    ...data,
+    tasks: data.tasks.map((t) =>
+      t.id === taskId
+        ? {
+            ...t,
+            subtasks: subtasks.map((st, idx) => ({ ...st, position: idx })),
+          }
+        : t,
     ),
   };
 }

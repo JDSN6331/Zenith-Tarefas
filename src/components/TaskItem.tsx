@@ -15,7 +15,9 @@ import {
   FlaticonTag,
   FlaticonTarget,
   FlaticonTrash,
+  FlaticonGripVertical,
 } from "./icons/FlaticonIcons";
+import { useDraggableList } from "@/hooks/useDraggableList";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -58,6 +60,7 @@ export function TaskItem({
     toggleSubTask,
     addSubTask,
     removeSubTask,
+    reorderSubtasks,
   } = useStore();
   const [expanded, setExpanded] = useState(false);
   const [newSubTask, setNewSubTask] = useState("");
@@ -71,6 +74,16 @@ export function TaskItem({
   const completedSubtasks = subtasks.filter((st) => st.done).length;
   const subtasksPercent =
     subtasks.length > 0 ? Math.round((completedSubtasks / subtasks.length) * 100) : 0;
+
+  const {
+    draggedIndex,
+    targetIndex,
+    getItemProps,
+    getHandleProps,
+  } = useDraggableList({
+    items: subtasks,
+    onReorder: (reordered) => reorderSubtasks(task.id, reordered),
+  });
 
   const handleAddInlineSubtask = (e: React.FormEvent) => {
     e.preventDefault();
@@ -314,11 +327,28 @@ export function TaskItem({
           <Progress value={subtasksPercent} className="h-1.5 bg-secondary" />
 
           <ul className="space-y-1.5 pt-1">
-            {subtasks.map((st) => (
+            {subtasks.map((st, index) => (
               <li
                 key={st.id}
-                className="flex items-start justify-between gap-2.5 rounded-lg bg-secondary/40 px-3 py-2 text-xs transition-colors hover:bg-secondary/60"
+                {...getItemProps(index)}
+                className={`group flex items-start justify-between gap-2.5 rounded-lg px-2.5 py-2 text-xs transition-all ${
+                  draggedIndex === index
+                    ? "opacity-40 border border-dashed border-primary/60 bg-primary/10 shadow-sm scale-[0.99]"
+                    : targetIndex === index && draggedIndex !== null
+                    ? "border border-primary ring-2 ring-primary/30 bg-primary/5"
+                    : "bg-secondary/40 hover:bg-secondary/60 border border-transparent"
+                }`}
               >
+                {/* Handle de arrastar */}
+                <div
+                  {...getHandleProps(index)}
+                  className="mt-0.5 -ml-1 flex items-center justify-center cursor-grab active:cursor-grabbing text-muted-foreground/40 hover:text-foreground active:text-primary touch-none select-none p-0.5 rounded transition-colors"
+                  title="Arrastar para ordenar"
+                  aria-label="Arrastar para ordenar"
+                >
+                  <FlaticonGripVertical size={13} />
+                </div>
+
                 <button
                   type="button"
                   onClick={() => toggleSubTask(task.id, st.id)}
@@ -327,6 +357,7 @@ export function TaskItem({
                       ? "border-success bg-success text-success-foreground"
                       : "border-border bg-background hover:border-primary"
                   }`}
+                  title={st.done ? "Marcar como pendente" : "Marcar como concluída"}
                 >
                   {st.done && <FlaticonCheck size={10} />}
                 </button>
@@ -341,6 +372,7 @@ export function TaskItem({
                   type="button"
                   onClick={() => removeSubTask(task.id, st.id)}
                   className="mt-0.5 text-muted-foreground hover:text-destructive p-0.5 shrink-0 transition-colors"
+                  title="Excluir subtarefa"
                 >
                   <FlaticonTrash size={13} />
                 </button>

@@ -39,6 +39,7 @@ interface StoreValue {
   addSubTask: (taskId: string, title: string) => void;
   toggleSubTask: (taskId: string, subTaskId: string) => void;
   removeSubTask: (taskId: string, subTaskId: string) => void;
+  reorderSubtasks: (taskId: string, subtasks: SubTask[]) => void;
 
   // Ações de Metas & Alvos ClickUp
   addGoal: (draft: GoalDraft) => void;
@@ -157,6 +158,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     addSubTask: (taskId, title) => commit(db.addSubTask(data, taskId, title)),
     toggleSubTask: (taskId, subTaskId) => commit(db.toggleSubTask(data, taskId, subTaskId)),
     removeSubTask: (taskId, subTaskId) => commit(db.removeSubTask(data, taskId, subTaskId)),
+    reorderSubtasks: (taskId, subtasks) => commit(db.reorderSubtasks(data, taskId, subtasks)),
 
     // Metas & Alvos ClickUp
     addGoal: (draft) => commit(db.createGoal(data, draft)),

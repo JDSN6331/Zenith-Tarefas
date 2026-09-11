@@ -19,6 +19,7 @@ export interface SubTask {
   title: string;
   done: boolean;
   createdAt: string;
+  position?: number;
 }
 
 export interface Category {
