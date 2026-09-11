@@ -91,6 +91,7 @@ html[data-palette="escuro"] {
   --glass-bg: rgba(255, 255, 255, 0.84);
   --glass-border: rgba(0, 153, 204, 0.25);
   --glass-inner-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.95);
+  --shadow-themed: 0 4px 24px -4px rgba(0, 153, 204, 0.15), 0 2px 8px -2px rgba(99, 102, 241, 0.08);
   --mesh-1: rgba(0, 153, 204, 0.1);
   --mesh-2: rgba(99, 102, 241, 0.08);
   --mesh-3: rgba(14, 165, 233, 0.05);
@@ -132,6 +133,7 @@ html[data-palette="escuro"].dark {
   --glass-bg: rgba(15, 24, 42, 0.75);
   --glass-border: rgba(0, 229, 255, 0.18);
   --glass-inner-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.08);
+  --shadow-themed: 0 4px 24px -4px rgba(0, 229, 255, 0.2), 0 2px 8px -2px rgba(99, 102, 241, 0.1);
   --mesh-1: rgba(0, 229, 255, 0.12);
   --mesh-2: rgba(99, 102, 241, 0.1);
   --mesh-3: rgba(30, 64, 175, 0.08);
@@ -176,6 +178,7 @@ html[data-palette="claro"] {
   --glass-bg: rgba(255, 255, 255, 0.86);
   --glass-border: rgba(2, 132, 199, 0.25);
   --glass-inner-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.95);
+  --shadow-themed: 0 4px 24px -4px rgba(2, 132, 199, 0.15), 0 2px 8px -2px rgba(0, 242, 254, 0.08);
   --mesh-1: rgba(2, 132, 199, 0.12);
   --mesh-2: rgba(0, 242, 254, 0.08);
   --mesh-3: rgba(79, 70, 229, 0.06);
@@ -216,6 +219,7 @@ html[data-palette="claro"].dark {
   --glass-bg: rgba(11, 25, 44, 0.76);
   --glass-border: rgba(56, 189, 248, 0.2);
   --glass-inner-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.08);
+  --shadow-themed: 0 4px 24px -4px rgba(56, 189, 248, 0.2), 0 2px 8px -2px rgba(0, 242, 254, 0.1);
   --mesh-1: rgba(56, 189, 248, 0.12);
   --mesh-2: rgba(0, 242, 254, 0.08);
   --mesh-3: rgba(30, 58, 138, 0.1);
@@ -260,6 +264,7 @@ html[data-palette="verde"] {
   --glass-bg: rgba(255, 255, 255, 0.86);
   --glass-border: rgba(16, 185, 129, 0.28);
   --glass-inner-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.95);
+  --shadow-themed: 0 4px 24px -4px rgba(16, 185, 129, 0.15), 0 2px 8px -2px rgba(74, 222, 128, 0.08);
   --mesh-1: rgba(16, 185, 129, 0.12);
   --mesh-2: rgba(74, 222, 128, 0.08);
   --mesh-3: rgba(5, 150, 105, 0.06);
@@ -300,6 +305,7 @@ html[data-palette="verde"].dark {
   --glass-bg: rgba(7, 35, 24, 0.75);
   --glass-border: rgba(74, 222, 128, 0.2);
   --glass-inner-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.08);
+  --shadow-themed: 0 4px 24px -4px rgba(16, 185, 129, 0.2), 0 2px 8px -2px rgba(74, 222, 128, 0.1);
   --mesh-1: rgba(16, 185, 129, 0.14);
   --mesh-2: rgba(74, 222, 128, 0.09);
   --mesh-3: rgba(4, 120, 87, 0.08);
@@ -344,6 +350,7 @@ html[data-palette="quente"] {
   --glass-bg: rgba(255, 255, 255, 0.86);
   --glass-border: rgba(217, 119, 6, 0.28);
   --glass-inner-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.95);
+  --shadow-themed: 0 4px 24px -4px rgba(245, 158, 11, 0.15), 0 2px 8px -2px rgba(234, 88, 12, 0.08);
   --mesh-1: rgba(245, 158, 11, 0.12);
   --mesh-2: rgba(234, 88, 12, 0.08);
   --mesh-3: rgba(180, 83, 9, 0.06);
@@ -384,6 +391,7 @@ html[data-palette="quente"].dark {
   --glass-bg: rgba(36, 20, 10, 0.75);
   --glass-border: rgba(245, 158, 11, 0.22);
   --glass-inner-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.08);
+  --shadow-themed: 0 4px 24px -4px rgba(245, 158, 11, 0.2), 0 2px 8px -2px rgba(234, 88, 12, 0.1);
   --mesh-1: rgba(245, 158, 11, 0.14);
   --mesh-2: rgba(234, 88, 12, 0.1);
   --mesh-3: rgba(253, 224, 71, 0.06);
@@ -428,6 +436,7 @@ html[data-palette="roxo"] {
   --glass-bg: rgba(255, 255, 255, 0.86);
   --glass-border: rgba(147, 51, 234, 0.28);
   --glass-inner-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.95);
+  --shadow-themed: 0 4px 24px -4px rgba(168, 85, 247, 0.15), 0 2px 8px -2px rgba(236, 72, 153, 0.08);
   --mesh-1: rgba(168, 85, 247, 0.12);
   --mesh-2: rgba(236, 72, 153, 0.08);
   --mesh-3: rgba(147, 51, 234, 0.06);
@@ -468,6 +477,7 @@ html[data-palette="roxo"].dark {
   --glass-bg: rgba(30, 12, 48, 0.75);
   --glass-border: rgba(236, 72, 153, 0.22);
   --glass-inner-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.08);
+  --shadow-themed: 0 4px 24px -4px rgba(168, 85, 247, 0.2), 0 2px 8px -2px rgba(236, 72, 153, 0.1);
   --mesh-1: rgba(168, 85, 247, 0.14);
   --mesh-2: rgba(236, 72, 153, 0.1);
   --mesh-3: rgba(126, 34, 206, 0.08);
@@ -486,8 +496,8 @@ html[data-palette="roxo"].dark {
     overflow-x: hidden;
     position: relative;
     transition:
-      background-color 0.25s ease,
-      color 0.25s ease;
+      background-color 0.4s ease,
+      color 0.4s ease;
   }
 
   h1,
@@ -500,7 +510,18 @@ html[data-palette="roxo"].dark {
   }
 }
 
-/* Background com Mesh Gradient Moderno */
+/* Background com Mesh Gradient Moderno + Animação de Respiração */
+@keyframes mesh-breathe {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.85;
+    transform: scale(1.02);
+  }
+}
+
 .modern-bg {
   position: fixed;
   inset: 0;
@@ -514,7 +535,8 @@ html[data-palette="roxo"].dark {
     radial-gradient(at 100% 100%, var(--mesh-1) 0px, transparent 50%),
     radial-gradient(at 0% 100%, var(--mesh-2) 0px, transparent 50%);
   background-attachment: fixed;
-  transition: background-color 0.3s ease;
+  transition: background-color 0.4s ease;
+  animation: mesh-breathe 12s ease-in-out infinite;
 }
 
 /* Utilitários de Glassmorphism */
@@ -528,7 +550,29 @@ html[data-palette="roxo"].dark {
 }
 
 @utility glass-card-hover {
-  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  transition:
+    transform 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+    border-color 0.3s ease;
+}
+
+.glass-card-hover:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lift), var(--shadow-themed, var(--shadow-soft));
+  border-color: var(--glass-border);
+}
+
+/* Bordas que brilham no hover — efeito premium de glow */
+@utility glow-border {
+  position: relative;
+  transition:
+    box-shadow 0.35s ease,
+    border-color 0.35s ease;
+}
+
+.glow-border:hover {
+  box-shadow: 0 0 20px -4px var(--ring), var(--shadow-soft);
+  border-color: var(--ring);
 }
 
 @utility glass-nav {
