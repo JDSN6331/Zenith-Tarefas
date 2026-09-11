@@ -16,7 +16,7 @@ export interface PaletteInfo {
 export const PALETTES: PaletteInfo[] = [
   {
     id: "claro",
-    name: "Claro (Aurora Multicolor)",
+    name: "Aurora Multicolor",
     desc: "Vibrante e expressivo. Degradê magenta ao laranja com brilho estelar cósmico.",
     previewColor: "#d946a8",
     accentColor: "#fb923c",
@@ -24,7 +24,7 @@ export const PALETTES: PaletteInfo[] = [
   },
   {
     id: "escuro",
-    name: "Escuro (Midnight Cyan)",
+    name: "Midnight Cyan",
     desc: "Preto espacial e azul cobalto com arco ciano elétrico e índigo real.",
     previewColor: "#00E5FF",
     accentColor: "#6366F1",
@@ -32,7 +32,7 @@ export const PALETTES: PaletteInfo[] = [
   },
   {
     id: "verde",
-    name: "Verde (Emerald Aurora)",
+    name: "Emerald Aurora",
     desc: "Floresta profunda e esmeralda nobre com arco aurora e menta neon.",
     previewColor: "#10B981",
     accentColor: "#4ADE80",
@@ -40,7 +40,7 @@ export const PALETTES: PaletteInfo[] = [
   },
   {
     id: "quente",
-    name: "Quente (Amber Sunset)",
+    name: "Amber Sunset",
     desc: "Bronze e espresso profundo com arco solar dourado e âmbar radiante.",
     previewColor: "#F59E0B",
     accentColor: "#EA580C",
@@ -48,7 +48,7 @@ export const PALETTES: PaletteInfo[] = [
   },
   {
     id: "roxo",
-    name: "Roxo (Cosmic Amethyst)",
+    name: "Cosmic Amethyst",
     desc: "Ébano e violeta cósmico com arco em degradê magenta e orquídea neon.",
     previewColor: "#A855F7",
     accentColor: "#EC4899",
