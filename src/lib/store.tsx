@@ -52,9 +52,9 @@ interface StoreValue {
   // Ações de Lixeira
   restoreTask: (id: string) => void;
   restoreGoal: (id: string) => void;
-  permanentDeleteTask: (id: string) => void;
-  permanentDeleteGoal: (id: string) => void;
-  emptyTrash: () => void;
+  permanentDeleteTask: (id: string) => Promise<void>;
+  permanentDeleteGoal: (id: string) => Promise<void>;
+  emptyTrash: () => Promise<void>;
 
   // Ações de Categorias
   addCategory: (name: string, color: string) => void;
@@ -117,14 +117,16 @@ export function StoreProvider({ children }: { children: ReactNode }) {
 
   // Atualização otimista na tela + sincronização no PostgreSQL em background
   const commit = useCallback(
-    (next: AppData) => {
+    async (next: AppData) => {
       setData(next);
       db.saveData(next);
 
       if (isAuthenticated && user) {
-        apiClient.syncData(next).catch((err) => {
+        try {
+          await apiClient.syncData(next);
+        } catch (err) {
           console.error("Falha ao sincronizar dados com PostgreSQL:", err);
-        });
+        }
       }
     },
     [isAuthenticated, user]

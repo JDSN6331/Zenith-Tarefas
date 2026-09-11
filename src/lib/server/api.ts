@@ -324,96 +324,127 @@ export async function syncUserData(userId: string, data: AppData): Promise<void>
 
   if (!hasPg) {
     // Modo local / em memória
-    for (const cat of data.categories || []) {
-      const idx = memoryStore.categories.findIndex((c) => c.id === cat.id);
-      const row = {
-        id: cat.id,
-        user_id: userId,
-        name: cat.name,
-        color: cat.color,
-        is_default: cat.isDefault ? 1 : 0,
-        created_at: cat.createdAt || new Date().toISOString(),
-      };
-      if (idx >= 0) memoryStore.categories[idx] = row;
-      else memoryStore.categories.push(row);
-    }
-
-    for (const goal of data.goals || []) {
-      const gIdx = memoryStore.goals.findIndex((g) => g.id === goal.id);
-      const gRow = {
-        id: goal.id,
-        user_id: userId,
-        title: goal.title,
-        description: goal.description || "",
-        horizon: goal.horizon,
-        category_id: goal.categoryId || null,
-        target_date: goal.targetDate || null,
-        created_at: goal.createdAt || new Date().toISOString(),
-        deleted_at: goal.deletedAt || null,
-      };
-      if (gIdx >= 0) memoryStore.goals[gIdx] = gRow;
-      else memoryStore.goals.push(gRow);
-
-      for (const target of goal.targets || []) {
-        const tIdx = memoryStore.goal_targets.findIndex((t) => t.id === target.id);
-        const tRow = {
-          id: target.id,
-          goal_id: goal.id,
-          title: target.title,
-          type: target.type,
-          start_value: target.startValue || 0,
-          current_value: target.currentValue || 0,
-          target_value: target.targetValue,
-          unit: target.unit || null,
-          completed: target.completed ? 1 : 0,
-          created_at: target.createdAt || new Date().toISOString(),
+    if (Array.isArray(data.categories)) {
+      const catIds = data.categories.map((c) => c.id);
+      memoryStore.categories = memoryStore.categories.filter(
+        (c) => c.user_id !== userId || catIds.includes(c.id)
+      );
+      for (const cat of data.categories) {
+        const idx = memoryStore.categories.findIndex((c) => c.id === cat.id);
+        const row = {
+          id: cat.id,
+          user_id: userId,
+          name: cat.name,
+          color: cat.color,
+          is_default: cat.isDefault ? 1 : 0,
+          created_at: cat.createdAt || new Date().toISOString(),
         };
-        if (tIdx >= 0) memoryStore.goal_targets[tIdx] = tRow;
-        else memoryStore.goal_targets.push(tRow);
+        if (idx >= 0) memoryStore.categories[idx] = row;
+        else memoryStore.categories.push(row);
       }
     }
 
-    for (const task of data.tasks || []) {
-      const tIdx = memoryStore.tasks.findIndex((t) => t.id === task.id);
-      const tRow = {
-        id: task.id,
-        user_id: userId,
-        title: task.title,
-        description: task.description || "",
-        due_date: task.dueDate || null,
-        priority: task.priority,
-        category_id: task.categoryId,
-        status: task.status,
-        done: task.done ? 1 : 0,
-        recurrence_frequency: task.recurrence?.frequency || "none",
-        recurrence_interval: task.recurrence?.interval || 1,
-        recurrence_days_of_week: task.recurrence?.daysOfWeek?.join(",") || null,
-        goal_id: task.goalId || null,
-        created_at: task.createdAt || new Date().toISOString(),
-        completed_at: task.completedAt || null,
-        deleted_at: task.deletedAt || null,
-      };
-      if (tIdx >= 0) memoryStore.tasks[tIdx] = tRow;
-      else memoryStore.tasks.push(tRow);
-
-      const currentStIds = (task.subtasks || []).map((s) => s.id);
-      memoryStore.subtasks = memoryStore.subtasks.filter(
-        (s) => s.task_id !== task.id || currentStIds.includes(s.id)
+    if (Array.isArray(data.goals)) {
+      const goalIds = data.goals.map((g) => g.id);
+      memoryStore.goals = memoryStore.goals.filter(
+        (g) => g.user_id !== userId || goalIds.includes(g.id)
+      );
+      memoryStore.goal_targets = memoryStore.goal_targets.filter(
+        (t) => goalIds.includes(t.goal_id)
       );
 
-      for (let i = 0; i < (task.subtasks || []).length; i++) {
-        const st = task.subtasks[i];
-        const stIdx = memoryStore.subtasks.findIndex((s) => s.id === st.id);
-        const stRow = {
-          id: st.id,
-          task_id: task.id,
-          title: st.title,
-          done: st.done ? 1 : 0,
-          created_at: st.createdAt || new Date().toISOString(),
-          position: typeof st.position === "number" ? st.position : i,
+      for (const goal of data.goals) {
+        const gIdx = memoryStore.goals.findIndex((g) => g.id === goal.id);
+        const gRow = {
+          id: goal.id,
+          user_id: userId,
+          title: goal.title,
+          description: goal.description || "",
+          horizon: goal.horizon,
+          category_id: goal.categoryId || null,
+          target_date: goal.targetDate || null,
+          created_at: goal.createdAt || new Date().toISOString(),
+          deleted_at: goal.deletedAt || null,
         };
-        if (stIdx >= 0) memoryStore.subtasks[stIdx] = stRow;
-        else memoryStore.subtasks.push(stRow);
+        if (gIdx >= 0) memoryStore.goals[gIdx] = gRow;
+        else memoryStore.goals.push(gRow);
+
+        const targetIds = (goal.targets || []).map((t) => t.id);
+        memoryStore.goal_targets = memoryStore.goal_targets.filter(
+          (t) => t.goal_id !== goal.id || targetIds.includes(t.id)
+        );
+
+        for (const target of goal.targets || []) {
+          const tIdx = memoryStore.goal_targets.findIndex((t) => t.id === target.id);
+          const tRow = {
+            id: target.id,
+            goal_id: goal.id,
+            title: target.title,
+            type: target.type,
+            start_value: target.startValue || 0,
+            current_value: target.currentValue || 0,
+            target_value: target.targetValue,
+            unit: target.unit || null,
+            completed: target.completed ? 1 : 0,
+            created_at: target.createdAt || new Date().toISOString(),
+          };
+          if (tIdx >= 0) memoryStore.goal_targets[tIdx] = tRow;
+          else memoryStore.goal_targets.push(tRow);
+        }
+      }
+    }
+
+    if (Array.isArray(data.tasks)) {
+      const taskIds = data.tasks.map((t) => t.id);
+      memoryStore.tasks = memoryStore.tasks.filter(
+        (t) => t.user_id !== userId || taskIds.includes(t.id)
+      );
+      memoryStore.subtasks = memoryStore.subtasks.filter(
+        (s) => taskIds.includes(s.task_id)
+      );
+
+      for (const task of data.tasks) {
+        const tIdx = memoryStore.tasks.findIndex((t) => t.id === task.id);
+        const tRow = {
+          id: task.id,
+          user_id: userId,
+          title: task.title,
+          description: task.description || "",
+          due_date: task.dueDate || null,
+          priority: task.priority,
+          category_id: task.categoryId,
+          status: task.status,
+          done: task.done ? 1 : 0,
+          recurrence_frequency: task.recurrence?.frequency || "none",
+          recurrence_interval: task.recurrence?.interval || 1,
+          recurrence_days_of_week: task.recurrence?.daysOfWeek?.join(",") || null,
+          goal_id: task.goalId || null,
+          created_at: task.createdAt || new Date().toISOString(),
+          completed_at: task.completedAt || null,
+          deleted_at: task.deletedAt || null,
+        };
+        if (tIdx >= 0) memoryStore.tasks[tIdx] = tRow;
+        else memoryStore.tasks.push(tRow);
+
+        const currentStIds = (task.subtasks || []).map((s) => s.id);
+        memoryStore.subtasks = memoryStore.subtasks.filter(
+          (s) => s.task_id !== task.id || currentStIds.includes(s.id)
+        );
+
+        for (let i = 0; i < (task.subtasks || []).length; i++) {
+          const st = task.subtasks[i];
+          const stIdx = memoryStore.subtasks.findIndex((s) => s.id === st.id);
+          const stRow = {
+            id: st.id,
+            task_id: task.id,
+            title: st.title,
+            done: st.done ? 1 : 0,
+            created_at: st.createdAt || new Date().toISOString(),
+            position: typeof st.position === "number" ? st.position : i,
+          };
+          if (stIdx >= 0) memoryStore.subtasks[stIdx] = stRow;
+          else memoryStore.subtasks.push(stRow);
+        }
       }
     }
     return;
@@ -421,139 +452,182 @@ export async function syncUserData(userId: string, data: AppData): Promise<void>
 
   // Modo PostgreSQL em produção
   await withTransaction(async (client) => {
-    // 1. Sincroniza Categorias
-    for (const cat of data.categories || []) {
-      await client.query(
-        `INSERT INTO categories (id, user_id, name, color, is_default, created_at)
-         VALUES ($1, $2, $3, $4, $5, $6)
-         ON CONFLICT (id) DO UPDATE SET
-           name = EXCLUDED.name,
-           color = EXCLUDED.color,
-           is_default = EXCLUDED.is_default`,
-        [cat.id, userId, cat.name, cat.color, cat.isDefault ? 1 : 0, cat.createdAt || new Date().toISOString()]
-      );
-    }
-
-    // 2. Sincroniza Metas e seus Alvos
-    for (const goal of data.goals || []) {
-      await client.query(
-        `INSERT INTO goals (id, user_id, title, description, horizon, category_id, target_date, created_at, deleted_at)
-         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
-         ON CONFLICT (id) DO UPDATE SET
-           title = EXCLUDED.title,
-           description = EXCLUDED.description,
-           horizon = EXCLUDED.horizon,
-           category_id = EXCLUDED.category_id,
-           target_date = EXCLUDED.target_date,
-           deleted_at = EXCLUDED.deleted_at`,
-        [
-          goal.id,
-          userId,
-          goal.title,
-          goal.description || "",
-          goal.horizon,
-          goal.categoryId || null,
-          goal.targetDate || null,
-          goal.createdAt || new Date().toISOString(),
-          goal.deletedAt || null,
-        ]
-      );
-
-      // Sincroniza alvos da meta
-      for (const target of goal.targets || []) {
+    // 1. Sincroniza Categorias (remove personalizadas excluídas)
+    if (Array.isArray(data.categories)) {
+      const currentCategoryIds = data.categories.map((c) => c.id);
+      if (currentCategoryIds.length > 0) {
         await client.query(
-          `INSERT INTO goal_targets (id, goal_id, title, type, start_value, current_value, target_value, unit, completed, created_at)
-           VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
-           ON CONFLICT (id) DO UPDATE SET
-             title = EXCLUDED.title,
-             type = EXCLUDED.type,
-             start_value = EXCLUDED.start_value,
-             current_value = EXCLUDED.current_value,
-             target_value = EXCLUDED.target_value,
-             unit = EXCLUDED.unit,
-             completed = EXCLUDED.completed`,
-          [
-            target.id,
-            goal.id,
-            target.title,
-            target.type,
-            target.startValue || 0,
-            target.currentValue || 0,
-            target.targetValue,
-            target.unit || null,
-            target.completed ? 1 : 0,
-            target.createdAt || new Date().toISOString(),
-          ]
+          `DELETE FROM categories WHERE user_id = $1 AND NOT (id = ANY($2::text[]))`,
+          [userId, currentCategoryIds]
         );
       }
-    }
-
-    // 3. Sincroniza Tarefas e suas Subtarefas
-    for (const task of data.tasks || []) {
-      const daysOfWeekStr = task.recurrence?.daysOfWeek?.join(",") || null;
-      await client.query(
-        `INSERT INTO tasks (
-           id, user_id, title, description, due_date, priority, category_id, status, done,
-           recurrence_frequency, recurrence_interval, recurrence_days_of_week, goal_id,
-           created_at, completed_at, deleted_at
-         ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16)
-         ON CONFLICT (id) DO UPDATE SET
-           title = EXCLUDED.title,
-           description = EXCLUDED.description,
-           due_date = EXCLUDED.due_date,
-           priority = EXCLUDED.priority,
-           category_id = EXCLUDED.category_id,
-           status = EXCLUDED.status,
-           done = EXCLUDED.done,
-           recurrence_frequency = EXCLUDED.recurrence_frequency,
-           recurrence_interval = EXCLUDED.recurrence_interval,
-           recurrence_days_of_week = EXCLUDED.recurrence_days_of_week,
-           goal_id = EXCLUDED.goal_id,
-           completed_at = EXCLUDED.completed_at,
-           deleted_at = EXCLUDED.deleted_at`,
-        [
-          task.id,
-          userId,
-          task.title,
-          task.description || "",
-          task.dueDate || null,
-          task.priority,
-          task.categoryId,
-          task.status,
-          task.done ? 1 : 0,
-          task.recurrence?.frequency || "none",
-          task.recurrence?.interval || 1,
-          daysOfWeekStr,
-          task.goalId || null,
-          task.createdAt || new Date().toISOString(),
-          task.completedAt || null,
-          task.deletedAt || null,
-        ]
-      );
-
-      // Sincroniza subtarefas
-      const currentDbStIds = (task.subtasks || []).map((st) => st.id);
-      if (currentDbStIds.length > 0) {
+      for (const cat of data.categories) {
         await client.query(
-          `DELETE FROM subtasks WHERE task_id = $1 AND NOT (id = ANY($2::text[]))`,
-          [task.id, currentDbStIds]
-        );
-      } else {
-        await client.query(`DELETE FROM subtasks WHERE task_id = $1`, [task.id]);
-      }
-
-      for (let i = 0; i < (task.subtasks || []).length; i++) {
-        const st = task.subtasks[i];
-        const pos = typeof st.position === "number" ? st.position : i;
-        await client.query(
-          `INSERT INTO subtasks (id, task_id, title, done, created_at, position)
+          `INSERT INTO categories (id, user_id, name, color, is_default, created_at)
            VALUES ($1, $2, $3, $4, $5, $6)
            ON CONFLICT (id) DO UPDATE SET
-             title = EXCLUDED.title,
-             done = EXCLUDED.done,
-             position = EXCLUDED.position`,
-          [st.id, task.id, st.title, st.done ? 1 : 0, st.createdAt || new Date().toISOString(), pos]
+             name = EXCLUDED.name,
+             color = EXCLUDED.color,
+             is_default = EXCLUDED.is_default`,
+          [cat.id, userId, cat.name, cat.color, cat.isDefault ? 1 : 0, cat.createdAt || new Date().toISOString()]
         );
+      }
+    }
+
+    // 2. Sincroniza Metas e seus Alvos (remove metas e alvos excluídos permanentemente)
+    if (Array.isArray(data.goals)) {
+      const currentGoalIds = data.goals.map((g) => g.id);
+      if (currentGoalIds.length > 0) {
+        await client.query(
+          `DELETE FROM goals WHERE user_id = $1 AND NOT (id = ANY($2::text[]))`,
+          [userId, currentGoalIds]
+        );
+      } else {
+        await client.query(`DELETE FROM goals WHERE user_id = $1`, [userId]);
+      }
+
+      for (const goal of data.goals) {
+        await client.query(
+          `INSERT INTO goals (id, user_id, title, description, horizon, category_id, target_date, created_at, deleted_at)
+           VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+           ON CONFLICT (id) DO UPDATE SET
+             title = EXCLUDED.title,
+             description = EXCLUDED.description,
+             horizon = EXCLUDED.horizon,
+             category_id = EXCLUDED.category_id,
+             target_date = EXCLUDED.target_date,
+             deleted_at = EXCLUDED.deleted_at`,
+          [
+            goal.id,
+            userId,
+            goal.title,
+            goal.description || "",
+            goal.horizon,
+            goal.categoryId || null,
+            goal.targetDate || null,
+            goal.createdAt || new Date().toISOString(),
+            goal.deletedAt || null,
+          ]
+        );
+
+        // Sincroniza alvos da meta (remove alvos que foram excluídos)
+        const currentTargetIds = (goal.targets || []).map((t) => t.id);
+        if (currentTargetIds.length > 0) {
+          await client.query(
+            `DELETE FROM goal_targets WHERE goal_id = $1 AND NOT (id = ANY($2::text[]))`,
+            [goal.id, currentTargetIds]
+          );
+        } else {
+          await client.query(`DELETE FROM goal_targets WHERE goal_id = $1`, [goal.id]);
+        }
+
+        for (const target of goal.targets || []) {
+          await client.query(
+            `INSERT INTO goal_targets (id, goal_id, title, type, start_value, current_value, target_value, unit, completed, created_at)
+             VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
+             ON CONFLICT (id) DO UPDATE SET
+               title = EXCLUDED.title,
+               type = EXCLUDED.type,
+               start_value = EXCLUDED.start_value,
+               current_value = EXCLUDED.current_value,
+               target_value = EXCLUDED.target_value,
+               unit = EXCLUDED.unit,
+               completed = EXCLUDED.completed`,
+            [
+              target.id,
+              goal.id,
+              target.title,
+              target.type,
+              target.startValue || 0,
+              target.currentValue || 0,
+              target.targetValue,
+              target.unit || null,
+              target.completed ? 1 : 0,
+              target.createdAt || new Date().toISOString(),
+            ]
+          );
+        }
+      }
+    }
+
+    // 3. Sincroniza Tarefas e suas Subtarefas (remove tarefas excluídas permanentemente)
+    if (Array.isArray(data.tasks)) {
+      const currentTaskIds = data.tasks.map((t) => t.id);
+      if (currentTaskIds.length > 0) {
+        await client.query(
+          `DELETE FROM tasks WHERE user_id = $1 AND NOT (id = ANY($2::text[]))`,
+          [userId, currentTaskIds]
+        );
+      } else {
+        await client.query(`DELETE FROM tasks WHERE user_id = $1`, [userId]);
+      }
+
+      for (const task of data.tasks) {
+        const daysOfWeekStr = task.recurrence?.daysOfWeek?.join(",") || null;
+        await client.query(
+          `INSERT INTO tasks (
+             id, user_id, title, description, due_date, priority, category_id, status, done,
+             recurrence_frequency, recurrence_interval, recurrence_days_of_week, goal_id,
+             created_at, completed_at, deleted_at
+           ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16)
+           ON CONFLICT (id) DO UPDATE SET
+             title = EXCLUDED.title,
+             description = EXCLUDED.description,
+             due_date = EXCLUDED.due_date,
+             priority = EXCLUDED.priority,
+             category_id = EXCLUDED.category_id,
+             status = EXCLUDED.status,
+             done = EXCLUDED.done,
+             recurrence_frequency = EXCLUDED.recurrence_frequency,
+             recurrence_interval = EXCLUDED.recurrence_interval,
+             recurrence_days_of_week = EXCLUDED.recurrence_days_of_week,
+             goal_id = EXCLUDED.goal_id,
+             completed_at = EXCLUDED.completed_at,
+             deleted_at = EXCLUDED.deleted_at`,
+          [
+            task.id,
+            userId,
+            task.title,
+            task.description || "",
+            task.dueDate || null,
+            task.priority,
+            task.categoryId,
+            task.status,
+            task.done ? 1 : 0,
+            task.recurrence?.frequency || "none",
+            task.recurrence?.interval || 1,
+            daysOfWeekStr,
+            task.goalId || null,
+            task.createdAt || new Date().toISOString(),
+            task.completedAt || null,
+            task.deletedAt || null,
+          ]
+        );
+
+        // Sincroniza subtarefas (remove as que foram excluídas)
+        const currentDbStIds = (task.subtasks || []).map((st) => st.id);
+        if (currentDbStIds.length > 0) {
+          await client.query(
+            `DELETE FROM subtasks WHERE task_id = $1 AND NOT (id = ANY($2::text[]))`,
+            [task.id, currentDbStIds]
+          );
+        } else {
+          await client.query(`DELETE FROM subtasks WHERE task_id = $1`, [task.id]);
+        }
+
+        for (let i = 0; i < (task.subtasks || []).length; i++) {
+          const st = task.subtasks[i];
+          const pos = typeof st.position === "number" ? st.position : i;
+          await client.query(
+            `INSERT INTO subtasks (id, task_id, title, done, created_at, position)
+             VALUES ($1, $2, $3, $4, $5, $6)
+             ON CONFLICT (id) DO UPDATE SET
+               title = EXCLUDED.title,
+               done = EXCLUDED.done,
+               position = EXCLUDED.position`,
+            [st.id, task.id, st.title, st.done ? 1 : 0, st.createdAt || new Date().toISOString(), pos]
+          );
+        }
       }
     }
   });

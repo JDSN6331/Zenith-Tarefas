@@ -52,6 +52,7 @@ export function LixeiraPage() {
   } = useStore();
 
   const [confirmEmptyOpen, setConfirmEmptyOpen] = useState(false);
+  const [isClearing, setIsClearing] = useState(false);
 
   return (
     <div className="space-y-6">
@@ -200,12 +201,18 @@ export function LixeiraPage() {
             </Button>
             <Button
               variant="destructive"
-              onClick={() => {
-                emptyTrash();
-                setConfirmEmptyOpen(false);
+              disabled={isClearing}
+              onClick={async () => {
+                setIsClearing(true);
+                try {
+                  await emptyTrash();
+                } finally {
+                  setIsClearing(false);
+                  setConfirmEmptyOpen(false);
+                }
               }}
             >
-              Sim, esvaziar permanentemente
+              {isClearing ? "Esvaziando..." : "Sim, esvaziar permanentemente"}
             </Button>
           </DialogFooter>
         </DialogContent>
