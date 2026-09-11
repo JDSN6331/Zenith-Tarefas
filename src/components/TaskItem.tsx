@@ -20,6 +20,12 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Progress } from "@/components/ui/progress";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { useStore } from "@/lib/store";
 import { PRIORITY_LABEL, RECURRENCE_LABEL, STATUS_LABEL, type Task } from "@/lib/types";
 import { computeTaskStatus, formatDate, isOverdue } from "@/lib/utils-domain";
@@ -43,8 +49,16 @@ export function TaskItem({
   isSelected = false,
   onToggleSelect,
 }: TaskItemProps) {
-  const { toggleTask, removeTask, goals, categories, toggleSubTask, addSubTask, removeSubTask } =
-    useStore();
+  const {
+    toggleTask,
+    editTask,
+    removeTask,
+    goals,
+    categories,
+    toggleSubTask,
+    addSubTask,
+    removeSubTask,
+  } = useStore();
   const [expanded, setExpanded] = useState(false);
   const [newSubTask, setNewSubTask] = useState("");
 
@@ -74,7 +88,7 @@ export function TaskItem({
       }`}
     >
       <div className="flex items-start gap-2.5 sm:gap-3">
-        {/* Checkbox de Seleção Múltipla em Lote */}
+        {/* Checkbox Único de Seleção */}
         {onToggleSelect && (
           <button
             type="button"
@@ -95,22 +109,6 @@ export function TaskItem({
           </button>
         )}
 
-        {/* Checkbox Principal de Conclusão */}
-        <button
-          type="button"
-          onClick={() => toggleTask(task.id)}
-          aria-label={task.done ? `Reabrir ${task.title}` : `Concluir ${task.title}`}
-          aria-pressed={task.done}
-          title={task.done ? "Reabrir tarefa" : "Concluir tarefa"}
-          className={`pop-check mt-0.5 flex size-6 shrink-0 cursor-pointer items-center justify-center rounded-full border transition-all ${
-            task.done
-              ? "border-success bg-success text-success-foreground scale-105 shadow-sm"
-              : "border-border/80 bg-background/50 text-muted-foreground/0 hover:text-muted-foreground hover:border-primary hover:scale-105"
-          }`}
-        >
-          <FlaticonCheck size={13} className="transition-opacity" />
-        </button>
-
         {/* Informações da Tarefa */}
         <div className="min-w-0 flex-1">
           <div className="flex flex-wrap items-center gap-2">
@@ -122,46 +120,76 @@ export function TaskItem({
               {task.title}
             </p>
 
-            {/* Badge de Status Clicável */}
-            <button
-              type="button"
-              onClick={() => toggleTask(task.id)}
-              className="cursor-pointer transition-transform hover:scale-105"
-              title="Clique para alternar conclusão"
-            >
-              {status === "completed" && (
-                <Badge
-                  variant="outline"
-                  className="bg-success/15 text-success border-success/30 text-[11px] gap-1 py-0 px-2 cursor-pointer"
+            {/* Badge de Status Interativo (Seletor de Status estilo ClickUp / Linear) */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button
+                  type="button"
+                  className="cursor-pointer transition-transform hover:scale-105 inline-flex items-center"
+                  title="Clique para alterar o status da tarefa"
                 >
-                  <FlaticonCheckCircle size={12} /> {STATUS_LABEL.completed}
-                </Badge>
-              )}
-              {status === "overdue" && (
-                <Badge
-                  variant="outline"
-                  className="bg-destructive/15 text-destructive border-destructive/30 text-[11px] gap-1 py-0 px-2 cursor-pointer"
+                  {status === "completed" && (
+                    <Badge
+                      variant="outline"
+                      className="bg-success/15 text-success border-success/30 text-[11px] gap-1 py-0 px-2 cursor-pointer hover:bg-success/25"
+                    >
+                      <FlaticonCheckCircle size={12} /> {STATUS_LABEL.completed}
+                      <FlaticonChevronDown size={10} className="ml-0.5 opacity-70" />
+                    </Badge>
+                  )}
+                  {status === "overdue" && (
+                    <Badge
+                      variant="outline"
+                      className="bg-destructive/15 text-destructive border-destructive/30 text-[11px] gap-1 py-0 px-2 cursor-pointer hover:bg-destructive/25"
+                    >
+                      <FlaticonAlertCircle size={12} /> {STATUS_LABEL.overdue}
+                      <FlaticonChevronDown size={10} className="ml-0.5 opacity-70" />
+                    </Badge>
+                  )}
+                  {status === "in_progress" && (
+                    <Badge
+                      variant="outline"
+                      className="bg-primary/15 text-primary border-primary/30 text-[11px] gap-1 py-0 px-2 cursor-pointer hover:bg-primary/25"
+                    >
+                      <FlaticonPlayCircle size={12} /> {STATUS_LABEL.in_progress}
+                      <FlaticonChevronDown size={10} className="ml-0.5 opacity-70" />
+                    </Badge>
+                  )}
+                  {status === "pending" && (
+                    <Badge
+                      variant="outline"
+                      className="bg-muted text-muted-foreground border-border/50 text-[11px] gap-1 py-0 px-2 cursor-pointer hover:bg-muted/80"
+                    >
+                      <FlaticonClock size={12} /> {STATUS_LABEL.pending}
+                      <FlaticonChevronDown size={10} className="ml-0.5 opacity-70" />
+                    </Badge>
+                  )}
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="start" className="w-44 p-1">
+                <DropdownMenuItem
+                  onClick={() => editTask(task.id, { status: "pending", done: false })}
+                  className="gap-2 text-xs cursor-pointer"
                 >
-                  <FlaticonAlertCircle size={12} /> {STATUS_LABEL.overdue}
-                </Badge>
-              )}
-              {status === "in_progress" && (
-                <Badge
-                  variant="outline"
-                  className="bg-primary/15 text-primary border-primary/30 text-[11px] gap-1 py-0 px-2 cursor-pointer"
+                  <FlaticonClock size={14} className="text-muted-foreground" />
+                  Não Iniciada
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={() => editTask(task.id, { status: "in_progress", done: false })}
+                  className="gap-2 text-xs cursor-pointer"
                 >
-                  <FlaticonPlayCircle size={12} /> {STATUS_LABEL.in_progress}
-                </Badge>
-              )}
-              {status === "pending" && (
-                <Badge
-                  variant="outline"
-                  className="bg-muted text-muted-foreground border-border/50 text-[11px] gap-1 py-0 px-2 cursor-pointer"
+                  <FlaticonPlayCircle size={14} className="text-primary" />
+                  Em Andamento
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={() => editTask(task.id, { status: "completed", done: true })}
+                  className="gap-2 text-xs cursor-pointer"
                 >
-                  <FlaticonClock size={12} /> {STATUS_LABEL.pending}
-                </Badge>
-              )}
-            </button>
+                  <FlaticonCheckCircle size={14} className="text-success" />
+                  Concluída
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
 
           {task.description && (
@@ -229,7 +257,23 @@ export function TaskItem({
         </div>
 
         {/* Ações Rápidas */}
-        <div className="flex shrink-0 gap-1">
+        <div className="flex shrink-0 items-center gap-1">
+          {/* Botão Rápido de Conclusão (1 clique) */}
+          <Button
+            variant="ghost"
+            size="icon"
+            className={`size-8 rounded-lg transition-colors ${
+              task.done
+                ? "text-success bg-success/15 hover:bg-success/25"
+                : "text-muted-foreground hover:text-success hover:bg-success/10"
+            }`}
+            aria-label={task.done ? `Reabrir ${task.title}` : `Concluir ${task.title}`}
+            title={task.done ? "Tarefa concluída (clique para reabrir)" : "Marcar como concluída"}
+            onClick={() => toggleTask(task.id)}
+          >
+            {task.done ? <FlaticonCheckCircle size={16} /> : <FlaticonCheck size={16} />}
+          </Button>
+
           <Button
             variant="ghost"
             size="icon"
