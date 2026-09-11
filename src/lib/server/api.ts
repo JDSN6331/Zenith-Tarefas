@@ -113,6 +113,7 @@ export async function fetchUserData(userId: string): Promise<AppData> {
           daysOfWeek: t.recurrence_days_of_week
             ? t.recurrence_days_of_week.split(",").map(Number).filter((n) => !isNaN(n))
             : undefined,
+          nextStatus: (t.recurrence_next_status || "pending") as "pending" | "in_progress",
         },
         subtasks: userSubtasks
           .filter((st) => st.task_id === t.id)
@@ -239,13 +240,14 @@ export async function fetchUserData(userId: string): Promise<AppData> {
     recurrence_frequency: string | null;
     recurrence_interval: number | null;
     recurrence_days_of_week: string | null;
+    recurrence_next_status: string | null;
     goal_id: string | null;
     created_at: string;
     completed_at: string | null;
     deleted_at: string | null;
   }>(
     `SELECT id, title, description, due_date, priority, category_id, status, done,
-            recurrence_frequency, recurrence_interval, recurrence_days_of_week, goal_id,
+            recurrence_frequency, recurrence_interval, recurrence_days_of_week, recurrence_next_status, goal_id,
             created_at, completed_at, deleted_at 
      FROM tasks 
      WHERE user_id = $1 
@@ -301,6 +303,7 @@ export async function fetchUserData(userId: string): Promise<AppData> {
       daysOfWeek: t.recurrence_days_of_week
         ? t.recurrence_days_of_week.split(",").map(Number).filter((n) => !isNaN(n))
         : undefined,
+      nextStatus: (t.recurrence_next_status || "pending") as "pending" | "in_progress",
     },
     subtasks: subtasksByTask.get(t.id) || [],
     goalId: t.goal_id,
@@ -418,6 +421,7 @@ export async function syncUserData(userId: string, data: AppData): Promise<void>
           recurrence_frequency: task.recurrence?.frequency || "none",
           recurrence_interval: task.recurrence?.interval || 1,
           recurrence_days_of_week: task.recurrence?.daysOfWeek?.join(",") || null,
+          recurrence_next_status: task.recurrence?.nextStatus || "pending",
           goal_id: task.goalId || null,
           created_at: task.createdAt || new Date().toISOString(),
           completed_at: task.completedAt || null,
@@ -431,8 +435,10 @@ export async function syncUserData(userId: string, data: AppData): Promise<void>
           (s) => s.task_id !== task.id || currentStIds.includes(s.id)
         );
 
-        for (let i = 0; i < (task.subtasks || []).length; i++) {
-          const st = task.subtasks[i];
+        const subtasks = task.subtasks || [];
+        for (let i = 0; i < subtasks.length; i++) {
+          const st = subtasks[i];
+          if (!st) continue;
           const stIdx = memoryStore.subtasks.findIndex((s) => s.id === st.id);
           const stRow = {
             id: st.id,
@@ -565,11 +571,11 @@ export async function syncUserData(userId: string, data: AppData): Promise<void>
       for (const task of data.tasks) {
         const daysOfWeekStr = task.recurrence?.daysOfWeek?.join(",") || null;
         await client.query(
-          `INSERT INTO tasks (
+           `INSERT INTO tasks (
              id, user_id, title, description, due_date, priority, category_id, status, done,
-             recurrence_frequency, recurrence_interval, recurrence_days_of_week, goal_id,
+             recurrence_frequency, recurrence_interval, recurrence_days_of_week, recurrence_next_status, goal_id,
              created_at, completed_at, deleted_at
-           ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16)
+           ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17)
            ON CONFLICT (id) DO UPDATE SET
              title = EXCLUDED.title,
              description = EXCLUDED.description,
@@ -581,6 +587,7 @@ export async function syncUserData(userId: string, data: AppData): Promise<void>
              recurrence_frequency = EXCLUDED.recurrence_frequency,
              recurrence_interval = EXCLUDED.recurrence_interval,
              recurrence_days_of_week = EXCLUDED.recurrence_days_of_week,
+             recurrence_next_status = EXCLUDED.recurrence_next_status,
              goal_id = EXCLUDED.goal_id,
              completed_at = EXCLUDED.completed_at,
              deleted_at = EXCLUDED.deleted_at`,
@@ -597,6 +604,7 @@ export async function syncUserData(userId: string, data: AppData): Promise<void>
             task.recurrence?.frequency || "none",
             task.recurrence?.interval || 1,
             daysOfWeekStr,
+            task.recurrence?.nextStatus || "pending",
             task.goalId || null,
             task.createdAt || new Date().toISOString(),
             task.completedAt || null,
@@ -615,8 +623,10 @@ export async function syncUserData(userId: string, data: AppData): Promise<void>
           await client.query(`DELETE FROM subtasks WHERE task_id = $1`, [task.id]);
         }
 
-        for (let i = 0; i < (task.subtasks || []).length; i++) {
-          const st = task.subtasks[i];
+        const subtasks = task.subtasks || [];
+        for (let i = 0; i < subtasks.length; i++) {
+          const st = subtasks[i];
+          if (!st) continue;
           const pos = typeof st.position === "number" ? st.position : i;
           await client.query(
             `INSERT INTO subtasks (id, task_id, title, done, created_at, position)
@@ -738,35 +748,48 @@ export async function handleApiRequest(request: Request): Promise<Response> {
       return jsonResponse({ ok: true, avatarUrl });
     }
 
-    // ---------------- USER: UPDATE PREFERENCES (THEME & PALETTE) ----------------
+    // ---------------- USER: UPDATE PREFERENCES (THEME, PALETTE & TASK FILTERS) ----------------
     if (path === "/api/user/preferences" && method === "POST") {
       const body = await request.json();
       const themeMode = body.themeMode === "light" ? "light" : body.themeMode === "dark" ? "dark" : null;
       const validPalettes = ["claro", "escuro", "verde", "quente", "roxo"];
       const themePalette = validPalettes.includes(body.themePalette) ? body.themePalette : null;
+      const taskFilters = body.taskFilters !== undefined ? body.taskFilters : undefined;
+      const taskFiltersStr = taskFilters !== undefined ? JSON.stringify(taskFilters) : undefined;
 
       const hasPg = !!getDbPool();
       if (hasPg) {
-        if (themeMode && themePalette) {
-          await query(`UPDATE users SET theme_mode = $1, theme_palette = $2 WHERE id = $3`, [
-            themeMode,
-            themePalette,
-            user.id,
-          ]);
-        } else if (themeMode) {
-          await query(`UPDATE users SET theme_mode = $1 WHERE id = $2`, [themeMode, user.id]);
-        } else if (themePalette) {
-          await query(`UPDATE users SET theme_palette = $1 WHERE id = $2`, [themePalette, user.id]);
+        const updates: string[] = [];
+        const params: any[] = [];
+        let pIdx = 1;
+
+        if (themeMode) {
+          updates.push(`theme_mode = $${pIdx++}`);
+          params.push(themeMode);
+        }
+        if (themePalette) {
+          updates.push(`theme_palette = $${pIdx++}`);
+          params.push(themePalette);
+        }
+        if (taskFiltersStr !== undefined) {
+          updates.push(`task_filters = $${pIdx++}`);
+          params.push(taskFiltersStr);
+        }
+
+        if (updates.length > 0) {
+          params.push(user.id);
+          await query(`UPDATE users SET ${updates.join(", ")} WHERE id = $${pIdx}`, params);
         }
       } else {
         const u = memoryStore.users.find((x) => x.id === user.id);
         if (u) {
           if (themeMode) u.theme_mode = themeMode;
           if (themePalette) u.theme_palette = themePalette;
+          if (taskFiltersStr !== undefined) u.task_filters = taskFiltersStr;
         }
       }
 
-      return jsonResponse({ ok: true, themeMode, themePalette });
+      return jsonResponse({ ok: true, themeMode, themePalette, taskFilters });
     }
 
     // ---------------- ADMIN: GESTÃO DE USUÁRIOS E SISTEMA (LGPD COMPLIANT) ----------------

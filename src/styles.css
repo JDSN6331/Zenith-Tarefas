@@ -95,6 +95,8 @@ html[data-palette="escuro"] {
   --mesh-1: rgba(0, 153, 204, 0.1);
   --mesh-2: rgba(99, 102, 241, 0.08);
   --mesh-3: rgba(14, 165, 233, 0.05);
+  --page-wallpaper: url('/logos/wallpaper-escuro.webp');
+  --page-wallpaper-overlay: radial-gradient(circle at 85% 20%, rgba(248, 250, 252, 0.65) 0%, rgba(248, 250, 252, 0.88) 70%), linear-gradient(180deg, rgba(248, 250, 252, 0.85) 0%, rgba(241, 245, 249, 0.92) 100%);
 }
 
 .dark,
@@ -137,6 +139,8 @@ html[data-palette="escuro"].dark {
   --mesh-1: rgba(0, 229, 255, 0.12);
   --mesh-2: rgba(99, 102, 241, 0.1);
   --mesh-3: rgba(30, 64, 175, 0.08);
+  --page-wallpaper: url('/logos/wallpaper-escuro.webp');
+  --page-wallpaper-overlay: radial-gradient(circle at 85% 20%, transparent 20%, rgba(8, 14, 26, 0.45) 85%), linear-gradient(180deg, rgba(8, 14, 26, 0.3) 0%, rgba(8, 14, 26, 0.75) 100%);
 }
 
 /* =========================================================================
@@ -144,85 +148,89 @@ html[data-palette="escuro"].dark {
    ========================================================================= */
 html[data-palette="claro"] {
   --radius: 1rem;
-  --background: #f8fafc;
-  --foreground: #0f172a;
+  --background: #faf8fc;
+  --foreground: #1a0e2e;
   --card: rgba(255, 255, 255, 0.9);
-  --card-foreground: #0f172a;
+  --card-foreground: #1a0e2e;
   --popover: rgba(255, 255, 255, 0.98);
-  --popover-foreground: #0f172a;
-  --primary: #0284c7;
+  --popover-foreground: #1a0e2e;
+  --primary: #d946a8;
   --primary-foreground: #ffffff;
-  --secondary: #e0f2fe;
-  --secondary-foreground: #0369a1;
-  --muted: #f1f5f9;
-  --muted-foreground: #64748b;
-  --accent: #00f2fe;
-  --accent-foreground: #082f49;
+  --secondary: #fce7f3;
+  --secondary-foreground: #9d174d;
+  --muted: #fdf2f8;
+  --muted-foreground: #78648a;
+  --accent: #f97316;
+  --accent-foreground: #ffffff;
   --destructive: #dc2626;
   --destructive-foreground: #ffffff;
   --success: #15803d;
   --success-foreground: #ffffff;
   --warning: #d97706;
   --warning-foreground: #451a03;
-  --info: #0284c7;
+  --info: #8b5cf6;
   --info-foreground: #ffffff;
-  --border: rgba(2, 132, 199, 0.22);
-  --input: #e2e8f0;
-  --ring: #0284c7;
-  --chart-1: #0284c7;
-  --chart-2: #00f2fe;
+  --border: rgba(217, 70, 168, 0.22);
+  --input: #f3e8ff;
+  --ring: #d946a8;
+  --chart-1: #d946a8;
+  --chart-2: #f97316;
   --chart-3: #15803d;
   --chart-4: #f59e0b;
   --chart-5: #dc2626;
 
   --glass-bg: rgba(255, 255, 255, 0.86);
-  --glass-border: rgba(2, 132, 199, 0.25);
+  --glass-border: rgba(217, 70, 168, 0.25);
   --glass-inner-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.95);
-  --shadow-themed: 0 4px 24px -4px rgba(2, 132, 199, 0.15), 0 2px 8px -2px rgba(0, 242, 254, 0.08);
-  --mesh-1: rgba(2, 132, 199, 0.12);
-  --mesh-2: rgba(0, 242, 254, 0.08);
-  --mesh-3: rgba(79, 70, 229, 0.06);
+  --shadow-themed: 0 4px 24px -4px rgba(217, 70, 168, 0.15), 0 2px 8px -2px rgba(249, 115, 22, 0.08);
+  --mesh-1: rgba(217, 70, 168, 0.1);
+  --mesh-2: rgba(249, 115, 22, 0.08);
+  --mesh-3: rgba(139, 92, 246, 0.06);
+  --page-wallpaper: url('/logos/wallpaper-claro.webp');
+  --page-wallpaper-overlay: radial-gradient(circle at 85% 20%, rgba(250, 248, 252, 0.65) 0%, rgba(250, 248, 252, 0.88) 70%), linear-gradient(180deg, rgba(250, 248, 252, 0.85) 0%, rgba(245, 243, 255, 0.92) 100%);
 }
 
 html[data-palette="claro"].dark {
-  --background: #071527;
-  --foreground: #f8fafc;
-  --card: rgba(11, 25, 44, 0.78);
-  --card-foreground: #f8fafc;
-  --popover: rgba(11, 25, 44, 0.96);
-  --popover-foreground: #f8fafc;
-  --primary: #38bdf8;
-  --primary-foreground: #071527;
-  --secondary: rgba(30, 58, 138, 0.4);
-  --secondary-foreground: #f8fafc;
-  --muted: rgba(20, 35, 58, 0.6);
-  --muted-foreground: #94a3b8;
-  --accent: #00f2fe;
-  --accent-foreground: #071527;
+  --background: #110a1e;
+  --foreground: #fdf4ff;
+  --card: rgba(22, 12, 38, 0.78);
+  --card-foreground: #fdf4ff;
+  --popover: rgba(22, 12, 38, 0.96);
+  --popover-foreground: #fdf4ff;
+  --primary: #f472b6;
+  --primary-foreground: #110a1e;
+  --secondary: rgba(88, 28, 135, 0.4);
+  --secondary-foreground: #fdf4ff;
+  --muted: rgba(30, 15, 48, 0.6);
+  --muted-foreground: #a78bba;
+  --accent: #fb923c;
+  --accent-foreground: #110a1e;
   --destructive: #f87171;
-  --destructive-foreground: #071527;
+  --destructive-foreground: #110a1e;
   --success: #4ade80;
-  --success-foreground: #071527;
+  --success-foreground: #110a1e;
   --warning: #fbbf24;
   --warning-foreground: #451a03;
-  --info: #38bdf8;
-  --info-foreground: #071527;
-  --border: rgba(56, 189, 248, 0.22);
-  --input: rgba(15, 30, 50, 0.8);
-  --ring: #38bdf8;
-  --chart-1: #38bdf8;
-  --chart-2: #00f2fe;
+  --info: #a78bfa;
+  --info-foreground: #110a1e;
+  --border: rgba(244, 114, 182, 0.22);
+  --input: rgba(30, 15, 48, 0.8);
+  --ring: #f472b6;
+  --chart-1: #f472b6;
+  --chart-2: #fb923c;
   --chart-3: #4ade80;
   --chart-4: #fbbf24;
   --chart-5: #f87171;
 
-  --glass-bg: rgba(11, 25, 44, 0.76);
-  --glass-border: rgba(56, 189, 248, 0.2);
+  --glass-bg: rgba(22, 12, 38, 0.76);
+  --glass-border: rgba(244, 114, 182, 0.2);
   --glass-inner-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.08);
-  --shadow-themed: 0 4px 24px -4px rgba(56, 189, 248, 0.2), 0 2px 8px -2px rgba(0, 242, 254, 0.1);
-  --mesh-1: rgba(56, 189, 248, 0.12);
-  --mesh-2: rgba(0, 242, 254, 0.08);
-  --mesh-3: rgba(30, 58, 138, 0.1);
+  --shadow-themed: 0 4px 24px -4px rgba(244, 114, 182, 0.2), 0 2px 8px -2px rgba(251, 146, 60, 0.1);
+  --mesh-1: rgba(244, 114, 182, 0.12);
+  --mesh-2: rgba(251, 146, 60, 0.08);
+  --mesh-3: rgba(88, 28, 135, 0.1);
+  --page-wallpaper: url('/logos/wallpaper-claro.webp');
+  --page-wallpaper-overlay: radial-gradient(circle at 85% 20%, transparent 20%, rgba(17, 10, 30, 0.45) 85%), linear-gradient(180deg, rgba(17, 10, 30, 0.3) 0%, rgba(17, 10, 30, 0.75) 100%);
 }
 
 /* =========================================================================
@@ -268,6 +276,8 @@ html[data-palette="verde"] {
   --mesh-1: rgba(16, 185, 129, 0.12);
   --mesh-2: rgba(74, 222, 128, 0.08);
   --mesh-3: rgba(5, 150, 105, 0.06);
+  --page-wallpaper: url('/logos/wallpaper-verde.webp');
+  --page-wallpaper-overlay: radial-gradient(circle at 85% 20%, rgba(246, 253, 248, 0.65) 0%, rgba(246, 253, 248, 0.88) 70%), linear-gradient(180deg, rgba(246, 253, 248, 0.85) 0%, rgba(236, 253, 243, 0.92) 100%);
 }
 
 html[data-palette="verde"].dark {
@@ -309,6 +319,8 @@ html[data-palette="verde"].dark {
   --mesh-1: rgba(16, 185, 129, 0.14);
   --mesh-2: rgba(74, 222, 128, 0.09);
   --mesh-3: rgba(4, 120, 87, 0.08);
+  --page-wallpaper: url('/logos/wallpaper-verde.webp');
+  --page-wallpaper-overlay: radial-gradient(circle at 85% 20%, transparent 20%, rgba(4, 20, 13, 0.45) 85%), linear-gradient(180deg, rgba(4, 20, 13, 0.3) 0%, rgba(4, 20, 13, 0.75) 100%);
 }
 
 /* =========================================================================
@@ -354,6 +366,8 @@ html[data-palette="quente"] {
   --mesh-1: rgba(245, 158, 11, 0.12);
   --mesh-2: rgba(234, 88, 12, 0.08);
   --mesh-3: rgba(180, 83, 9, 0.06);
+  --page-wallpaper: url('/logos/wallpaper-quente.webp');
+  --page-wallpaper-overlay: radial-gradient(circle at 85% 20%, rgba(254, 252, 248, 0.65) 0%, rgba(254, 252, 248, 0.88) 70%), linear-gradient(180deg, rgba(254, 252, 248, 0.85) 0%, rgba(254, 243, 226, 0.92) 100%);
 }
 
 html[data-palette="quente"].dark {
@@ -395,6 +409,8 @@ html[data-palette="quente"].dark {
   --mesh-1: rgba(245, 158, 11, 0.14);
   --mesh-2: rgba(234, 88, 12, 0.1);
   --mesh-3: rgba(253, 224, 71, 0.06);
+  --page-wallpaper: url('/logos/wallpaper-quente.webp');
+  --page-wallpaper-overlay: radial-gradient(circle at 85% 20%, transparent 20%, rgba(20, 12, 6, 0.45) 85%), linear-gradient(180deg, rgba(20, 12, 6, 0.3) 0%, rgba(20, 12, 6, 0.75) 100%);
 }
 
 /* =========================================================================
@@ -440,6 +456,8 @@ html[data-palette="roxo"] {
   --mesh-1: rgba(168, 85, 247, 0.12);
   --mesh-2: rgba(236, 72, 153, 0.08);
   --mesh-3: rgba(147, 51, 234, 0.06);
+  --page-wallpaper: url('/logos/wallpaper-roxo.webp');
+  --page-wallpaper-overlay: radial-gradient(circle at 85% 20%, rgba(253, 248, 255, 0.65) 0%, rgba(253, 248, 255, 0.88) 70%), linear-gradient(180deg, rgba(253, 248, 255, 0.85) 0%, rgba(250, 238, 255, 0.92) 100%);
 }
 
 html[data-palette="roxo"].dark {
@@ -481,6 +499,8 @@ html[data-palette="roxo"].dark {
   --mesh-1: rgba(168, 85, 247, 0.14);
   --mesh-2: rgba(236, 72, 153, 0.1);
   --mesh-3: rgba(126, 34, 206, 0.08);
+  --page-wallpaper: url('/logos/wallpaper-roxo.webp');
+  --page-wallpaper-overlay: radial-gradient(circle at 85% 20%, transparent 20%, rgba(18, 8, 28, 0.45) 85%), linear-gradient(180deg, rgba(18, 8, 28, 0.3) 0%, rgba(18, 8, 28, 0.75) 100%);
 }
 
 @layer base {
@@ -529,23 +549,34 @@ html[data-palette="roxo"].dark {
   pointer-events: none;
   background-color: var(--color-background);
   background-image:
+    var(--page-wallpaper-overlay),
+    var(--page-wallpaper),
     radial-gradient(at 0% 0%, var(--mesh-1) 0px, transparent 50%),
     radial-gradient(at 100% 0%, var(--mesh-2) 0px, transparent 50%),
     radial-gradient(at 50% 50%, var(--mesh-3) 0px, transparent 50%),
     radial-gradient(at 100% 100%, var(--mesh-1) 0px, transparent 50%),
     radial-gradient(at 0% 100%, var(--mesh-2) 0px, transparent 50%);
+  background-size: cover;
+  background-position: center top;
+  background-repeat: no-repeat;
   background-attachment: fixed;
-  transition: background-color 0.4s ease;
-  animation: mesh-breathe 12s ease-in-out infinite;
+  transition:
+    background-color 0.4s ease,
+    background-image 0.4s ease;
+  animation: mesh-breathe 14s ease-in-out infinite;
 }
 
-/* Utilitários de Glassmorphism */
+/* Utilitários de Glassmorphism — Efeito Premium Aprimorado */
 @utility glass-card {
   background: var(--glass-bg);
-  backdrop-filter: blur(18px) saturate(180%);
-  -webkit-backdrop-filter: blur(18px) saturate(180%);
+  backdrop-filter: blur(24px) saturate(200%);
+  -webkit-backdrop-filter: blur(24px) saturate(200%);
   border: 1px solid var(--glass-border);
-  box-shadow: var(--shadow-soft), var(--glass-inner-shadow);
+  box-shadow:
+    var(--shadow-soft),
+    var(--glass-inner-shadow),
+    0 0 0 0.5px rgba(255, 255, 255, 0.06),
+    inset 0 0 20px 0 rgba(255, 255, 255, 0.03);
   border-radius: var(--radius-xl);
 }
 
@@ -558,7 +589,11 @@ html[data-palette="roxo"].dark {
 
 .glass-card-hover:hover {
   transform: translateY(-2px);
-  box-shadow: var(--shadow-lift), var(--shadow-themed, var(--shadow-soft));
+  box-shadow:
+    var(--shadow-lift),
+    var(--shadow-themed, var(--shadow-soft)),
+    0 0 0 0.5px rgba(255, 255, 255, 0.1),
+    inset 0 0 30px 0 rgba(255, 255, 255, 0.04);
   border-color: var(--glass-border);
 }
 
@@ -571,16 +606,19 @@ html[data-palette="roxo"].dark {
 }
 
 .glow-border:hover {
-  box-shadow: 0 0 20px -4px var(--ring), var(--shadow-soft);
+  box-shadow: 0 0 24px -4px var(--ring), 0 0 8px -2px var(--ring), var(--shadow-soft);
   border-color: var(--ring);
 }
 
 @utility glass-nav {
   background: var(--glass-bg);
-  backdrop-filter: blur(20px) saturate(190%);
-  -webkit-backdrop-filter: blur(20px) saturate(190%);
+  backdrop-filter: blur(28px) saturate(200%);
+  -webkit-backdrop-filter: blur(28px) saturate(200%);
   border-bottom: 1px solid var(--glass-border);
-  box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.05);
+  box-shadow:
+    0 4px 24px -2px rgba(0, 0, 0, 0.08),
+    0 1px 0 0 rgba(255, 255, 255, 0.05),
+    inset 0 -1px 0 0 rgba(255, 255, 255, 0.03);
 }
 
 html {
@@ -609,18 +647,23 @@ body[data-scroll-locked] {
 
 @utility glass-badge {
   background: var(--glass-bg);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(14px) saturate(190%);
+  -webkit-backdrop-filter: blur(14px) saturate(190%);
   border: 1px solid var(--glass-border);
+  box-shadow: 0 0 0 0.5px rgba(255, 255, 255, 0.06);
 }
 
 @utility card-surface {
   background: var(--glass-bg);
-  backdrop-filter: blur(18px) saturate(180%);
-  -webkit-backdrop-filter: blur(18px) saturate(180%);
+  backdrop-filter: blur(24px) saturate(200%);
+  -webkit-backdrop-filter: blur(24px) saturate(200%);
   border: 1px solid var(--glass-border);
   border-radius: var(--radius-xl);
-  box-shadow: var(--shadow-soft), var(--glass-inner-shadow);
+  box-shadow:
+    var(--shadow-soft),
+    var(--glass-inner-shadow),
+    0 0 0 0.5px rgba(255, 255, 255, 0.06),
+    inset 0 0 20px 0 rgba(255, 255, 255, 0.03);
   transition:
     transform 0.2s ease,
     box-shadow 0.2s ease;

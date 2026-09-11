@@ -5,6 +5,15 @@ import type { AppData } from "./types";
 
 const TOKEN_KEY = "zenith.auth.token";
 
+export interface TaskFilterPreferences {
+  statusFilter?: string;
+  priorityFilter?: string;
+  categoryFilter?: string;
+  searchQuery?: string;
+  dueDateFilter?: string;
+  sortKey?: string;
+}
+
 export interface UserProfile {
   id: string;
   name: string;
@@ -14,6 +23,7 @@ export interface UserProfile {
   avatarUrl?: string | null;
   themeMode?: "light" | "dark";
   themePalette?: "claro" | "escuro" | "verde" | "quente" | "roxo";
+  taskFilters?: TaskFilterPreferences | null;
   createdAt: string;
 }
 
@@ -161,7 +171,11 @@ export const apiClient = {
     return res.ok;
   },
 
-  async updatePreferences(prefs: { themeMode?: "light" | "dark"; themePalette?: string }): Promise<boolean> {
+  async updatePreferences(prefs: {
+    themeMode?: "light" | "dark";
+    themePalette?: string;
+    taskFilters?: TaskFilterPreferences;
+  }): Promise<boolean> {
     const res = await request("/api/user/preferences", {
       method: "POST",
       body: JSON.stringify(prefs),

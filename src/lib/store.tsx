@@ -12,7 +12,7 @@ import {
 } from "react";
 import * as db from "./storage";
 import { DEFAULT_CATEGORIES } from "./types";
-import type { AppData, Category, Goal, GoalDraft, GoalTarget, Task, TaskDraft } from "./types";
+import type { AppData, Category, Goal, GoalDraft, GoalTarget, SubTask, Task, TaskDraft } from "./types";
 import { useAuth } from "./auth";
 import { apiClient } from "./api-client";
 

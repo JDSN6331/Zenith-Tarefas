@@ -88,9 +88,9 @@ export function AppShell({ children }: { children: ReactNode }) {
 
   return (
     <div className="relative min-h-screen">
-      {/* Header Superior (Desktop e Mobile) */}
-      <header className="glass-nav sticky top-0 z-40 transition-colors w-full">
-        <div className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 sm:px-6 py-2.5 sm:py-3">
+      {/* Header Superior (Desktop e Mobile) com Glassmorphism elegante */}
+      <header className="sticky top-0 z-40 w-full glass-nav transition-colors">
+        <div className="relative mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 sm:px-6 py-3.5 sm:py-4">
           {/* Logo e Nome */}
           <Link to="/" className="group flex items-center gap-2.5 shrink-0" aria-label="Zenith Início">
             <ZenithLogo size={38} variant="wordmark" />

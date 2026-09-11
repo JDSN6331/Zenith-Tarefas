@@ -26,6 +26,7 @@ interface MemoryDb {
     avatar_url?: string | null;
     theme_mode?: string;
     theme_palette?: string;
+    task_filters?: string;
     created_at: string;
   }>;
   sessions: Array<{
@@ -78,6 +79,7 @@ interface MemoryDb {
     recurrence_frequency: string;
     recurrence_interval: number;
     recurrence_days_of_week: string | null;
+    recurrence_next_status: string;
     goal_id: string | null;
     created_at: string;
     completed_at: string | null;
@@ -211,6 +213,7 @@ export async function initDb(): Promise<void> {
         password_hash TEXT NOT NULL,
         role TEXT DEFAULT 'user',
         status TEXT DEFAULT 'active',
+        task_filters TEXT DEFAULT '{}',
         created_at TEXT NOT NULL
       );
     `);
@@ -283,6 +286,7 @@ export async function initDb(): Promise<void> {
         recurrence_frequency TEXT DEFAULT 'none',
         recurrence_interval INTEGER DEFAULT 1,
         recurrence_days_of_week TEXT,
+        recurrence_next_status TEXT DEFAULT 'pending',
         goal_id TEXT REFERENCES goals(id) ON DELETE SET NULL,
         created_at TEXT NOT NULL,
         completed_at TEXT,
@@ -308,11 +312,13 @@ export async function initDb(): Promise<void> {
     await query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS avatar_url TEXT;`);
     await query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS theme_mode TEXT DEFAULT 'dark';`);
     await query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS theme_palette TEXT DEFAULT 'escuro';`);
+    await query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS task_filters TEXT DEFAULT '{}';`);
     await query(`ALTER TABLE categories ADD COLUMN IF NOT EXISTS user_id TEXT;`);
     await query(`ALTER TABLE goals ADD COLUMN IF NOT EXISTS user_id TEXT;`);
     await query(`ALTER TABLE tasks ADD COLUMN IF NOT EXISTS user_id TEXT;`);
     await query(`ALTER TABLE tasks ADD COLUMN IF NOT EXISTS recurrence_interval INTEGER DEFAULT 1;`);
     await query(`ALTER TABLE tasks ADD COLUMN IF NOT EXISTS recurrence_days_of_week TEXT;`);
+    await query(`ALTER TABLE tasks ADD COLUMN IF NOT EXISTS recurrence_next_status TEXT DEFAULT 'pending';`);
     await query(`ALTER TABLE subtasks ADD COLUMN IF NOT EXISTS position INTEGER DEFAULT 0;`);
 
     // Índices para performance

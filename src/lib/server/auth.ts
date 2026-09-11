@@ -15,6 +15,7 @@ export interface SafeUser {
   avatarUrl?: string | null;
   themeMode?: "light" | "dark";
   themePalette?: "claro" | "escuro" | "verde" | "quente" | "roxo";
+  taskFilters?: Record<string, any> | null;
   createdAt: string;
 }
 
@@ -87,11 +88,13 @@ export async function validateSession(token: string | null | undefined): Promise
         avatar_url: string | null;
         theme_mode: string | null;
         theme_palette: string | null;
+        task_filters: string | null;
         created_at: string;
         expires_at: string;
       }>(
         `SELECT u.id, u.name, u.login, COALESCE(u.role, 'user') as role, COALESCE(u.status, 'active') as status, 
                 u.avatar_url, COALESCE(u.theme_mode, 'dark') as theme_mode, COALESCE(u.theme_palette, 'escuro') as theme_palette, 
+                COALESCE(u.task_filters, '{}') as task_filters,
                 u.created_at, s.expires_at
          FROM sessions s
          JOIN users u ON s.user_id = u.id
@@ -102,6 +105,13 @@ export async function validateSession(token: string | null | undefined): Promise
       if (rows.length === 0 || !rows[0]) return null;
 
       const row = rows[0];
+      let taskFilters = null;
+      try {
+        if (row.task_filters && row.task_filters.trim() !== "{}") {
+          taskFilters = JSON.parse(row.task_filters);
+        }
+      } catch {}
+
       return {
         id: row.id,
         name: row.name,
@@ -111,6 +121,7 @@ export async function validateSession(token: string | null | undefined): Promise
         avatarUrl: row.avatar_url || null,
         themeMode: (row.theme_mode === "light" ? "light" : "dark"),
         themePalette: (row.theme_palette as any) || "escuro",
+        taskFilters,
         createdAt: row.created_at,
       };
     } else {
@@ -118,6 +129,13 @@ export async function validateSession(token: string | null | undefined): Promise
       if (!session) return null;
       const user = memoryStore.users.find((u) => u.id === session.user_id);
       if (!user) return null;
+      let memTaskFilters = null;
+      try {
+        if (user.task_filters && user.task_filters.trim() !== "{}") {
+          memTaskFilters = JSON.parse(user.task_filters);
+        }
+      } catch {}
+
       return {
         id: user.id,
         name: user.name,
@@ -127,6 +145,7 @@ export async function validateSession(token: string | null | undefined): Promise
         avatarUrl: user.avatar_url || null,
         themeMode: (user.theme_mode === "light" ? "light" : "dark"),
         themePalette: (user.theme_palette as any) || "escuro",
+        taskFilters: memTaskFilters,
         createdAt: user.created_at,
       };
     }
@@ -268,6 +287,7 @@ export async function loginUser(params: {
     avatar_url?: string | null;
     theme_mode?: string | null;
     theme_palette?: string | null;
+    task_filters?: string | null;
     created_at: string;
   } | undefined;
 
@@ -282,10 +302,12 @@ export async function loginUser(params: {
       avatar_url: string | null;
       theme_mode: string | null;
       theme_palette: string | null;
+      task_filters: string | null;
       created_at: string;
     }>(
       `SELECT id, name, login, password_hash, COALESCE(role, 'user') as role, COALESCE(status, 'active') as status, 
               avatar_url, COALESCE(theme_mode, 'dark') as theme_mode, COALESCE(theme_palette, 'escuro') as theme_palette, 
+              COALESCE(task_filters, '{}') as task_filters,
               created_at 
        FROM users WHERE login = $1`,
       [login]
@@ -318,8 +340,17 @@ export async function loginUser(params: {
       role: (userRecord.role || "user") as "admin" | "user",
       status: (userRecord.status || "active") as "active" | "inactive",
       avatarUrl: userRecord.avatar_url || null,
-      themeMode: (userRecord.theme_mode === "light" ? "light" : "dark"),
+      themeMode: userRecord.theme_mode === "light" ? "light" : "dark",
       themePalette: (userRecord.theme_palette as any) || "escuro",
+      taskFilters: (() => {
+        try {
+          return userRecord.task_filters && userRecord.task_filters.trim() !== "{}"
+            ? JSON.parse(userRecord.task_filters)
+            : null;
+        } catch {
+          return null;
+        }
+      })(),
       createdAt: userRecord.created_at,
     },
     token,

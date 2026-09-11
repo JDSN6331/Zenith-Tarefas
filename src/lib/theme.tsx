@@ -16,11 +16,11 @@ export interface PaletteInfo {
 export const PALETTES: PaletteInfo[] = [
   {
     id: "claro",
-    name: "Claro (Sky Cyan & Navy)",
-    desc: "Luminoso e nítido. Degradê branco ao azul marinho com arco ciano celeste.",
-    previewColor: "#0284C7",
-    accentColor: "#00F2FE",
-    brandGradient: "linear-gradient(135deg, #4F46E5 0%, #00F2FE 100%)",
+    name: "Claro (Aurora Multicolor)",
+    desc: "Vibrante e expressivo. Degradê magenta ao laranja com brilho estelar cósmico.",
+    previewColor: "#d946a8",
+    accentColor: "#fb923c",
+    brandGradient: "linear-gradient(135deg, #ec4899 0%, #fb923c 100%)",
   },
   {
     id: "escuro",

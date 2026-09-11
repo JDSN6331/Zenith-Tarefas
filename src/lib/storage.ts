@@ -105,75 +105,113 @@ export function createTask(data: AppData, draft: TaskDraft): AppData {
   return { ...data, tasks: [task, ...data.tasks] };
 }
 
+function createNextRecurringTask(targetTask: Task, now: string): Task {
+  const nextDueDate = calculateNextDueDate(targetTask.dueDate, targetTask.recurrence.frequency);
+  return {
+    ...targetTask,
+    id: uid(),
+    done: false,
+    status: targetTask.recurrence.nextStatus || "pending",
+    dueDate: nextDueDate,
+    createdAt: now,
+    completedAt: null,
+    deletedAt: null,
+    // Reseta subtarefas para a nova ocorrência
+    subtasks: (targetTask.subtasks || []).map((st) => ({
+      ...st,
+      id: uid(),
+      done: false,
+      createdAt: now,
+    })),
+  };
+}
+
 export function updateTask(data: AppData, id: string, patch: Partial<Task>): AppData {
   const now = new Date().toISOString();
-  return {
-    ...data,
-    tasks: data.tasks.map((t) => {
-      if (t.id !== id) return t;
-      const updated = { ...t, ...patch };
+  const targetTask = data.tasks.find((t) => t.id === id);
+  if (!targetTask) return data;
 
-      if (patch.status !== undefined) {
-        if (patch.status === "completed") {
-          updated.done = true;
-          updated.completedAt = updated.completedAt || now;
-          updated.subtasks = updated.subtasks.map((st) => ({ ...st, done: true }));
-        } else {
-          updated.done = false;
-          updated.completedAt = null;
-        }
-      } else if (patch.done !== undefined) {
-        updated.done = patch.done;
-        updated.status = patch.done
-          ? "completed"
-          : updated.status === "completed"
-            ? "pending"
-            : updated.status;
-        updated.completedAt = patch.done ? (updated.completedAt || now) : null;
-        if (patch.done) {
-          updated.subtasks = updated.subtasks.map((st) => ({ ...st, done: true }));
-        }
+  const wasDone = targetTask.done || targetTask.status === "completed";
+  const newRecurringTasks: Task[] = [];
+
+  const nextTasks = data.tasks.map((t) => {
+    if (t.id !== id) return t;
+    const updated = { ...t, ...patch };
+
+    if (patch.status !== undefined) {
+      if (patch.status === "completed") {
+        updated.done = true;
+        updated.completedAt = updated.completedAt || now;
+        updated.subtasks = updated.subtasks.map((st) => ({ ...st, done: true }));
+      } else {
+        updated.done = false;
+        updated.completedAt = null;
       }
+    } else if (patch.done !== undefined) {
+      updated.done = patch.done;
+      updated.status = patch.done
+        ? "completed"
+        : updated.status === "completed"
+          ? "pending"
+          : updated.status;
+      updated.completedAt = patch.done ? (updated.completedAt || now) : null;
+      if (patch.done) {
+        updated.subtasks = updated.subtasks.map((st) => ({ ...st, done: true }));
+      }
+    }
 
-      return updated;
-    }),
-  };
+    const isNowDone = updated.done || updated.status === "completed";
+    if (!wasDone && isNowDone && updated.recurrence && updated.recurrence.frequency !== "none") {
+      newRecurringTasks.push(createNextRecurringTask(updated, now));
+    }
+
+    return updated;
+  });
+
+  return { ...data, tasks: [...newRecurringTasks, ...nextTasks] };
 }
 
 export function batchUpdateTasks(data: AppData, ids: string[], patch: Partial<Task>): AppData {
   const idSet = new Set(ids);
   const now = new Date().toISOString();
-  return {
-    ...data,
-    tasks: data.tasks.map((t) => {
-      if (!idSet.has(t.id)) return t;
-      const updated = { ...t, ...patch };
+  const newRecurringTasks: Task[] = [];
 
-      if (patch.status !== undefined) {
-        if (patch.status === "completed") {
-          updated.done = true;
-          updated.completedAt = updated.completedAt || now;
-          updated.subtasks = updated.subtasks.map((st) => ({ ...st, done: true }));
-        } else {
-          updated.done = false;
-          updated.completedAt = null;
-        }
-      } else if (patch.done !== undefined) {
-        updated.done = patch.done;
-        updated.status = patch.done
-          ? "completed"
-          : updated.status === "completed"
-            ? "pending"
-            : updated.status;
-        updated.completedAt = patch.done ? (updated.completedAt || now) : null;
-        if (patch.done) {
-          updated.subtasks = updated.subtasks.map((st) => ({ ...st, done: true }));
-        }
+  const nextTasks = data.tasks.map((t) => {
+    if (!idSet.has(t.id)) return t;
+    const wasDone = t.done || t.status === "completed";
+    const updated = { ...t, ...patch };
+
+    if (patch.status !== undefined) {
+      if (patch.status === "completed") {
+        updated.done = true;
+        updated.completedAt = updated.completedAt || now;
+        updated.subtasks = updated.subtasks.map((st) => ({ ...st, done: true }));
+      } else {
+        updated.done = false;
+        updated.completedAt = null;
       }
+    } else if (patch.done !== undefined) {
+      updated.done = patch.done;
+      updated.status = patch.done
+        ? "completed"
+        : updated.status === "completed"
+          ? "pending"
+          : updated.status;
+      updated.completedAt = patch.done ? (updated.completedAt || now) : null;
+      if (patch.done) {
+        updated.subtasks = updated.subtasks.map((st) => ({ ...st, done: true }));
+      }
+    }
 
-      return updated;
-    }),
-  };
+    const isNowDone = updated.done || updated.status === "completed";
+    if (!wasDone && isNowDone && updated.recurrence && updated.recurrence.frequency !== "none") {
+      newRecurringTasks.push(createNextRecurringTask(updated, now));
+    }
+
+    return updated;
+  });
+
+  return { ...data, tasks: [...newRecurringTasks, ...nextTasks] };
 }
 
 export function toggleTask(data: AppData, id: string): AppData {
@@ -197,24 +235,7 @@ export function toggleTask(data: AppData, id: string): AppData {
 
   // Se concluiu uma tarefa recorrente, cria a próxima ocorrência
   if (nextDone && targetTask.recurrence && targetTask.recurrence.frequency !== "none") {
-    const nextDueDate = calculateNextDueDate(targetTask.dueDate, targetTask.recurrence.frequency);
-    const recurringTask: Task = {
-      ...targetTask,
-      id: uid(),
-      done: false,
-      status: targetTask.recurrence.nextStatus || "pending",
-      dueDate: nextDueDate,
-      createdAt: now,
-      completedAt: null,
-      deletedAt: null,
-      // Reseta subtarefas para a nova ocorrência
-      subtasks: targetTask.subtasks.map((st) => ({
-        ...st,
-        id: uid(),
-        done: false,
-        createdAt: now,
-      })),
-    };
+    const recurringTask = createNextRecurringTask(targetTask, now);
     nextTasks = [recurringTask, ...nextTasks];
   }
 

@@ -1,26 +1,26 @@
 <svg width="512" height="512" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
   <defs>
     <linearGradient id="bb-claro" x1="50%" y1="0%" x2="50%" y2="100%">
-      <stop offset="0%" stop-color="#102042" />
-      <stop offset="100%" stop-color="#091326" />
+      <stop offset="0%" stop-color="#1a0e2e" />
+      <stop offset="100%" stop-color="#110a1e" />
     </linearGradient>
     <radialGradient id="bg-claro" cx="50%" cy="45%" r="45%">
-      <stop offset="0%" stop-color="rgba(56, 189, 248, 0.20)" />
+      <stop offset="0%" stop-color="rgba(244, 114, 182, 0.20)" />
       <stop offset="100%" stop-color="transparent" />
     </radialGradient>
     <linearGradient id="zg-claro" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#0284C7" />
-      <stop offset="100%" stop-color="#00F2FE" />
+      <stop offset="0%" stop-color="#ec4899" />
+      <stop offset="100%" stop-color="#fb923c" />
     </linearGradient>
     <linearGradient id="ag-claro" x1="0%" y1="50%" x2="100%" y2="50%">
-      <stop offset="0%" stop-color="#0284C7" stop-opacity="0.6" />
-      <stop offset="50%" stop-color="#00F2FE" />
-      <stop offset="100%" stop-color="#00F2FE" stop-opacity="0.6" />
+      <stop offset="0%" stop-color="#ec4899" stop-opacity="0.6" />
+      <stop offset="50%" stop-color="#fb923c" />
+      <stop offset="100%" stop-color="#fb923c" stop-opacity="0.6" />
     </linearGradient>
     <radialGradient id="sf-claro" cx="50%" cy="50%" r="50%">
       <stop offset="0%" stop-color="#FFFFFF" />
-      <stop offset="30%" stop-color="#38BDF8" stop-opacity="0.9" />
-      <stop offset="100%" stop-color="#38BDF8" stop-opacity="0" />
+      <stop offset="30%" stop-color="#f472b6" stop-opacity="0.9" />
+      <stop offset="100%" stop-color="#f472b6" stop-opacity="0" />
     </radialGradient>
     <filter id="ds-claro" x="-15%" y="-10%" width="130%" height="130%">
       <feDropShadow dx="0" dy="2" stdDeviation="2.5" flood-color="#000000" flood-opacity="0.4" />
@@ -82,6 +82,6 @@
   </g>
 
   <!-- Bordas do squircle -->
-  <rect x="2" y="2" width="96" height="96" rx="24" stroke="rgba(56, 189, 248, 0.30)" stroke-width="1.2" fill="none" />
+  <rect x="2" y="2" width="96" height="96" rx="24" stroke="rgba(244, 114, 182, 0.30)" stroke-width="1.2" fill="none" />
   <rect x="3.5" y="3.5" width="93" height="93" rx="22.5" stroke="rgba(255, 255, 255, 0.08)" stroke-width="0.8" fill="none" />
 </svg>

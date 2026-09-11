@@ -10,7 +10,13 @@ import {
   useState,
   type ReactNode,
 } from "react";
-import { apiClient, getStoredToken, setStoredToken, type UserProfile } from "./api-client";
+import {
+  apiClient,
+  getStoredToken,
+  setStoredToken,
+  type TaskFilterPreferences,
+  type UserProfile,
+} from "./api-client";
 
 interface AuthContextType {
   user: UserProfile | null;
@@ -24,7 +30,11 @@ interface AuthContextType {
   }) => Promise<{ ok: boolean; error?: string }>;
   logout: () => Promise<void>;
   updateAvatar: (avatarUrl: string | null) => Promise<boolean>;
-  updateUserPreferences: (prefs: { themeMode?: "light" | "dark"; themePalette?: any }) => Promise<void>;
+  updateUserPreferences: (prefs: {
+    themeMode?: "light" | "dark";
+    themePalette?: any;
+    taskFilters?: TaskFilterPreferences;
+  }) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | null>(null);
@@ -125,7 +135,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const updateUserPreferences = useCallback(
-    async (prefs: { themeMode?: "light" | "dark"; themePalette?: any }) => {
+    async (prefs: {
+      themeMode?: "light" | "dark";
+      themePalette?: any;
+      taskFilters?: TaskFilterPreferences;
+    }) => {
       setUser((prev) => (prev ? { ...prev, ...prefs } : null));
       try {
         await apiClient.updatePreferences(prefs);

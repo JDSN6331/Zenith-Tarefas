@@ -29,9 +29,11 @@ export function useDraggableList<T>({ items, onReorder }: UseDraggableListOption
         return;
       }
       const updated = [...itemsRef.current];
-      const [removed] = updated.splice(from, 1);
-      updated.splice(to, 0, removed);
-      onReorder(updated);
+      const removed = updated.splice(from, 1)[0];
+      if (removed !== undefined) {
+        updated.splice(to, 0, removed);
+        onReorder(updated);
+      }
     },
     [onReorder]
   );

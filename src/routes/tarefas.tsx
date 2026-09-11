@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
 import { AppShell } from "@/components/AppShell";
 import { EmptyState } from "@/components/EmptyState";
@@ -35,6 +35,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { useAuth } from "@/lib/auth";
 import { useStore } from "@/lib/store";
 import type { Priority, Task, TaskStatus } from "@/lib/types";
 import { computeTaskStatus, isOverdue, sortTasks, todayISO, type SortKey } from "@/lib/utils-domain";
@@ -60,21 +61,129 @@ export const Route = createFileRoute("/tarefas")({
 
 type FilterStatus = "todas" | TaskStatus;
 
+export interface TaskFiltersState {
+  statusFilter?: FilterStatus;
+  priorityFilter?: string;
+  categoryFilter?: string;
+  searchQuery?: string;
+  dueDateFilter?: string;
+  sortKey?: SortKey;
+}
+
+const STORAGE_KEY = "zenith.filters.tasks";
+
+function getInitialFilters(): TaskFiltersState {
+  if (typeof window === "undefined") return {};
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) {
+      return JSON.parse(raw);
+    }
+  } catch {}
+  return {};
+}
+
 export function TarefasPage() {
   const { tasks, categories, ready, batchUpdateTasks, batchRemoveTasks } = useStore();
+  const { user, updateUserPreferences } = useAuth();
   const [openDialog, setOpenDialog] = useState(false);
   const [editingTask, setEditingTask] = useState<Task | null>(null);
 
   // Seleção Múltipla em Lote
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
 
-  // Filtros
-  const [statusFilter, setStatusFilter] = useState<FilterStatus>("todas");
-  const [priorityFilter, setPriorityFilter] = useState<string>("todas");
-  const [categoryFilter, setCategoryFilter] = useState<string>("todas");
-  const [searchQuery, setSearchQuery] = useState("");
-  const [dueDateFilter, setDueDateFilter] = useState<string>("");
-  const [sortKey, setSortKey] = useState<SortKey>("createdAt");
+  // Filtros persistentes (localStorage imediato + PostgreSQL no Easypanel debounced)
+  const initial = useMemo(() => getInitialFilters(), []);
+  const [statusFilter, setStatusFilter] = useState<FilterStatus>(
+    initial.statusFilter || (user?.taskFilters?.statusFilter as FilterStatus) || "todas"
+  );
+  const [priorityFilter, setPriorityFilter] = useState<string>(
+    initial.priorityFilter || user?.taskFilters?.priorityFilter || "todas"
+  );
+  const [categoryFilter, setCategoryFilter] = useState<string>(
+    initial.categoryFilter || user?.taskFilters?.categoryFilter || "todas"
+  );
+  const [searchQuery, setSearchQuery] = useState(
+    initial.searchQuery ?? user?.taskFilters?.searchQuery ?? ""
+  );
+  const [dueDateFilter, setDueDateFilter] = useState<string>(
+    initial.dueDateFilter || user?.taskFilters?.dueDateFilter || ""
+  );
+  const [sortKey, setSortKey] = useState<SortKey>(
+    initial.sortKey || (user?.taskFilters?.sortKey as SortKey) || "createdAt"
+  );
+
+  const hasLoadedRemoteRef = useRef(false);
+  const isFirstMountRef = useRef(true);
+
+  // Sincroniza filtros remotos do PostgreSQL caso o cache local estivesse vazio
+  useEffect(() => {
+    if (!user?.taskFilters || hasLoadedRemoteRef.current) return;
+    const localRaw = typeof window !== "undefined" ? localStorage.getItem(STORAGE_KEY) : null;
+    if (!localRaw && Object.keys(user.taskFilters).length > 0) {
+      hasLoadedRemoteRef.current = true;
+      const f = user.taskFilters;
+      if (f.statusFilter) setStatusFilter(f.statusFilter as FilterStatus);
+      if (f.priorityFilter) setPriorityFilter(f.priorityFilter);
+      if (f.categoryFilter) setCategoryFilter(f.categoryFilter);
+      if (f.searchQuery !== undefined) setSearchQuery(f.searchQuery);
+      if (f.dueDateFilter !== undefined) setDueDateFilter(f.dueDateFilter);
+      if (f.sortKey) setSortKey(f.sortKey as SortKey);
+    }
+  }, [user?.taskFilters]);
+
+  // Persistência local imediata e sincronização remota debounced no PostgreSQL
+  useEffect(() => {
+    const currentFilters: TaskFiltersState = {
+      statusFilter,
+      priorityFilter,
+      categoryFilter,
+      searchQuery,
+      dueDateFilter,
+      sortKey,
+    };
+
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(currentFilters));
+    } catch {}
+
+    if (isFirstMountRef.current) {
+      isFirstMountRef.current = false;
+      return;
+    }
+
+    const timer = setTimeout(() => {
+      if (user) {
+        updateUserPreferences({ taskFilters: currentFilters });
+      }
+    }, 600);
+
+    return () => clearTimeout(timer);
+  }, [statusFilter, priorityFilter, categoryFilter, searchQuery, dueDateFilter, sortKey, user, updateUserPreferences]);
+
+  const hasActiveFilters =
+    statusFilter !== "todas" ||
+    priorityFilter !== "todas" ||
+    categoryFilter !== "todas" ||
+    searchQuery.trim() !== "" ||
+    dueDateFilter !== "" ||
+    sortKey !== "createdAt";
+
+  const handleClearFilters = () => {
+    setStatusFilter("todas");
+    setPriorityFilter("todas");
+    setCategoryFilter("todas");
+    setSearchQuery("");
+    setDueDateFilter("");
+    setSortKey("createdAt");
+    try {
+      localStorage.removeItem(STORAGE_KEY);
+    } catch {}
+    if (user) {
+      updateUserPreferences({ taskFilters: {} });
+    }
+    toast.success("Filtros redefinidos.");
+  };
 
   const pendingCount = tasks.filter((t) => !t.done).length;
 
@@ -297,11 +406,34 @@ export function TarefasPage() {
         })}
       </div>
 
-      {/* Seção de Filtros Detalhados */}
-      <section
-        aria-label="Filtros Detalhados"
-        className="glass-card grid gap-3.5 p-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6"
-      >
+      {/* Seção de Filtros Detalhados com Indicador e Ação de Limpeza */}
+      <div className="space-y-2">
+        <div className="flex items-center justify-between px-1">
+          <div className="flex items-center gap-2">
+            <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+              Filtros & Ordenação
+            </span>
+            {hasActiveFilters && (
+              <span className="inline-flex items-center rounded-full bg-primary/15 px-2.5 py-0.5 text-[11px] font-semibold text-primary animate-in fade-in">
+                Filtros ativos
+              </span>
+            )}
+          </div>
+          {hasActiveFilters && (
+            <button
+              type="button"
+              onClick={handleClearFilters}
+              className="text-xs font-semibold text-primary hover:underline hover:text-primary/80 transition-colors cursor-pointer"
+            >
+              Limpar todos os filtros
+            </button>
+          )}
+        </div>
+
+        <section
+          aria-label="Filtros Detalhados"
+          className="glass-card grid gap-3.5 p-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6"
+        >
         {/* Campo de Busca */}
         <div className="space-y-1.5">
           <Label
@@ -445,6 +577,7 @@ export function TarefasPage() {
           </Select>
         </div>
       </section>
+      </div>
 
       {/* Barra de Seleção Rápida em Lote */}
       {ready && visibleTasks.length > 0 && (
@@ -492,11 +625,29 @@ export function TarefasPage() {
 
       {/* Lista de Tarefas ou Empty State */}
       {ready && visibleTasks.length === 0 ? (
-        <EmptyState
-          icon={FlaticonTasks}
-          title="Nenhuma tarefa encontrada"
-          hint="Não encontramos tarefas correspondentes aos filtros selecionados. Altere os filtros ou crie uma nova tarefa."
-        />
+        <div className="space-y-4">
+          <EmptyState
+            icon={FlaticonTasks}
+            title={hasActiveFilters ? "Nenhuma tarefa para os filtros selecionados" : "Nenhuma tarefa encontrada"}
+            hint={
+              hasActiveFilters
+                ? "Nenhuma tarefa corresponde à combinação de filtros atual. Altere os filtros ou clique abaixo para redefini-los."
+                : "Não encontramos tarefas cadastradas. Clique em 'Nova Tarefa' para começar."
+            }
+          />
+          {hasActiveFilters && (
+            <div className="flex justify-center">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleClearFilters}
+                className="gap-2 text-xs border-primary/40 hover:bg-primary/10 cursor-pointer"
+              >
+                Limpar Filtros
+              </Button>
+            </div>
+          )}
+        </div>
       ) : (
         <ul className="space-y-3 pb-24">
           {visibleTasks.map((t) => (
